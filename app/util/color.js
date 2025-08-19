@@ -69,9 +69,3 @@ export function getTweenedColorHsl(t, colorRange) {
 
   return hslToRgb([h, s, l, a]);
 }
-
-export function metersToPixels(radiusMeters, latitude, zoom) {
-  const earthCircumference = 40075016.686; // in meters
-  const latitudeRad = latitude * (Math.PI / 180);
-  return radiusMeters / (earthCircumference * Math.cos(latitudeRad) / Math.pow(2, zoom + 8));
-}
