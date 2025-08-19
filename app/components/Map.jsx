@@ -1,7 +1,7 @@
 import React from 'react';
 import {DeckGL} from '@deck.gl/react';
 import {LineLayer} from '@deck.gl/layers';
-import {ZoomWidget} from '@deck.gl/react';
+// import {ZoomWidget} from '@deck.gl/react';
 import {Map, useControl} from 'react-map-gl/maplibre';
 import {MapView, FirstPersonView} from '@deck.gl/core';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -9,9 +9,15 @@ import data from './new.json';
 import {H3HexagonLayer} from '@deck.gl/geo-layers';
 import {getTweenedColorHsl} from "../util/color.js";
 import {MapboxOverlay} from '@deck.gl/mapbox';
+import {ZoomWidget} from '@deck.gl/widgets';
+
 
 const INITIAL_VIEW_STATE = {
-  longitude: -3.24718538, latitude: 53.15126933, zoom: 5.93, bearing: -27, pitch: 40.5,
+  longitude: -3.24718538,
+  latitude: 53.15126933, 
+  zoom: 5.93, 
+  bearing: -27, 
+  pitch: 40.5,
 };
 
 export const colorRange = [
@@ -28,7 +34,6 @@ function DeckGLOverlay(props) {
     overlay.setProps(props);
     return null;
 }
-
 
 export default function MapComponent(){
   const activeIdx = 1;
@@ -54,7 +59,13 @@ export default function MapComponent(){
     coverage: 0.8,
     autoHighlight: true,
     highlightColor: [255, 255, 255, 100],
-    elevationScale: 2000
+    elevationScale: 2000,
+
+    onClick: info => {
+      if (info.object) {
+        console.log('Clicked hexagon:', info.object);
+      }
+    }
   })
   
 
@@ -68,13 +79,11 @@ export default function MapComponent(){
             pitch: 40.5,
         }}
         >
-            
-            <DeckGLOverlay layers={[layer]} interleaved />
-
-
-
+            <DeckGLOverlay 
+              layers={[layer]} 
+              interleaved 
+              widgets={[new ZoomWidget({position: 'top-left'})]}
+/>
         </Map>
-
     )
-
 }

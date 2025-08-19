@@ -11,8 +11,10 @@
   "dependencies": {
     "@deck.gl/core": "^9.1.14",
     "@deck.gl/geo-layers": "^9.1.14",
+    "@deck.gl/layers": "^9.1.14",
     "@deck.gl/mapbox": "^9.1.14",
     "@deck.gl/react": "^9.1.14",
+    "@deck.gl/widgets": "^9.1.14",
     "@react-router/node": "^7.7.1",
     "@react-router/serve": "^7.7.1",
     "isbot": "^5.1.27",
