@@ -1,7 +1,6 @@
 import React from 'react';
-import {DeckGL} from '@deck.gl/react';
 import {LineLayer} from '@deck.gl/layers';
-// import {ZoomWidget} from '@deck.gl/react';
+import {useWidget, ZoomWidget} from '@deck.gl/react';
 import {Map, useControl} from 'react-map-gl/maplibre';
 import {MapView, FirstPersonView} from '@deck.gl/core';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -9,7 +8,8 @@ import data from './new.json';
 import {H3HexagonLayer} from '@deck.gl/geo-layers';
 import {getTweenedColorHsl} from "../util/color.js";
 import {MapboxOverlay} from '@deck.gl/mapbox';
-import {ZoomWidget} from '@deck.gl/widgets';
+// import {ZoomWidget} from '@deck.gl/widgets';
+import '@deck.gl/widgets/stylesheet.css';
 
 
 const INITIAL_VIEW_STATE = {
@@ -32,6 +32,11 @@ export const colorRange = [
 function DeckGLOverlay(props) {
     const overlay = useControl(() => new MapboxOverlay(props));
     overlay.setProps(props);
+    return null;
+}
+
+function ZoomWidgetComponent(props) {
+    const overlay = useWidget(ZoomWidget, props);
     return null;
 }
 
@@ -70,7 +75,10 @@ export default function MapComponent(){
   
 
     return (
-        <Map mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
+        <Map 
+          style={{ width: '100%', height: '100vh' }}
+  
+        mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
         initialViewState={{
             longitude: -3.24718538, 
             latitude: 53.15126933, 
@@ -82,8 +90,11 @@ export default function MapComponent(){
             <DeckGLOverlay 
               layers={[layer]} 
               interleaved 
-              widgets={[new ZoomWidget({position: 'top-left'})]}
-/>
+            >
+              <ZoomWidgetComponent></ZoomWidgetComponent>
+
+              </DeckGLOverlay>
+
         </Map>
     )
 }
