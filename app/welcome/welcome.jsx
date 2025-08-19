@@ -1,10 +1,14 @@
 import logoDark from "./logo-dark.svg";
 import logoLight from "./logo-light.svg";
 import Map from "../components/Map.jsx"
+import Icons from "../components/Icons.jsx"
 
 export function Welcome() {
   return (
+    <>
     <Map/>
+    <Icons/>
+    </>
   );
 }
 
