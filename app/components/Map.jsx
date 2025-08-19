@@ -2,12 +2,13 @@ import React from 'react';
 import {DeckGL} from '@deck.gl/react';
 import {LineLayer} from '@deck.gl/layers';
 import {ZoomWidget} from '@deck.gl/react';
-import {Map} from 'react-map-gl/maplibre';
+import {Map, useControl} from 'react-map-gl/maplibre';
 import {MapView, FirstPersonView} from '@deck.gl/core';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import data from './new.json';
 import {H3HexagonLayer} from '@deck.gl/geo-layers';
 import {getTweenedColorHsl} from "../util/color.js";
+import {MapboxOverlay} from '@deck.gl/mapbox';
 
 const INITIAL_VIEW_STATE = {
   longitude: -3.24718538, latitude: 53.15126933, zoom: 5.93, bearing: -27, pitch: 40.5,
@@ -22,11 +23,19 @@ export const colorRange = [
   [209, 55, 78, 255],
 ];
 
+function DeckGLOverlay(props) {
+    const overlay = useControl(() => new MapboxOverlay(props));
+    overlay.setProps(props);
+    return null;
+}
+
+
 export default function MapComponent(){
   const activeIdx = 1;
   const layer = new H3HexagonLayer({
     id: "hexagons",
     data,
+    pickable: true,
     getHexagon: d => d[0],
     getElevation: d => d[activeIdx],
     getFillColor: d => getTweenedColorHsl(Math.min(1, Math.max(0, d[activeIdx] / 50)), colorRange),
@@ -47,19 +56,25 @@ export default function MapComponent(){
     highlightColor: [255, 255, 255, 100],
     elevationScale: 2000
   })
-  return (<DeckGL
-      initialViewState={INITIAL_VIEW_STATE}
-      controller
-      layers={[layer]}
-    >
+  
+
+    return (
+        <Map mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
+        initialViewState={{
+            longitude: -3.24718538, 
+            latitude: 53.15126933, 
+            zoom: 5.93, 
+            bearing: -27, 
+            pitch: 40.5,
+        }}
+        >
+            
+            <DeckGLOverlay layers={[layer]} interleaved />
 
 
-      <MapView id="map" width="50%" controller>
-        <Map mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"/>
-      </MapView>
 
-      <FirstPersonView width="50%" x="50%" fovy={50}/>
+        </Map>
 
-      <ZoomWidget/>
-    </DeckGL>)
+    )
+
 }
