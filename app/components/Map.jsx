@@ -70,32 +70,8 @@ export default function MapComponent(){
     }
   })
 
-
-    return (
-        <Map
-          style={{ width: '100%', height: '100vh' }}
-
-        mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
-        initialViewState={{
-            longitude: -3.24718538,
-            latitude: 53.15126933,
-            zoom: 5.93,
-            bearing: -27,
-            pitch: 40.5,
-        }}
-        >
-            <DeckGLOverlay
-              layers={[layer]}
-              interleaved
-            >
-              <ZoomWidgetComponent></ZoomWidgetComponent>
-
-              </DeckGLOverlay>
-
-        </Map>
-    )
   return (
-    <Map
+    <Map className='relative'
       style={{width: '100%', height: '100vh'}}
       mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
       initialViewState={{
