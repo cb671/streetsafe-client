@@ -1,6 +1,5 @@
 import React from 'react';
 import {LineLayer} from '@deck.gl/layers';
-// import {useWidget, ZoomWidget} from '@deck.gl/react';
 import {Map, useControl, NavigationControl, ScaleControl} from 'react-map-gl/maplibre';
 import {MapView, FirstPersonView} from '@deck.gl/core';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -32,11 +31,6 @@ export const colorRange = [
 function DeckGLOverlay(props){
   const overlay = useControl(() => new MapboxOverlay(props));
   overlay.setProps(props);
-  return null;
-}
-
-function ZoomWidgetComponent(props){
-  const overlay = useControl(() => new ZoomWidget(props));
   return null;
 }
 
