@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Map, useControl, NavigationControl, ScaleControl} from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import {useEffect} from 'react';
@@ -33,9 +33,11 @@ function DeckGLOverlay(props){
 }
 
 export default function MapComponent({onClick}){
+  const [data, setData] = useState(null);
   const activeIdx = 1;
   const layer = new H3HexagonLayer({
     id: "hexagons",
+    data,
     pickable: true,
     getHexagon: d => d[0],
     getElevation: d => d[activeIdx],
@@ -67,11 +69,9 @@ export default function MapComponent({onClick}){
 
   useEffect(()=>{
     getMapData().then(d => {
-      layer.setState({
-        data:d
-      })
-    })
-  })
+      setData(d);
+    });
+  }, []);
 
   return (
     <Map
