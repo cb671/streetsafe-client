@@ -1,12 +1,14 @@
 import React from 'react';
-import {Layers, ChartPie, GraduationCap} from 'lucide-react'
+import {LandPlot, ChartPie, GraduationCap} from 'lucide-react'
+import {Link} from 'react-router'
+import "../app.css"
 
 const Icons = () => {
   return (
-    <div className='flex justify-between gap-4 align-items absolute bottom-10 left-[50%]'>
-      <Layers color='white' size={30} />
-      <ChartPie color='white' size={30} />
-      <GraduationCap color='white' size={30} />
+    <div className='flex w-[100%] align-items pt-1.5 h-[65px] rounded-t-lg rounded-r-lg justify-center gap-10 align-items absolute bottom-0 bg-darkgrey'>
+       <Link to="/"><LandPlot color='white' size={50} /></Link>
+       <Link to="/"><ChartPie color='white' size={50} /></Link>
+       <Link to="/"> <GraduationCap color='white' size={50} /></Link>
     </div>
   );
 };
