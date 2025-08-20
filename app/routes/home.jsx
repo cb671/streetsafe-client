@@ -1,6 +1,5 @@
 import {useState} from "react";
 import Map from "../components/Map.jsx";
-// import { data } from "react-router";
 
 export default function Home() {
   // const [clicked, setClicked] = useState(null);
@@ -25,12 +24,14 @@ export default function Home() {
           <h1 className={"text-center m-4 text-2xl font-bold"}>
             {crimeData.name}
           </h1>
-          {/* <ul className="mt-4"> */}
           <ul className="text-center m-4 text-1xl">
             {crimeData.crimes.map((c, i) => (
               <li key={i}>Crime {i + 1}: {c}</li>
             ))}
           </ul>
+          <h2 className="text-center m-4 text-2xl">
+            Closest Police Station:
+          </h2>
         </div>
       )}
 
