@@ -1,13 +1,10 @@
 import React from 'react';
-import {LineLayer} from '@deck.gl/layers';
 import {Map, useControl, NavigationControl, ScaleControl} from 'react-map-gl/maplibre';
-import {MapView, FirstPersonView} from '@deck.gl/core';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import data from './new.json';
 import {H3HexagonLayer} from '@deck.gl/geo-layers';
 import {getTweenedColorHsl} from "../util/color.js";
 import {MapboxOverlay} from '@deck.gl/mapbox';
-import {ZoomWidget} from '@deck.gl/widgets';
 import '@deck.gl/widgets/stylesheet.css';
 
 
@@ -34,7 +31,7 @@ function DeckGLOverlay(props){
   return null;
 }
 
-export default function MapComponent(){
+export default function MapComponent({onClick}){
   const activeIdx = 1;
   const layer = new H3HexagonLayer({
     id: "hexagons",
@@ -62,7 +59,7 @@ export default function MapComponent(){
 
     onClick: info => {
       if(info.object){
-        console.log('Clicked hexagon:', info.object);
+        onClick && onClick(info.object);
       }
     }
   })
@@ -88,7 +85,7 @@ export default function MapComponent(){
         interleaved
       />
       <NavigationControl/>
-      <ScaleControl/>
+      <ScaleControl position={"top-left"}/>
     </Map>
   )
 }
