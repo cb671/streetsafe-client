@@ -5,10 +5,19 @@ import "../app.css"
 
 const Icons = () => {
   return (
-    <div className='flex w-[100%] align-items pt-1.5 h-[65px] rounded-t-lg rounded-r-lg justify-center gap-10 align-items absolute bottom-0 bg-darkgrey'>
-       <Link to="/"><LandPlot color='white' size={50} /></Link>
-       <Link to="/"><ChartPie color='white' size={50} /></Link>
-       <Link to="/"> <GraduationCap color='white' size={50} /></Link>
+    <div className='flex text-whiteish fill-whiteish w-full align-items p-2 rounded-t-lg rounded-r-lg justify-center gap-10 align-items absolute bottom-0 bg-darkgrey'>
+       <div >
+       <Link to="/"><LandPlot size={48} /></Link>
+       <p className='ml-3' >Go</p>
+       </div>
+       <div>
+         <Link to="/"><ChartPie  size={48} /></Link>
+         <p className='' >Trends</p>
+       </div>
+        <div>
+        <Link to="/"> <GraduationCap size={48} /></Link>
+         <p className='ml-1' >Learn</p>
+       </div>
     </div>
   );
 };
