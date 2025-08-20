@@ -1,11 +1,12 @@
 import React from 'react';
 import {Map, useControl, NavigationControl, ScaleControl} from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import data from './new.json';
+import {useEffect} from 'react';
 import {H3HexagonLayer} from '@deck.gl/geo-layers';
 import {getTweenedColorHsl} from "../util/color.js";
 import {MapboxOverlay} from '@deck.gl/mapbox';
 import '@deck.gl/widgets/stylesheet.css';
+import { getMapData } from '../api/api.js';
 
 
 const INITIAL_VIEW_STATE = {
@@ -35,7 +36,6 @@ export default function MapComponent({onClick}){
   const activeIdx = 1;
   const layer = new H3HexagonLayer({
     id: "hexagons",
-    data,
     pickable: true,
     getHexagon: d => d[0],
     getElevation: d => d[activeIdx],
@@ -62,8 +62,16 @@ export default function MapComponent({onClick}){
         onClick && onClick(info.object);
       }
     }
+
   })
 
+  useEffect(()=>{
+    getMapData().then(d => {
+      layer.setState({
+        data:d
+      })
+    })
+  })
 
   return (
     <Map
