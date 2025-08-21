@@ -16,23 +16,28 @@ const CRIME_LABELS = [
   'Damage',
   'Robbery',
   'Shoplifting',
-  'Violent', 
+  'Violent Crime', 
   'Antisocial', 
   'Drugs', 
-  'Vehicle crime'];
+  'Vehicle Crime'];
 
 export default function Home() {
   const [crimeData, setCrimeData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   async function handleClick(info) {
 
     try {
+      setIsLoading(true);
+
       const res = await fetch(`http://localhost:3000/api/map/hexagon/${info[0]}`);
       const data = await res.json();
       console.log(data);
       setCrimeData(data);
     } catch(err) {
       console.error("Failed to fetch crime data", err);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -41,7 +46,6 @@ export default function Home() {
 
     const values = crimeData.crimes.slice(0, CRIME_LABELS.length);
 
-    // Provide the same number of colours as values
     const bg_colours = [
       "rgba(255, 99, 132, 0.2)",
       "rgba(54, 162, 235, 0.2)",
@@ -71,14 +75,13 @@ export default function Home() {
     ].slice(0, values.length);
   
   return {
-    // labels: CRIME_LABELS.slice(0, values.length),
     datasets: [
         {
           label: "Number of Crimes",
           data: values,
           backgroundColor: bg_colours,
           borderColor: border,
-          borderWidth: 1
+          borderWidth: 3
         }
       ]
     };
@@ -96,17 +99,29 @@ export default function Home() {
           onTouchMove={(e) => e.stopPropagation()} // on mobile phones, prevents map panning
         >
 
-          <h1 className={"text-center m-4 text-2xl font-bold"}>
-            {crimeData.name}
-          </h1>
+
+            { crimeData && (
+              <h1 className={"text-center m-4 text-2xl font-bold"}>
+                {crimeData.name}
+              </h1>
+            )}
+
+            <div className="flex items-center justify-center text-ms font-semibold">
+                Click on the pie chart to see local crime data
+            </div>
+            
 
           <div className="max-w-md mx-auto text-white">
-            {!pieChartData ? (
-              <div className="flex-items-center justify-center h-48 text-lg font-semibold">
+            {isLoading ? (
+              <div className="flex items-center justify-center h-48 text-lg font-semibold">
                 Loading Data...
               </div>
+            ) : pieChartData ? (
+              <Pie data={pieChartData} />
             ) : (
-            <Pie data={pieChartData} />
+              <div className="flex items-center justify-center h-48 text-lg font-semibold">
+                No data available
+              </div>
             )}
           </div>
 
