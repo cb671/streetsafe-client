@@ -96,12 +96,6 @@ export default function Home() {
 
   return (
     <>
-      {/* 1) Before user clicks anywhere */}
-      {!crimeData && !isLoading && (
-        <div className="text-white">
-          Click your area of map to load local crime data
-        </div>
-      )}
 
       {isLoading && (
         <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
