@@ -71,7 +71,7 @@ export default function Home() {
     ].slice(0, values.length);
   
   return {
-    labels: CRIME_LABELS.slice(0, values.length),
+    // labels: CRIME_LABELS.slice(0, values.length),
     datasets: [
         {
           label: "Number of Crimes",
@@ -101,7 +101,13 @@ export default function Home() {
           </h1>
 
           <div className="max-w-md mx-auto text-white">
-            {pieChartData && <Pie data={pieChartData} />}
+            {!pieChartData ? (
+              <div className="flex-items-center justify-center h-48 text-lg font-semibold">
+                Loading Data...
+              </div>
+            ) : (
+            <Pie data={pieChartData} />
+            )}
           </div>
 
           <ul className="text-center m-4 text-xl">
