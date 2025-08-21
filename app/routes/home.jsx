@@ -8,6 +8,7 @@ import '@deck.gl/widgets/stylesheet.css';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
+// crime labels corresponding to numbers in API hexagon data
 const CRIME_LABELS = [
   'Burglary', 
   'Personal Theft',
@@ -91,6 +92,7 @@ export default function Home() {
     };
   }, [crimeData]);  
 
+  // modal pop-up with data:
 
   return (
     <>
@@ -103,13 +105,13 @@ export default function Home() {
           aria-labelledby="crime-modal-title"
           
           onClick={(e) => e.stopPropagation()}
-          onWheel={(e) => e.stopPropagation()} // Prevents map zoom on scroll; map already has separate zoom function
-          onTouchMove={(e) => e.stopPropagation()} // on mobile phones, prevents map panning
+          onWheel={(e) => e.stopPropagation()} 
+          onTouchMove={(e) => e.stopPropagation()} 
         >
         {/* Close button */}
         <button 
           class="absolute right-3 top-3 inline-flex h-2 w-9 items-center justify-center
-                 rounded-full text-white hover:bg-white transition"
+                 rounded-full text-white transform transition duration-500 hover:scale-125"
           aria-label="Close modal"
           onClick={closeModal}
         >
@@ -123,7 +125,7 @@ export default function Home() {
               </h1>
             )}
 
-            <div className="flex items-center justify-center text-ms font-semibold">
+            <div className="flex items-center justify-center text-ms p-8 font-semibold">
                 Click on the pie chart to see local crime data
             </div>
             
