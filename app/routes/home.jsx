@@ -1,7 +1,13 @@
+import React from 'react';
+import {useEffect} from 'react';
 import { useMemo, useState } from "react";
+import {NavigationControl} from 'react-map-gl/maplibre';
+import 'maplibre-gl/dist/maplibre-gl.css';
 import Map from "../components/Map.jsx";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from "react-chartjs-2";
+import '@deck.gl/widgets/stylesheet.css';
+
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -12,7 +18,7 @@ const CRIME_LABELS = [
   'Bicycle Theft',
   'Damage',
   'Robbery',
-  'Shoftlifting',
+  'Shoplifting',
   'Violent', 
   'Antisocial', 
   'Drugs', 
@@ -85,12 +91,19 @@ export default function Home() {
   return (
     <>
       {crimeData && (
-        <div className="fixed bottom-0 left-0 w-[100vw] h-[50vh] bg-black/75 backdrop-blur-2xl z-10 rounded-t-2xl">
+        <div 
+          className="fixed bottom-0 left-0 w-[100vw] h-[50vh] bg-black/75 text-white 
+          backdrop-blur-2xl z-10 rounded-t-2xl overflow-y-auto"
+          
+          onWheel={(e) => e.stopPropagation()} // Prevents map zoom on scroll; map already has separate zoom function
+          onTouchMove={(e) => e.stopPropagation()} // on mobile phones, prevents map panning
+        >
+
           <h1 className={"text-center m-4 text-2xl font-bold"}>
             {crimeData.name}
           </h1>
 
-          <div className="max-w-md mx-auto">
+          <div className="max-w-md mx-auto text-white">
             {doughnutData && <Doughnut data={doughnutData} />}
           </div>
 
