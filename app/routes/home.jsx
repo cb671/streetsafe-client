@@ -1,8 +1,24 @@
-import {useState} from "react";
+import { useMemo, useState } from "react";
 import Map from "../components/Map.jsx";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Doughnut } from "react-chartjs-2";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+const CRIME_LABELS = [
+  'Burglary', 
+  'Personal Theft',
+  'Weapon Crime',
+  'Bicycle Theft',
+  'Damage',
+  'Robbery',
+  'Shoftlifting',
+  'Violent', 
+  'Antisocial', 
+  'Drugs', 
+  'Vehicle crime'];
 
 export default function Home() {
-  // const [clicked, setClicked] = useState(null);
   const [crimeData, setCrimeData] = useState(null);
 
   async function handleClick(info) {
@@ -17,6 +33,55 @@ export default function Home() {
     }
   }
 
+  const doughnutData = useMemo(() => {
+    if (!crimeData?.crimes) return null;
+
+    const values = crimeData.crimes.slice(0, CRIME_LABELS.length);
+
+    // Provide the same number of colours as values
+    const bg_colours = [
+      "rgba(255, 99, 132, 0.2)",
+      "rgba(54, 162, 235, 0.2)",
+      "rgba(255, 206, 86, 0.2)",
+      "rgba(75, 192, 192, 0.2)",
+      "rgba(153, 102, 255, 0.2)",
+      "rgba(255, 159, 64, 0.2)",
+      "rgba(201, 203, 207, 0.2)",
+      "rgba(99, 255, 132, 0.2)",
+      "rgba(235, 54, 162, 0.2)",
+      "rgba(86, 255, 206, 0.2)",
+      "rgba(192, 75, 192, 0.2)"
+    ].slice(0, values.length);
+
+    const border = [
+      "rgba(255, 99, 132, 1)",
+      "rgba(54, 162, 235, 1)",
+      "rgba(255, 206, 86, 1)",
+      "rgba(75, 192, 192, 1)",
+      "rgba(153, 102, 255, 1)",
+      "rgba(255, 159, 64, 1)",
+      "rgba(201, 203, 207, 1)",
+      "rgba(99, 255, 132, 1)",
+      "rgba(235, 54, 162, 1)",
+      "rgba(86, 255, 206, 1)",
+      "rgba(192, 75, 192, 1)"
+    ].slice(0, values.length);
+  
+  return {
+    labels: CRIME_LABELS.slice(0, values.length),
+    datasets: [
+        {
+          label: "Type of Crime",
+          data: values,
+          backgroundColor: bg_colours,
+          borderColor: border,
+          borderWidth: 1
+        }
+      ]
+    };
+  }, [crimeData]);  
+
+
   return (
     <>
       {crimeData && (
@@ -24,11 +89,17 @@ export default function Home() {
           <h1 className={"text-center m-4 text-2xl font-bold"}>
             {crimeData.name}
           </h1>
-          <ul className="text-center m-4 text-1xl">
+
+          <div className="max-w-md mx-auto">
+            {doughnutData && <Doughnut data={doughnutData} />}
+          </div>
+
+          <ul className="text-center m-4 text-xl">
             {crimeData.crimes.map((c, i) => (
               <li key={i}>Crime {i + 1}: {c}</li>
             ))}
           </ul>
+
           <h2 className="text-center m-4 text-2xl">
             Closest Police Station:
           </h2>
