@@ -75,6 +75,8 @@ export default function Home() {
     ].slice(0, values.length);
   
   return {
+        labels: CRIME_LABELS.slice(0, values.length),
+
     datasets: [
         {
           label: "Number of Crimes",
@@ -82,8 +84,9 @@ export default function Home() {
           backgroundColor: bg_colours,
           borderColor: border,
           borderWidth: 3
-        }
-      ]
+        },
+      ],
+
     };
   }, [crimeData]);  
 
