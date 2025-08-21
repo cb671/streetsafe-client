@@ -96,9 +96,24 @@ export default function Home() {
 
   return (
     <>
+      {/* 1) Before user clicks anywhere */}
+      {!crimeData && !isLoading && (
+        <div className="text-white">
+          Click your area of map to load local crime data
+        </div>
+      )}
+
+      {isLoading && (
+        <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
+          <div className="rounded-lg bg-black/80 text-white px-4 py-2 text-lg">
+          Loading data...
+          </div>
+        </div>
+      )}
+
       {crimeData && (
         <div 
-          className="fixed bottom-0 left-0 w-[100vw] h-[50vh] bg-black/75 text-white 
+          className="fixed bottom-0 left-0 w-[100vw] h-[60vh] bg-black/75 text-white 
           backdrop-blur-2xl z-10 rounded-t-2xl overflow-y-auto"
           role="dialog"
           aria-modal="true"
@@ -109,7 +124,7 @@ export default function Home() {
           onTouchMove={(e) => e.stopPropagation()} 
         >
         {/* Close button */}
-        <button 
+        <button type="button" 
           class="absolute right-3 top-3 inline-flex h-2 w-9 items-center justify-center
                  rounded-full text-white transform transition duration-500 hover:scale-125"
           aria-label="Close modal"
@@ -155,12 +170,6 @@ export default function Home() {
               </div>
             )}
           </div>
-
-          <ul className="text-center m-4 text-xl">
-            {crimeData.crimes.map((c, i) => (
-              <li key={i}>Crime {i + 1}: {c}</li>
-            ))}
-          </ul>
 
           <h2 className="text-center m-4 text-2xl">
             Closest Police Station:
