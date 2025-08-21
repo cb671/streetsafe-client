@@ -102,6 +102,14 @@ export default function Home() {
           onTouchMove={(e) => e.stopPropagation()} // on mobile phones, prevents map panning
         >
 
+        <button 
+          class="bg-white flex md:flex md:flex-grow flex-row-reverse justify-end space-x-1"
+          aria-label="Close modal"
+          onclick='closeModal()'
+        >
+          X
+        </button>
+
 
             { crimeData && (
               <h1 className={"text-center m-4 text-2xl font-bold"}>
@@ -120,7 +128,19 @@ export default function Home() {
                 Loading Data...
               </div>
             ) : pieChartData ? (
-              <Pie data={pieChartData} />
+              <Pie 
+                data={pieChartData} 
+                options={{
+                   plugins: {
+                    legend: {
+                      display: false,
+                    },
+                    tooltip: {
+                      enabled: true,
+                    }
+                  }
+                }}
+                />
             ) : (
               <div className="flex items-center justify-center h-48 text-lg font-semibold">
                 No data available
