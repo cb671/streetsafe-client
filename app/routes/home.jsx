@@ -25,6 +25,8 @@ export default function Home() {
   const [crimeData, setCrimeData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const closeModal = () => setCrimeData(null);
+
   async function handleClick(info) {
 
     try {
@@ -86,7 +88,6 @@ export default function Home() {
           borderWidth: 3
         },
       ],
-
     };
   }, [crimeData]);  
 
@@ -97,17 +98,22 @@ export default function Home() {
         <div 
           className="fixed bottom-0 left-0 w-[100vw] h-[50vh] bg-black/75 text-white 
           backdrop-blur-2xl z-10 rounded-t-2xl overflow-y-auto"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="crime-modal-title"
           
+          onclick={(e) => e.stopPropagation()}
           onWheel={(e) => e.stopPropagation()} // Prevents map zoom on scroll; map already has separate zoom function
           onTouchMove={(e) => e.stopPropagation()} // on mobile phones, prevents map panning
         >
 
         <button 
-          class="bg-white flex md:flex md:flex-grow flex-row-reverse justify-end space-x-1"
+          class="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center
+                 rounded-full bg-white/90 text-black hover:bg-white transition"
           aria-label="Close modal"
-          onclick='closeModal()'
+          onclick={closeModal}
         >
-          X
+          ✕
         </button>
 
 
