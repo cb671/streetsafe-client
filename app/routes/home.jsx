@@ -102,16 +102,16 @@ export default function Home() {
           aria-modal="true"
           aria-labelledby="crime-modal-title"
           
-          onclick={(e) => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
           onWheel={(e) => e.stopPropagation()} // Prevents map zoom on scroll; map already has separate zoom function
           onTouchMove={(e) => e.stopPropagation()} // on mobile phones, prevents map panning
         >
-
+        {/* Close button */}
         <button 
-          class="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center
-                 rounded-full bg-white/90 text-black hover:bg-white transition"
+          class="absolute right-3 top-3 inline-flex h-2 w-9 items-center justify-center
+                 rounded-full text-white hover:bg-white transition"
           aria-label="Close modal"
-          onclick={closeModal}
+          onClick={closeModal}
         >
           ✕
         </button>
