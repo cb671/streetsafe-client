@@ -1,11 +1,8 @@
-import React from 'react';
-import {useEffect} from 'react';
 import { useMemo, useState } from "react";
-import {NavigationControl} from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import Map from "../components/Map.jsx";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Doughnut } from "react-chartjs-2";
+import { Pie } from "react-chartjs-2";
 import '@deck.gl/widgets/stylesheet.css';
 
 
@@ -39,7 +36,7 @@ export default function Home() {
     }
   }
 
-  const doughnutData = useMemo(() => {
+  const pieChartData = useMemo(() => {
     if (!crimeData?.crimes) return null;
 
     const values = crimeData.crimes.slice(0, CRIME_LABELS.length);
@@ -77,7 +74,7 @@ export default function Home() {
     labels: CRIME_LABELS.slice(0, values.length),
     datasets: [
         {
-          label: "Type of Crime",
+          label: "Number of Crimes",
           data: values,
           backgroundColor: bg_colours,
           borderColor: border,
@@ -104,7 +101,7 @@ export default function Home() {
           </h1>
 
           <div className="max-w-md mx-auto text-white">
-            {doughnutData && <Doughnut data={doughnutData} />}
+            {pieChartData && <Pie data={pieChartData} />}
           </div>
 
           <ul className="text-center m-4 text-xl">
