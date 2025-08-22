@@ -50,17 +50,17 @@ export default function Home() {
     const values = crimeData.crimes.slice(0, CRIME_LABELS.length);
 
     const bg_colours = [
-      "rgba(255, 99, 132, 0.2)",
-      "rgba(54, 162, 235, 0.2)",
-      "rgba(255, 206, 86, 0.2)",
-      "rgba(75, 192, 192, 0.2)",
-      "rgba(153, 102, 255, 0.2)",
-      "rgba(255, 159, 64, 0.2)",
-      "rgba(201, 203, 207, 0.2)",
-      "rgba(99, 255, 132, 0.2)",
-      "rgba(235, 54, 162, 0.2)",
-      "rgba(86, 255, 206, 0.2)",
-      "rgba(192, 75, 192, 0.2)"
+      "rgba(255, 99, 132, 1)",
+      "rgba(54, 162, 235, 1)",
+      "rgba(255, 206, 86, 1)",
+      "rgba(75, 192, 192, 1)",
+      "rgba(153, 102, 255, 1)",
+      "rgba(255, 159, 64, 1)",
+      "rgba(201, 203, 207, 1)",
+      "rgba(99, 255, 132, 1)",
+      "rgba(235, 54, 162, 1)",
+      "rgba(86, 255, 206, 1)",
+      "rgba(192, 75, 192, 1)"
     ].slice(0, values.length);
 
     const border = [
@@ -86,7 +86,7 @@ export default function Home() {
           data: values,
           backgroundColor: bg_colours,
           borderColor: border,
-          borderWidth: 3
+          borderWidth: 0,
         },
       ],
     };
@@ -146,18 +146,29 @@ export default function Home() {
               </div>
             ) : pieChartData ? (
 
+
+              <div style={{ width: 300, height: 300 }}>
+
               <Pie 
                 data={pieChartData}
-                width={150}
-                height={150}
                 options={{
+                    responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                      legend: { display: false },
-                    tooltip: { enabled: true },
-                    }
+                      plugins: {
+                        legend: {
+                          position: 'bottom',
+                          labels: {
+                            color: '#fff',
+                            boxWidth: 20,
+                            padding: 15,
+                            usePointStyle: true,
+                            pointStyle: 'circle',  
+                          }
+                        }
+                      }
                 }}
                 />
+              </div>
             ) : (
               <div className="flex items-center justify-center h-48 text-lg font-semibold">
                 No data available
@@ -165,9 +176,6 @@ export default function Home() {
             )}
           </div>
 
-          <h2 className="text-center m-4 text-2xl">
-            Closest Police Station:
-          </h2>
         </div>
       )}
 
