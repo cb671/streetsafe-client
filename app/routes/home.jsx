@@ -145,17 +145,17 @@ export default function Home() {
                 Loading Data...
               </div>
             ) : pieChartData ? (
+
               <Pie 
-                data={pieChartData} 
+                data={pieChartData}
+                width={150}
+                height={150}
                 options={{
-                   plugins: {
-                    legend: {
-                      display: false,
-                    },
-                    tooltip: {
-                      enabled: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { display: false },
+                    tooltip: { enabled: true },
                     }
-                  }
                 }}
                 />
             ) : (
