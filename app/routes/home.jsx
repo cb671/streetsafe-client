@@ -4,7 +4,6 @@ import Map from "../components/Map.jsx";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from "react-chartjs-2";
 import '@deck.gl/widgets/stylesheet.css';
-import PieChart from "../components/PieChart.jsx";
 
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -136,15 +135,14 @@ export default function Home() {
               </h1>
             )}            
 
-          <div className="max-w-md mx-auto text-white">
+          <div className="max-w-md mx-auto text-white px-4">
             {isLoading ? (
               <div className="flex items-center justify-center h-48 text-lg font-semibold">
                 Loading Data...
               </div>
             ) : pieChartData ? (
 
-            <div className="w-full flex justify-center">   
-              <div style={{ width: 375, height: 320 }}>
+            <div className="w-full h-78 flex justify-center">   
 
               <Pie 
                 data={pieChartData}
@@ -166,7 +164,6 @@ export default function Home() {
                     }}
                 />
               </div>
-            </div>
             ) : (
               <div className="flex items-center justify-center h-48 text-lg font-semibold">
                 No data available
