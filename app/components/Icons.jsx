@@ -5,9 +5,9 @@ import "../app.css"
 
 const Icons = () => {
   return (
-    <div className='flex text-whiteish fill-whiteish w-full align-items p-2 rounded-t-lg rounded-r-lg justify-center gap-10 align-items absolute bottom-0 bg-darkgrey'>
+    <div className='flex text-whiteish fill-whiteish w-full align-items p-2 rounded-t-lg rounded-r-lg justify-center gap-10 align-items absolute bottom-0 bg-darkgrey z-50'>
        <div >
-       <Link to="/"><LandPlot size={48} /></Link>
+       <Link to="/go"><LandPlot size={48} /></Link>
        <p className='ml-3' >Go</p>
        </div>
        <div>

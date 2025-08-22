@@ -1,51 +1,53 @@
-import { useMemo, useState } from "react";
+import {useEffect, useMemo, useState} from "react";
 import 'maplibre-gl/dist/maplibre-gl.css';
 import Map from "../components/Map.jsx";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Pie } from "react-chartjs-2";
+import {Chart as ChartJS, ArcElement, Tooltip, Legend} from 'chart.js';
+import {Pie} from "react-chartjs-2";
 import '@deck.gl/widgets/stylesheet.css';
+import Icons from "../components/Icons.jsx";
+import {useMap} from "../contexts/MapContext.jsx";
 
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 // crime labels corresponding to numbers in API hexagon data
 const CRIME_LABELS = [
-  'Burglary', 
+  'Burglary',
   'Personal Theft',
   'Weapon Crime',
   'Bicycle Theft',
   'Damage',
   'Robbery',
   'Shoplifting',
-  'Violent Crime', 
-  'Antisocial', 
-  'Drugs', 
+  'Violent Crime',
+  'Antisocial',
+  'Drugs',
   'Vehicle Crime'];
 
-export default function Home() {
+export default function Home(){
   const [crimeData, setCrimeData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const closeModal = () => setCrimeData(null);
 
-  async function handleClick(info) {
+  async function handleClick(info){
 
-    try {
+    try{
       setIsLoading(true);
 
       const res = await fetch(`http://localhost:3000/api/map/hexagon/${info[0]}`);
       const data = await res.json();
       console.log(data);
       setCrimeData(data);
-    } catch(err) {
+    }catch(err){
       console.error("Failed to fetch crime data", err);
-    } finally {
+    }finally{
       setIsLoading(false);
     }
   }
 
   const pieChartData = useMemo(() => {
-    if (!crimeData?.crimes) return null;
+    if(!crimeData?.crimes) return null;
 
     const values = crimeData.crimes.slice(0, CRIME_LABELS.length);
 
@@ -76,11 +78,11 @@ export default function Home() {
       "rgba(86, 255, 206, 1)",
       "rgba(192, 75, 192, 1)"
     ].slice(0, values.length);
-  
-  return {
-        labels: CRIME_LABELS.slice(0, values.length),
 
-    datasets: [
+    return {
+      labels: CRIME_LABELS.slice(0, values.length),
+
+      datasets: [
         {
           label: "Number of Crimes",
           data: values,
@@ -90,7 +92,16 @@ export default function Home() {
         },
       ],
     };
-  }, [crimeData]);  
+  }, [crimeData]);
+
+
+  const {setClickHandler, clearClickHandler} = useMap();
+  useEffect(()=>{
+    setClickHandler(handleClick);
+
+    return () => clearClickHandler();
+  }, []);
+
 
   // modal pop-up with data:
 
@@ -100,55 +111,55 @@ export default function Home() {
       {isLoading && (
         <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
           <div className="rounded-lg bg-black/80 text-white px-4 py-2 text-lg">
-          Loading data...
+            Loading data...
           </div>
         </div>
       )}
 
-      {crimeData && (
-        <div 
-          className="fixed bottom-0 left-0 w-[100vw] h-[60vh] bg-black/75 text-white 
+      {crimeData ? (
+        <div
+          className="fixed bottom-0 left-0 w-[100vw] h-[60vh] bg-black/75 text-white
           backdrop-blur-2xl z-10 rounded-t-2xl overflow-y-auto"
           role="dialog"
           aria-modal="true"
           aria-labelledby="crime-modal-title"
-          
+
           onClick={(e) => e.stopPropagation()}
-          onWheel={(e) => e.stopPropagation()} 
-          onTouchMove={(e) => e.stopPropagation()} 
+          onWheel={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
         >
-        {/* Close button */}
-        <button type="button" 
-          class="absolute right-3 top-3 inline-flex h-2 w-9 items-center justify-center
+          {/* Close button */}
+          <button type="button"
+                  class="absolute right-3 top-3 inline-flex h-2 w-9 items-center justify-center
                  rounded-full text-white transform transition duration-500 hover:scale-125"
-          aria-label="Close modal"
-          onClick={closeModal}
-        >
-          ✕
-        </button>
+                  aria-label="Close modal"
+                  onClick={closeModal}
+          >
+            ✕
+          </button>
 
 
-            { crimeData && (
-              <h1 className={"text-center m-4 text-2xl font-bold"}>
-                {crimeData.name}
-              </h1>
-            )}
+          {crimeData && (
+            <h1 className={"text-center m-4 text-2xl font-bold"}>
+              {crimeData.name}
+            </h1>
+          )}
 
-            <div className="flex items-center justify-center text-ms p-8 font-semibold">
-                Click on the pie chart to see local crime data
-            </div>
-            
+          <div className="flex items-center justify-center text-ms p-8 font-semibold">
+            Click on the pie chart to see local crime data
+          </div>
 
-          <div className="max-w-md mx-auto text-white">
+
+          <div className="max-w-md mx-auto text-white px-4">
             {isLoading ? (
               <div className="flex items-center justify-center h-48 text-lg font-semibold">
                 Loading Data...
               </div>
             ) : pieChartData ? (
-              <Pie 
-                data={pieChartData} 
+              <Pie
+                data={pieChartData}
                 options={{
-                   plugins: {
+                  plugins: {
                     legend: {
                       display: false,
                     },
@@ -157,7 +168,7 @@ export default function Home() {
                     }
                   }
                 }}
-                />
+              />
             ) : (
               <div className="flex items-center justify-center h-48 text-lg font-semibold">
                 No data available
@@ -169,9 +180,7 @@ export default function Home() {
             Closest Police Station:
           </h2>
         </div>
-      )}
-
-      <Map onClick={handleClick}/>
+      ) : <Icons/>}
     </>
   );
 }
