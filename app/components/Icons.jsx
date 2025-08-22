@@ -11,7 +11,7 @@ const Icons = () => {
        <p className='ml-3' >Go</p>
        </div>
        <div>
-         <Link to="/"><ChartPie  size={48} /></Link>
+         <Link to=""><ChartPie  size={48} /></Link>
          <p className='' >Trends</p>
        </div>
         <div>
