@@ -148,7 +148,6 @@ export default function Home() {
                 data={pieChartData}
                 options={{
                     responsive: true,
-                    maintainAspectRatio: false,
                       plugins: {
                         legend: {
                           position: 'right',
