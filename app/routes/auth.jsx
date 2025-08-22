@@ -8,7 +8,7 @@ export default function AuthLayout(){
     <div className="min-h-screen flex items-center justify-center p-6">
         <div className="w-full max-w-md rounded-2xl border-2 border-white/80 bg-white/70 p-6 shadow-sm backdrop-blur
                       dark:bg-gray-900/60">   
-            <h1 className="text-center text-2xl font-semibold text-gray-900 dark:text-gray-100">    
+            <h1 className="text-center text-4xl text-gray-700 dark:text-gray-50 font-heading">    
                 StreetSafe
             </h1>
 
