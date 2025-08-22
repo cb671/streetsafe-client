@@ -20,7 +20,8 @@ const CRIME_LABELS = [
   'Violent Crime', 
   'Antisocial', 
   'Drugs', 
-  'Vehicle Crime'];
+  'Vehicle Crime'
+];
 
 export default function Home() {
   const [crimeData, setCrimeData] = useState(null);
@@ -132,12 +133,7 @@ export default function Home() {
               <h1 className={"text-center m-4 text-2xl font-bold"}>
                 {crimeData.name}
               </h1>
-            )}
-
-            <div className="flex items-center justify-center text-ms p-8 font-semibold">
-                Click on the pie chart to see local crime data
-            </div>
-            
+            )}            
 
           <div className="max-w-md mx-auto text-white">
             {isLoading ? (
@@ -147,7 +143,7 @@ export default function Home() {
             ) : pieChartData ? (
 
 
-              <div style={{ width: 300, height: 300 }}>
+              <div style={{ width: 320, height: 320 }}>
 
               <Pie 
                 data={pieChartData}
@@ -156,7 +152,7 @@ export default function Home() {
                     maintainAspectRatio: false,
                       plugins: {
                         legend: {
-                          position: 'bottom',
+                          position: 'right',
                           labels: {
                             color: '#fff',
                             boxWidth: 20,
