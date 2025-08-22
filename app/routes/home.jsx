@@ -88,7 +88,7 @@ export default function Home(){
           data: values,
           backgroundColor: bg_colours,
           borderColor: border,
-          borderWidth: 3
+          borderWidth: 1,
         },
       ],
     };
@@ -111,7 +111,7 @@ export default function Home(){
       {isLoading && (
         <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
           <div className="rounded-lg bg-black/80 text-white px-4 py-2 text-lg">
-            Loading data...
+          Loading data...
           </div>
         </div>
       )}
@@ -128,27 +128,22 @@ export default function Home(){
           onWheel={(e) => e.stopPropagation()}
           onTouchMove={(e) => e.stopPropagation()}
         >
-          {/* Close button */}
-          <button type="button"
-                  class="absolute right-3 top-3 inline-flex h-2 w-9 items-center justify-center
+        {/* Close button */}
+        <button type="button"
+          class="absolute right-3 top-3 inline-flex h-2 w-9 items-center justify-center
                  rounded-full text-white transform transition duration-500 hover:scale-125"
-                  aria-label="Close modal"
-                  onClick={closeModal}
-          >
-            ✕
-          </button>
+          aria-label="Close modal"
+          onClick={closeModal}
+        >
+          ✕
+        </button>
 
 
-          {crimeData && (
-            <h1 className={"text-center m-4 text-2xl font-bold"}>
-              {crimeData.name}
-            </h1>
-          )}
-
-          <div className="flex items-center justify-center text-ms p-8 font-semibold">
-            Click on the pie chart to see local crime data
-          </div>
-
+            { crimeData && (
+              <h1 className={"text-center m-4 text-2xl font-bold"}>
+                {crimeData.name}
+              </h1>
+            )}
 
           <div className="max-w-md mx-auto text-white px-4">
             {isLoading ? (
@@ -156,19 +151,28 @@ export default function Home(){
                 Loading Data...
               </div>
             ) : pieChartData ? (
+
+            <div className="w-full h-78 flex justify-center">
+
               <Pie
                 data={pieChartData}
                 options={{
-                  plugins: {
-                    legend: {
-                      display: false,
-                    },
-                    tooltip: {
-                      enabled: true,
-                    }
-                  }
-                }}
-              />
+                    responsive: true,
+                      plugins: {
+                        legend: {
+                          position: 'right',
+                          labels: {
+                            color: '#fff',
+                            boxWidth: 20,
+                            padding: 15,
+                            usePointStyle: true, // Show legend as dots
+                            pointStyle: 'circle', // Use circle shape
+                          }
+                        }
+                      }
+                    }}
+                />
+              </div>
             ) : (
               <div className="flex items-center justify-center h-48 text-lg font-semibold">
                 No data available
