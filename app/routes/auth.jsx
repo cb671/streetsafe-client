@@ -20,11 +20,7 @@ export default function AuthLayout(){
             <div className="mt-8">
                 <Outlet />
             </div>
-
-            <div className="mt-6 text-center text-sm text-gray-500">
-                <Link to="/login" className="underline mr-4">Sign In</Link>
-                <Link to="/register" className="underline">Register</Link>
-            </div>    
+  
         </div>
     </div>
   );
