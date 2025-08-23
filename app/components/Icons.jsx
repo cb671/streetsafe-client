@@ -15,7 +15,7 @@ const Icons = () => {
          <p className='' >Trends</p>
        </div>
         <div>
-        <Link to="/"> <GraduationCap size={48} /></Link>
+        <Link to="/learn"> <GraduationCap size={48} /></Link>
          <p className='ml-1' >Learn</p>
        </div>
     </div>
