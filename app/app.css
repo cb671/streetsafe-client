@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Jersey+25&display=swap');
+
 @import "tailwindcss";
 
 @theme {
@@ -5,7 +7,8 @@
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --color-darkgrey: rgba(5, 5, 5, 0.8);
   --color-whiteish: #F6F7F9;
-  --color-grey: #2C353C
+  --color-grey: #2C353C;
+  --font-heading: "Jersey 25", sans-serif;
 }
 
 html,

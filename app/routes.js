@@ -6,4 +6,8 @@ export default [
     route("/go", "routes/go.jsx")
   ]),
   route("chart", "./components/ChartPage.jsx"),
+  layout("routes/auth.jsx", [
+      route("/login", "routes/login.jsx"),
+      route("/register", "routes/register.jsx")
+  ])
 ];
