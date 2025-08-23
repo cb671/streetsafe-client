@@ -12,7 +12,7 @@ export default function AuthLayout(){
                 StreetSafe
             </h1>
 
-             <p className="mt-1 text-center text-sm text-gray-600 dark:text-gray-400">
+             <p className="mt-1 text-center text-sm text-gray-600 dark:text-gray-400 font-heading">
                 See the facts. Stay informed. Stay Safe
             </p>
 
