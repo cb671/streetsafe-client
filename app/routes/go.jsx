@@ -24,6 +24,8 @@ export default function Go(){
     return () => {};
   }, []);
   return <>
-    <Icons/>
+    <div className={"fixed bottom-0 left-0 w-full z-10 pb-24"}>
+      <Icons page={"go"}/>
+    </div>
   </>
 }
