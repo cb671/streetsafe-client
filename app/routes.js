@@ -5,7 +5,7 @@ export default [
     index("routes/home.jsx"),
     route("/go", "routes/go.jsx")
   ]),
-  route("chart", "routes/ChartPage.jsx"),
+  route("/trends", "routes/ChartPage.jsx"),
   layout("routes/auth.jsx", [
       route("/login", "routes/login.jsx"),
       route("/register", "routes/register.jsx")

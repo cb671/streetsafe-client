@@ -10,9 +10,22 @@ export function useMap() {
   return context;
 }
 
+export const initialPosition = {
+  longitude: -2.1460945,
+  latitude: 53.1617999,
+  zoom: 5.93,
+  pitch: 40.5,
+  bearing: -27,
+  maxZoom: 18,
+  offset: undefined
+}
+
 export function MapProvider({ children }) {
   const [mapProps, setMapProps] = useState({
-    onClick: null
+    onClick: null,
+    position: initialPosition,
+    bounds: null,
+    routes: null
   });
 
   const contextValue = useMemo(() => ({
@@ -33,12 +46,41 @@ export function MapProvider({ children }) {
     },
 
     updateMapProps: (props) => {
-      console.log(props);
       setMapProps(prev => ({
         ...prev,
         ...props,
         onClick: prev.onClick
       }))
+    },
+
+    setLocation: (pos) => {
+      setMapProps(prev => ({
+        ...prev,
+        position: pos
+      }))
+    },
+
+    fitBounds: (bounds) => {
+      setMapProps(prev => ({
+        ...prev,
+        bounds
+      }))
+    },
+
+    setRoutes: (routes) => {
+      setMapProps(prev => ({
+        ...prev,
+        routes
+      }))
+    },
+
+    getMapRef: () => {
+      return new Promise(r=>{
+        setMapProps(prev => ({
+          ...prev,
+          resolveMapRef: r
+        }));
+      });
     }
   }), [mapProps]);
 
