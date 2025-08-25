@@ -1,7 +1,7 @@
 export const routeColors = {
   // keyed by crime level
   0: [251, 113, 133, 255],
-  100: [253, 230, 138, 255],
+  75: [253, 230, 138, 255],
   200: [187, 247, 208, 255],
   // go!
   [-1]: [165, 180, 252, 255]
@@ -10,7 +10,7 @@ export const routeColors = {
 export const routeNames = {
   // keyed by crime level
   0: "Direct",
-  100: "Informed",
+  75: "Informed",
   200: "Cautious"
 }
 
