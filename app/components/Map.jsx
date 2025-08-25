@@ -63,7 +63,7 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
         },
         getPath: (d) => {
           return d.routes[0].geometry.coordinates.map(c => {
-            return [c[0], c[1], d.active ? 0.01 : 0]
+            return [c[0], c[1], d.go ? 0 : d.active ? 1 : 0]
           });
         },
       });
