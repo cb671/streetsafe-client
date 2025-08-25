@@ -7,26 +7,27 @@ export default function Learn() {
   const [personalisation, setPersonalisation] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showPersonalised, setShowPersonalised] = useState(true);
+
+  const fetchResources = async (personalised = true) => {
+    try {
+      setIsLoading(true);
+      const data = await getEducationalResources(personalised);
+      console.log('API Response:', data);
+      console.log('Personalisation:', data.personalisation);
+      setResources(data.resources || []);
+      setPersonalisation(data.personalisation || null);
+    } catch (err) {
+      console.error('Error fetching educational resources:', err);
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchResources = async () => {
-      try {
-        setIsLoading(true);
-        const data = await getEducationalResources();
-        console.log('API Response:', data); 
-        console.log('Personalisation:', data.personalisation);
-        setResources(data.resources || []);
-        setPersonalisation(data.personalisation || null);
-      } catch (err) {
-        console.error('Error fetching educational resources:', err);
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchResources();
-  }, []);
+    fetchResources(showPersonalised);
+  }, [showPersonalised]); 
 
   const getTypeColor = (type) => {
     switch (type) {
@@ -51,11 +52,9 @@ export default function Learn() {
       'drugs': 'Drug Offences'
     };
     
-    
     if (crimeTypeMap[crimeType]) {
       return crimeTypeMap[crimeType];
     }
-    
     
     return crimeType
       .split('_')
@@ -108,15 +107,8 @@ export default function Learn() {
     );
   }
 
-  const sortedResources = [...resources].sort((a, b) => {
-    const aRelevant = isRelevantToUser(a);
-    const bRelevant = isRelevantToUser(b);
-    
-    if (aRelevant && !bRelevant) return -1;
-    if (!aRelevant && bRelevant) return 1;
-    
-    return (b.relevance_score || 0) - (a.relevance_score || 0);
-  });
+
+  const displayResources = resources;
 
   return (
     <>
@@ -129,7 +121,38 @@ export default function Learn() {
             <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-gray-400 mx-auto rounded-full"></div>
           </div>
 
-          {personalisation?.isPersonalised && (
+
+          {personalisation?.isPersonalised !== null && (
+            <div className="flex justify-center mb-8">
+              <div className="bg-grey/40 rounded-full p-1 border border-whiteish/10">
+                <div className="flex items-center">
+                  <button
+                    onClick={() => setShowPersonalised(true)}
+                    className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                      showPersonalised
+                        ? 'bg-blue-500 text-white shadow-lg'
+                        : 'text-whiteish/60 hover:text-whiteish'
+                    }`}
+                  >
+                    Personalised for You
+                  </button>
+                  <button
+                    onClick={() => setShowPersonalised(false)}
+                    className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                      !showPersonalised
+                        ? 'bg-blue-500 text-white shadow-lg'
+                        : 'text-whiteish/60 hover:text-whiteish'
+                    }`}
+                  >
+                    All Resources
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+
+          {personalisation?.isPersonalised && showPersonalised && (
             <div className="relative mb-8">
               <div className="bg-gradient-to-r from-blue-500/10 to-gray-500/10 border border-blue-500/20 rounded-2xl p-6 backdrop-blur text-center overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-gray-500/5 backdrop-blur"></div>
@@ -160,7 +183,16 @@ export default function Learn() {
             </div>
           )}
 
-          {sortedResources.length === 0 ? (
+          <div className="mb-6 text-center">
+            <p className="text-whiteish/60 text-sm">
+              {showPersonalised && personalisation?.isPersonalised
+                ? `Showing ${displayResources.length} resources prioritised for your area`
+                : `Showing all ${displayResources.length} resources`
+              }
+            </p>
+          </div>
+
+          {displayResources.length === 0 ? (
             <div className="text-center py-16">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-grey/50 flex items-center justify-center">
                 <span className="text-2xl">📚</span>
@@ -169,20 +201,21 @@ export default function Learn() {
             </div>
           ) : (
             <div className="space-y-6">
-              {sortedResources.map((resource) => {
+              {displayResources.map((resource) => {
                 const isRelevant = isRelevantToUser(resource);
-                
+                const shouldHighlight = showPersonalised && personalisation?.isPersonalised && isRelevant;
+
                 return (
                   <div
                     key={resource.id}
                     className={`group relative rounded-2xl p-6 backdrop-blur transition-all duration-300 hover:scale-[1.02] ${
-                      isRelevant 
+                      shouldHighlight
                         ? 'bg-gradient-to-r from-blue-500/10 to-gray-500/10 border border-blue-500/30 shadow-xl shadow-blue-500/10' 
                         : 'bg-grey/40 border border-whiteish/10 hover:border-whiteish/20 hover:bg-grey/60'
                     }`}
                   >
 
-                    {isRelevant && (
+                    {shouldHighlight && (
                       <div className="absolute -top-3 -right-3">
                         <div className="bg-gradient-to-r from-blue-500 to-gray-500 text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg">
                            Relevant to Your Area

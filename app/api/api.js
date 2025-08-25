@@ -1,7 +1,6 @@
 const API_ROOT = 'http://localhost:3000/api';
 
 function getAuthHeaders() {
-
   return {
     'Content-Type': 'application/json'
   };
@@ -9,12 +8,15 @@ function getAuthHeaders() {
 
 export function getMapData() {
     return fetch(API_ROOT + '/map', {
-      headers: getAuthHeaders()
     }).then(r => r.json())
 }
 
-export function getEducationalResources() {
-    return fetch(API_ROOT + '/educational', {
+export function getEducationalResources(personalised = true) {
+    const url = personalised
+      ? API_ROOT + '/educational'
+      : API_ROOT + '/educational?personalised=false';
+      
+    return fetch(url, {
       headers: getAuthHeaders(),
       credentials: 'include'
     }).then(r => r.json())
