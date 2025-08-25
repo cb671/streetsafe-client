@@ -10,18 +10,18 @@ export default function Login(){
             <form className="mt-6 space-y-4">
 
                 <div className="px-8">
-                    <label htmlFor="identifier" className="block text-sm">
-                        Email or Username
+                    <label htmlFor="username" className="block text-sm">
+                        Username
                     </label>
                     <input
-                        id="identifier"
-                        name="identifier"
+                        id="username"
+                        name="username"
                         type="text"
-                        autoComplete="username" // generic hint
-                        inputMode="email" // keyboard on mobile
+                        autoComplete="username"
+                        inputMode="text"
                         required
                         className="mt-1 block w-full rounded-md border border-gray-300 bg-white/80 px-3
-                        py-3 text-gray-900 outline-none focus:ring-2 focus-ring-indigo-500"
+                        py-3 text-gray-900 outline-none focus:ring-2 focus:ring-indigo-500"
                         placeholder="e.g. john_doe"
                     />
                 </div>
@@ -36,7 +36,7 @@ export default function Login(){
                         type="password"
                         required
                         className="mt-1 block w-full rounded-md border border-gray-300 bg-white/80 px-3 
-                        py-3 text-gray-900 outline-none focus:ring-2 focus-ring-indigo-500"
+                        py-3 text-gray-900 outline-none focus:ring-2 focus:ring-indigo-500"
                         placeholder="***********"
                     />
                 </div>
