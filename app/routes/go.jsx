@@ -5,7 +5,16 @@ import {useEffect, useState} from "react";
 import {initialPosition, useMap} from "../contexts/MapContext.jsx";
 import {Link, useNavigate} from "react-router";
 import {calculateRoutes, geocode, reverseGeo, searchLocation} from "../api/api.js";
-import {Route, ChevronLeft, LoaderPinwheel} from "lucide-react";
+import {
+  Route,
+  ChevronLeft,
+  LoaderPinwheel,
+  Footprints,
+  CornerUpLeft,
+  CornerUpRight,
+  MoveUpLeft,
+  MoveUpRight, Cake
+} from "lucide-react";
 import {dev, routeColors, routeNames} from "../util/const.js";
 import {formatSecs} from "../util/time.jsx";
 import {calculateStepProgress} from "../util/go-progress.js";
@@ -297,9 +306,38 @@ function DoRoute({route}){
     return () => el.remove();
   });
 
-  return <>
+  return <div className={"flex gap-2 items-center flex-grow"}>
+    <div className={"text-3xl"}>
+      {(()=>{
+        const iconSize = 36;
+        switch(steps[si].maneuver.type){
+          case "arrive":
+            return <Cake size={iconSize}/>
+          case "turn":
+          case "end of road":
+          case "fork":
+          case "on ramp":
+          case "off ramp":
+          case "continue":
+            switch(steps[si].maneuver.modifier){
+              case "left":
+              case "sharp left":
+                return <CornerUpLeft size={iconSize}/>
+              case "right":
+              case "sharp right":
+                return <CornerUpRight size={iconSize}/>
+              case "slight left":
+                return <MoveUpLeft size={iconSize}/>
+              case "slight right":
+                return <MoveUpRight size={iconSize}/>
+            }
+          default:
+            return <Footprints size={iconSize}/>
+        }
+      })()}
+    </div>
     <span>{steps[si].maneuver.instruction}</span>
-  </>
+  </div>
 }
 
 export default function Go(){
