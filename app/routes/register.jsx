@@ -17,7 +17,7 @@ export default function Register(){
                         type="text"
                         autoComplete="username"
                         required
-                        className="mt-1 block w-full rounded-md border border-gray-300 bg-white/80 px-3
+                        className="h-8 mt-1 block w-full rounded-md border border-gray-300 bg-white/80 px-3
                         py-3 text-gray-900 outline-none focus:ring-2 focus:ring-indigo-500"
                         placeholder="e.g. john_doe"
                     />
@@ -32,7 +32,7 @@ export default function Register(){
                         autoComplete="email"
                         inputMode="email"
                         required
-                        className="mt-1 block w-full rounded-md border border-gray-300 bg-white/80 px-3 
+                        className="h-8 mt-1 block w-full rounded-md border border-gray-300 bg-white/80 px-3 
                         py-3 text-gray-900 outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                 </div>
@@ -45,7 +45,7 @@ export default function Register(){
                         type="password"
                         autoComplete="new-password"
                         required
-                        className="mt-1 block w-full rounded-md border border-gray-300 bg-white/80 px-3 
+                        className="h-8 mt-1 block w-full rounded-md border border-gray-300 bg-white/80 px-3
                         py-3 text-gray-900 outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                 </div>
@@ -57,7 +57,7 @@ export default function Register(){
                         name="postcode"
                         type="text"
                         required
-                        className="mt-1 block w-full rounded-md border border-gray-300 bg-white/80 px-3 
+                        className="h-8 mt-1 block w-full rounded-md border border-gray-300 bg-white/80 px-3 
                         py-3 text-gray-900 outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                 </div>
