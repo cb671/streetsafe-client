@@ -1,6 +1,6 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useState } from "react";
 import { register } from "../api/api.js";
-import { useNavigate, useState } from "react";
 
 
 export default function Register(){
@@ -109,6 +109,7 @@ export default function Register(){
             
             </form>
 
+            {error&&<div className="text-center text-red-500">{error}</div>}
 
             <p className="mt-6 text-center text-sm text-gray-500">
                 Already registered?{" "}

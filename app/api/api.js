@@ -5,32 +5,32 @@ export function getMapData() {
 }
 
 
-export async function login(username, password) {
+export async function login(email, password) {
     const response = await fetch(API_ROOT + '/auth/login', {
         method: 'POST',
         headers: {"Content-Type": "application/json"},
         credentials: 'include',
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ email, password })
     });
     if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Login failed');
+        throw new Error(error.error || 'Login failed');
     }
     return response.json();
 }
 
 
 
-export async function register(username, email, password, postcode) {
+export async function register(name, email, password, postcode) {
     const response = await fetch(API_ROOT + '/auth/register', {
         method: 'POST',
         headers: {"Content-Type": "application/json"},
         credentials: 'include',
-        body: JSON.stringify({ username, email, password, postcode })
+        body: JSON.stringify({ name, email, password, postcode })
     });
     if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Register failed');
+        throw new Error(error.error || 'Register failed');
     }
     return response.json();
 }

@@ -1,6 +1,6 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useState } from "react";
 import { login } from "../api/api.js";
-import { useNavigate, useState } from "react";
 
 
 export default function Login(){
@@ -35,19 +35,17 @@ export default function Login(){
             <form onSubmit={handleSubmit} className="mt-6 space-y-4">
 
                 <div className="px-8">
-                    <label htmlFor="username" className="block text-sm">
-                        Username
-                    </label>
+                    <label htmlFor="username" className="block text-sm">Email</label>
                     <input
                         id="username"
                         name="username"
-                        type="text"
+                        type="email"
                         autoComplete="username"
                         inputMode="text"
                         required
                         className="mt-1 block w-full rounded-md border border-gray-300 bg-white/80 px-3
                         py-3 text-gray-900 outline-none focus:ring-2 focus:ring-indigo-500"
-                        placeholder="e.g. john_doe"
+                        placeholder="e.g. john_doe@hello.com"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                     />
@@ -81,6 +79,9 @@ export default function Login(){
                 </div>
             
             </form>
+
+            {error&&<div className="text-center text-red-500">{error}</div>}
+            
 
             <p className="mt-6 text-center text-sm text-gray-500">
                 Forgot password?
