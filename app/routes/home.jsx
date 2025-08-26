@@ -6,6 +6,7 @@ import {Pie} from "react-chartjs-2";
 import '@deck.gl/widgets/stylesheet.css';
 import Icons from "../components/Icons.jsx";
 import {useMap} from "../contexts/MapContext.jsx";
+import {getHexData} from "../api/api.js";
 
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -35,8 +36,7 @@ export default function Home(){
     try{
       setIsLoading(true);
 
-      const res = await fetch(`http://localhost:3000/api/map/hexagon/${info[0]}`);
-      const data = await res.json();
+      const data = await getHexData(info[0]);
       console.log(data);
       setCrimeData(data);
     }catch(err){
@@ -123,6 +123,7 @@ export default function Home(){
           role="dialog"
           aria-modal="true"
           aria-labelledby="crime-modal-title"
+          data-testid={"map-data-modal"}
 
           onClick={(e) => e.stopPropagation()}
           onWheel={(e) => e.stopPropagation()}
