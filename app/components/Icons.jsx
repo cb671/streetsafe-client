@@ -6,7 +6,9 @@ import "../app.css"
 const Icons = ({page}) => {
   return (
     <div
-      className={`flex text-whiteish fill-whiteish w-full align-items p-2 rounded-t-lg justify-center gap-10 align-items absolute bottom-0 bg-darkgrey z-50 text-center`}>
+      className={`flex text-whiteish fill-whiteish w-full align-items p-2 rounded-t-lg justify-center gap-10 align-items absolute bottom-0 bg-darkgrey z-50 text-center`}
+      data-testid={"nav-icons"}
+    >
       <div>
         <Link to="/trends"><ChartPie size={48}/></Link>
         <p>Trends</p>
