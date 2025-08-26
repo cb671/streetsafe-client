@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Icons from "../components/Icons.jsx";
-import { getEducationalResources } from "../api/api.js";
+import { getEducationalResources, getEducationalResourcesByCrimeType } from "../api/api.js";
 
 export default function Learn() {
   const [resources, setResources] = useState([]);
@@ -8,11 +8,37 @@ export default function Learn() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showPersonalised, setShowPersonalised] = useState(true);
+  const [selectedCrimeType, setSelectedCrimeType] = useState('all');
+  const [showFilters, setShowFilters] = useState(false);
 
-  const fetchResources = async (personalised = true) => {
+  
+  const crimeTypes = [
+    { value: 'all', label: 'All Crime Types' },
+    { value: 'violent', label: 'Violent Crime' },
+    { value: 'burglary', label: 'Burglary' },
+    { value: 'personal_theft', label: 'Personal Theft' },
+    { value: 'anti_social', label: 'Anti Social Behaviour' },
+    { value: 'damage', label: 'Criminal Damage' },
+    { value: 'shoplifting', label: 'Shoplifting' },
+    { value: 'robbery', label: 'Robbery' },
+    { value: 'vehicle_crime', label: 'Vehicle Crime' },
+    { value: 'drugs', label: 'Drug Offences' },
+    { value: 'sexual_offences', label: 'Sexual Offences' },
+    { value: 'weapon_crime', label: 'Weapon Crime' },
+    { value: 'bicycle_theft', label: 'Bicycle Theft' }
+  ];
+
+  const fetchResources = async (personalised = true, crimeType = 'all') => {
     try {
       setIsLoading(true);
-      const data = await getEducationalResources(personalised);
+      let data;
+      
+      if (!personalised && crimeType !== 'all') {
+        data = await getEducationalResourcesByCrimeType(crimeType);
+      } else {
+        data = await getEducationalResources(personalised);
+      }
+      
       console.log('API Response:', data);
       console.log('Personalisation:', data.personalisation);
       setResources(data.resources || []);
@@ -26,8 +52,15 @@ export default function Learn() {
   };
 
   useEffect(() => {
-    fetchResources(showPersonalised);
-  }, [showPersonalised]); 
+    fetchResources(showPersonalised, selectedCrimeType);
+  }, [showPersonalised, selectedCrimeType]); 
+
+
+  useEffect(() => {
+    if (showPersonalised && selectedCrimeType !== 'all') {
+      setSelectedCrimeType('all');
+    }
+  }, [showPersonalised]);
 
   const getTypeColor = (type) => {
     switch (type) {
@@ -46,10 +79,13 @@ export default function Learn() {
       'anti_social': 'Anti Social Behaviour',
       'shoplifting': 'Shoplifting',
       'burglary': 'Burglary',
-      'theft': 'Theft',
+      'personal_theft': 'Personal Theft',
       'robbery': 'Robbery',
-      'vehicle': 'Vehicle Crime',
-      'drugs': 'Drug Offences'
+      'vehicle_crime': 'Vehicle Crime',
+      'drugs': 'Drug Offences',
+      'sexual_offences': 'Sexual Offences',
+      'weapon_crime': 'Weapon Crime',
+      'bicycle_theft': 'Bicycle Theft'
     };
     
     if (crimeTypeMap[crimeType]) {
@@ -71,6 +107,11 @@ export default function Learn() {
       resource.target_crime_type.toLowerCase().includes(localCrime.toLowerCase()) ||
       localCrime.toLowerCase().includes(resource.target_crime_type.toLowerCase())
     );
+  };
+
+  const handleCrimeTypeChange = (crimeType) => {
+    setSelectedCrimeType(crimeType);
+    setShowFilters(false);
   };
 
   if (isLoading) {
@@ -106,7 +147,6 @@ export default function Learn() {
       </>
     );
   }
-
 
   const displayResources = resources;
 
@@ -152,6 +192,62 @@ export default function Learn() {
           )}
 
 
+          {!showPersonalised && (
+            <div className="flex justify-center mb-8">
+              <div className="relative">
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="flex items-center space-x-2 bg-grey/40 border border-whiteish/10 rounded-full px-6 py-3 text-whiteish hover:bg-grey/60 transition-all duration-300"
+                >
+                  <span className="text-blue-300">🔍</span>
+                  <span className="font-medium">
+                    {crimeTypes.find(ct => ct.value === selectedCrimeType)?.label || 'Filter by Crime Type'}
+                  </span>
+                  <span className={`transform transition-transform duration-200 ${showFilters ? 'rotate-180' : ''}`}>
+                    ▼
+                  </span>
+                </button>
+
+                {showFilters && (
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-grey/90 border border-whiteish/20 rounded-2xl backdrop-blur shadow-xl z-50 overflow-hidden">
+                    <div className="max-h-64 overflow-y-auto">
+                      {crimeTypes.map((crimeType) => (
+                        <button
+                          key={crimeType.value}
+                          onClick={() => handleCrimeTypeChange(crimeType.value)}
+                          className={`w-full text-left px-4 py-3 hover:bg-blue-500/20 transition-colors ${
+                            selectedCrimeType === crimeType.value
+                              ? 'bg-blue-500/30 text-blue-300'
+                              : 'text-whiteish'
+                          }`}
+                        >
+                          {crimeType.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {!showPersonalised && selectedCrimeType !== 'all' && (
+            <div className="flex justify-center mb-6">
+              <div className="flex items-center space-x-3 bg-blue-500/20 border border-blue-500/30 rounded-full px-4 py-2">
+                <span className="text-blue-300 text-sm">Filtered by:</span>
+                <span className="bg-blue-500/30 text-blue-300 px-3 py-1 rounded-full text-sm font-medium">
+                  {getCrimeTypeDisplayName(selectedCrimeType)}
+                </span>
+                <button
+                  onClick={() => setSelectedCrimeType('all')}
+                  className="text-blue-300 hover:text-white ml-2 text-sm"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+          )}
+
           {personalisation?.isPersonalised && showPersonalised && (
             <div className="relative mb-8">
               <div className="bg-gradient-to-r from-blue-500/10 to-gray-500/10 border border-blue-500/20 rounded-2xl p-6 backdrop-blur text-center overflow-hidden">
@@ -187,6 +283,8 @@ export default function Learn() {
             <p className="text-whiteish/60 text-sm">
               {showPersonalised && personalisation?.isPersonalised
                 ? `Showing ${displayResources.length} resources prioritised for your area`
+                : !showPersonalised && selectedCrimeType !== 'all'
+                ? `Showing ${displayResources.length} resources for ${getCrimeTypeDisplayName(selectedCrimeType)}`
                 : `Showing all ${displayResources.length} resources`
               }
             </p>
@@ -197,7 +295,12 @@ export default function Learn() {
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-grey/50 flex items-center justify-center">
                 <span className="text-2xl">📚</span>
               </div>
-              <p className="text-xl text-whiteish/60">No educational resources available at this time.</p>
+              <p className="text-xl text-whiteish/60">
+                {!showPersonalised && selectedCrimeType !== 'all' 
+                  ? `No resources found for ${getCrimeTypeDisplayName(selectedCrimeType)}`
+                  : 'No educational resources available at this time.'
+                }
+              </p>
             </div>
           ) : (
             <div className="space-y-6">
