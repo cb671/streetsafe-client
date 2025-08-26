@@ -29,14 +29,14 @@ describe("Register component works", () => {
 
         vi.mock('../app/api/api.js', {spy: true});
         
-        const page = render(<body><RegistrationStub initialEntries={["/register"]} /></body>);
+        const page = render(<RegistrationStub initialEntries={["/register"]} />);
 
         const form = page.getByTestId("form");
 
-        await userEvent.type(document.querySelector('input[name=username]'), 'bob@bob.com')
-        await userEvent.type(document.querySelector('input[name=email]'), '   bob@bob.com')
-        await userEvent.type(document.querySelector('input[name=password]'), 'bob@bob.com')
-        await userEvent.type(document.querySelector('input[name=postcode]'), 'N16 5JJ')
+        await userEvent.fill(document.querySelector('input[name=username]'), 'bob@bob.com')
+        await userEvent.fill(document.querySelector('input[name=email]'), '   bob@bob.com')
+        await userEvent.fill(document.querySelector('input[name=password]'), 'bob@bob.com')
+        await userEvent.fill(document.querySelector('input[name=postcode]'), 'N16 5JJ')
 
         await userEvent.click(document.querySelector('button[type=submit]'))
 
