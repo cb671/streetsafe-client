@@ -16,7 +16,7 @@ describe("Register component works", () => {
 
     it("renders the registration form", () => {   
         
-        const page = render(<body><RegistrationStub initialEntries={["/register"]}/></body>);
+        const page = render(<RegistrationStub initialEntries={["/register"]} />);
 
         const form = page.getByTestId("form");
 
