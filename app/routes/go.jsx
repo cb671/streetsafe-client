@@ -385,6 +385,7 @@ export default function Go(){
           <button type={"button"} className={"cursor-pointer"} onClick={() => {
             setFromTo(undefined);
             setRoutes(null);
+            setRoutesState(null);
           }}>
             <ChevronLeft/>
           </button>
