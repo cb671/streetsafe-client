@@ -1,4 +1,6 @@
-const API_ROOT = '/api';
+import {dev} from "../util/const.js";
+
+const API_ROOT = !dev ? '/api' : 'http://localhost:3000/api';
 
 export function getMapData(){
   return fetch(API_ROOT + '/map').then(r => r.json())
