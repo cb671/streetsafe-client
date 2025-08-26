@@ -3,7 +3,6 @@ import { login } from "../api/api.js";
 import { useNavigate, useState } from "react";
 
 
-
 export default function Login(){
 
     const [username, setUsername] = useState('');
@@ -11,6 +10,7 @@ export default function Login(){
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
