@@ -34,7 +34,7 @@ export default function Register(){
             <h2 className="text-lg font-semibold text-center">Register</h2>
 
 
-            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+            <form onSubmit={handleSubmit} data-testid="form" className="mt-6 space-y-4">
 
                 <div className="px-4">
                     <label htmlFor="username" className="block text-sm">Username</label>
