@@ -123,6 +123,7 @@ export default function Home(){
           role="dialog"
           aria-modal="true"
           aria-labelledby="crime-modal-title"
+          data-testid={"map-data-modal"}
 
           onClick={(e) => e.stopPropagation()}
           onWheel={(e) => e.stopPropagation()}

@@ -11,5 +11,8 @@ export default defineConfig({
         { browser: 'chromium' },
       ],
     },
+    coverage: {
+      exclude: ["build/**", ".react-router/**"]
+    }
   },
 })
