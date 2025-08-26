@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Icons from "../components/Icons.jsx";
+import Sidebar from "../components/Sidebar.jsx";
 import { getEducationalResources, getEducationalResourcesByCrimeType } from "../api/api.js";
 
 export default function Learn() {
@@ -117,13 +117,13 @@ export default function Learn() {
   if (isLoading) {
     return (
       <>
+        <Sidebar />
         <div className="min-h-screen bg-gray-950 text-whiteish flex items-center justify-center p-6">
           <div className="flex flex-col items-center space-y-4">
             <div className="w-8 h-8 border-2 border-whiteish/30 border-t-whiteish rounded-full animate-spin"></div>
             <p className="text-lg font-medium">Loading educational resources...</p>
           </div>
         </div>
-        <Icons />
       </>
     );
   }
@@ -131,6 +131,7 @@ export default function Learn() {
   if (error) {
     return (
       <>
+        <Sidebar />
         <div className="min-h-screen bg-gray-950 text-whiteish p-6">
           <div className="container mx-auto max-w-4xl">
             <h1 className="text-4xl font-heading text-center mb-8 text-whiteish">
@@ -143,7 +144,6 @@ export default function Learn() {
             </div>
           </div>
         </div>
-        <Icons />
       </>
     );
   }
@@ -152,7 +152,8 @@ export default function Learn() {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-950 text-whiteish p-6 pb-28">
+      <Sidebar />
+      <div className="min-h-screen bg-gray-950 text-whiteish p-6">
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-12">
             <h1 className="text-5xl font-heading text-whiteish mb-4">
@@ -373,8 +374,6 @@ export default function Learn() {
           )}
         </div>
       </div>
-      
-      <Icons />
     </>
   );
 }
