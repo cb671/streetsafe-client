@@ -141,7 +141,8 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
 
   useEffect(() => {
     if(!!bounds) mapRef.current.fitBounds(bounds, {
-      padding: {bottom: (window.screen.availHeight / 3) * 2 + 32, top: 32, left: 32, right: 32}
+      padding: {bottom: (window.screen.availHeight / 3) * 2 + 32, top: 32, left: 32, right: 32},
+      pitch: 0
     })
   }, [bounds]);
 
