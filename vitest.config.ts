@@ -12,7 +12,7 @@ export default defineConfig({
       ],
     },
     coverage: {
-      exclude: ["build/**", ".react-router/**"]
+      exclude: ["build/**", ".react-router/**", "*.config.*"]
     }
   },
 })
