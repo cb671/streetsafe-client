@@ -1,13 +1,38 @@
 import { Link } from "react-router";
+import { login } from "../api/api.js";
+import { useNavigate, useState } from "react";
+
+
 
 export default function Login(){
+
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setError('');
+        try {
+            await login(username, password);
+            navigate('/');
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+
     return (
         <>
 
             <h2 className="text-lg font-semibold text-center">Sign In</h2>
 
 
-            <form className="mt-6 space-y-4">
+            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
 
                 <div className="px-8">
                     <label htmlFor="username" className="block text-sm">
@@ -23,6 +48,8 @@ export default function Login(){
                         className="mt-1 block w-full rounded-md border border-gray-300 bg-white/80 px-3
                         py-3 text-gray-900 outline-none focus:ring-2 focus:ring-indigo-500"
                         placeholder="e.g. john_doe"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
                     />
                 </div>
 
@@ -38,6 +65,8 @@ export default function Login(){
                         className="mt-1 block w-full rounded-md border border-gray-300 bg-white/80 px-3 
                         py-3 text-gray-900 outline-none focus:ring-2 focus:ring-indigo-500"
                         placeholder="***********"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
 
