@@ -1,9 +1,13 @@
-import {  index, layout, route } from "@react-router/dev/routes";
+import {index, layout, route} from "@react-router/dev/routes";
 
 export default [
+  layout("routes/map-layout.jsx", [
     index("routes/home.jsx"),
-    layout("routes/auth.jsx", [
-        route("/login", "routes/login.jsx"),
-        route("/register", "routes/register.jsx")
-    ])
+    route("/go", "routes/go.jsx")
+  ]),
+  route("/trends", "routes/ChartPage.jsx"),
+  layout("routes/auth.jsx", [
+      route("/login", "routes/login.jsx"),
+      route("/register", "routes/register.jsx")
+  ])
 ];

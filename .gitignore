@@ -8,3 +8,5 @@
 
 app/components/new.json
 
+*.pem
+coverage
