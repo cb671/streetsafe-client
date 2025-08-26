@@ -14,23 +14,23 @@ const RegistrationStub = createRoutesStub([
 
 describe("Register component works", () => {
 
-    it("renders the registration form", () => {   
-        
-        const page = render(<RegistrationStub initialEntries={["/register"]} />);
+    it("renders the registration form", () => {
+
+        const page = render(<RegistrationStub initialEntries={["/register"]}/>);
 
         const form = page.getByTestId("form");
 
         expect(form).toBeInTheDocument()
-        
+
     });
 
-    
+
     it("submits the form when the submit button is clicked", async () => {
 
         vi.mock('../app/api/api.js', {spy: true});
-        
-        const page = render(<RegistrationStub initialEntries={["/register"]} />);
 
+        const page = render(<RegistrationStub initialEntries={["/register"]} />);
+        
         const form = page.getByTestId("form");
 
         await userEvent.fill(document.querySelector('input[name=username]'), 'bob@bob.com')
