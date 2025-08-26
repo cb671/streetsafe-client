@@ -35,11 +35,11 @@ export async function register(name, email, password, postcode) {
     return response.json();
 }
 
-export function getHexData(h3){
+export async function getHexData(h3){
   return fetch(`${API_ROOT}/map/hexagon/${h3}`).then(r => r.json())
 }
 
-export function calculateRoutes(from, to){
+export async function calculateRoutes(from, to){
   return fetch(`${API_ROOT}/go`, {
     method: "POST",
     headers: {
@@ -49,21 +49,21 @@ export function calculateRoutes(from, to){
   }).then(r => r.json()).catch(err => ({message: err.toString()}))
 }
 
-export function searchLocation(query, bias){
+export async function searchLocation(query, bias){
   return fetch(`${API_ROOT}/go/search?q=${encodeURIComponent(query)}${bias ? ("&bias=" + bias.longitude + "," + bias.latitude) : ""}`, {
     method: "POST",
     credentials: "include"
   }).then(r => r.json()).catch(err => ({message: err.toString()}))
 }
 
-export function geocode(place){
+export async function geocode(place){
   return fetch(`${API_ROOT}/go/geocode?place=${encodeURIComponent(place)}`, {
     method: "POST",
     credentials: "include"
   }).then(r => r.json()).catch(err => ({message: err.toString()}))
 }
 
-export function reverseGeo(lon, lat){
+export async function reverseGeo(lon, lat){
   return fetch(`${API_ROOT}/go/reverse`, {
     method: "POST",
     headers: {
