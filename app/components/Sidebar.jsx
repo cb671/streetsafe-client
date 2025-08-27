@@ -10,7 +10,7 @@ const Sidebar = () => {
   const navItems = [
     { to: "/", icon: Home, label: "Home" },
     { to: "/go", icon: LandPlot, label: "Go" },
-    { to: "/chart", icon: ChartPie, label: "Chart" },
+    { to: "/trends", icon: ChartPie, label: "Chart" },
     { to: "/learn", icon: GraduationCap, label: "Learn" },
   ];
 
