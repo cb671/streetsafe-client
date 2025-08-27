@@ -5,6 +5,8 @@ import {render} from "vitest-browser-react";
 import {MapProvider, useMap} from "../app/contexts/MapContext.jsx";
 import {InnerMap} from "./common.jsx";
 import {useEffect} from "react";
+import { userEvent } from "@vitest/browser/context";
+
 
 const ExpectMapClick = ({onFinish}) => {
   const {mapProps} = useMap();
@@ -53,7 +55,7 @@ test("pop-up close button hides the modal when clicked", async() => {
   let closePopUpModalButton;
   const clickPromise = new Promise((r) => (closePopUpModalButton = r));
 
-  const { getByTestId, queryByTestId, getByRole, user} = await render(
+  const { getByTestId, queryByTestId, getByRole} = await render(
     <MapProvider>
       <Stub initialEntries={["/"]} />
       <ExpectMapClick onFinish={closePopUpModalButton} />
@@ -67,7 +69,7 @@ test("pop-up close button hides the modal when clicked", async() => {
   await expect.element(getByTestId("map-data-modal")).toBeInTheDocument();
 
   // Click the close button; getByRole can match accessible name of element (aria-label="close modal")
-  await user.click(getByRole("button", { name: /close modal/i }))
+  await userEvent.click(getByRole("button", { name: /Close modal/i }))
   
   // Modal disappears
   expect(queryByTestId("map-data-model")).not.toBeInTheDocument();

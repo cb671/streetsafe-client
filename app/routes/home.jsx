@@ -12,7 +12,7 @@ import {getHexData} from "../api/api.js";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 // crime labels corresponding to numbers in API hexagon data
-const CRIME_LABELS =4 [
+const CRIME_LABELS = [
   'Burglary',
   'Personal Theft',
   'Weapon Crime',
