@@ -6,6 +6,7 @@ import {MapProvider, useMap} from "../app/contexts/MapContext.jsx";
 import {InnerMap} from "./common.jsx";
 import {useEffect} from "react";
 import { userEvent } from "@vitest/browser/context";
+import {waitFor} from "@testing-library/react";
 
 
 const ExpectMapClick = ({onFinish}) => {
@@ -13,6 +14,7 @@ const ExpectMapClick = ({onFinish}) => {
   useEffect(() => {
     if(!mapProps.onClick) return;
     (async() => {
+      await new Promise(r=>setTimeout(r, 500));
       mapProps.onClick(["89195d1a803ffff"]);
       onFinish();
     })();
@@ -31,13 +33,12 @@ test("hexagon click works", async() => {
   let clickResolve;
   const clickPromise = new Promise(r => clickResolve = r);
   const page = render(<MapProvider>
-    <Stub initialEntries={["/"]}/>
     <InnerMap/>
+    <Stub initialEntries={["/"]}/>
     <ExpectMapClick onFinish={clickResolve}/>
   </MapProvider>);
-  const canvas = page.getByLabelText("Map");
-  await expect.element(canvas).toBeInTheDocument();
   await clickPromise;
+  await expect.element(document.querySelector(".maplibregl-canvas")).toBeInTheDocument()
   await expect.element(page.getByTestId("map-data-modal")).toBeInTheDocument();
 });
 
@@ -70,7 +71,7 @@ test("pop-up close button hides the modal when clicked", async() => {
 
   // Click the close button; getByRole can match accessible name of element (aria-label="close modal")
   await userEvent.click(page.getByRole("button", { name: /close modal/i }))
-  
+
   // Modal disappears - use expect.element with a try/catch or waitFor
   await expect.element(page.getByTestId("map-data-modal")).not.toBeInTheDocument();
 });

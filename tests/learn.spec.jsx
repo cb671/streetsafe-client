@@ -6,11 +6,7 @@ import {createRoutesStub} from "react-router";
 import { userEvent } from '@vitest/browser/context';
 
 
-vi.mock("../app/api/api.js", () => ({
-    getEducationalResources: vi.fn(),
-    getEducationalResourcesByCrimeType: vi.fn(),
-    spy: true
-}));
+vi.mock("../app/api/api.js", {spy:true});
 
 
 import { getEducationalResources, getEducationalResourcesByCrimeType } from "../app/api/api.js";
@@ -24,7 +20,7 @@ describe("Learn page", async () => {
         },
       ]);
 
-    
+
   it("shows a loading message", () => {
 
     const page = render(<Stub initialEntries={["/learn"]}/>);
@@ -57,7 +53,7 @@ describe("Learn page", async () => {
     const page = render(<Stub initialEntries={["/learn"]}/>);
     await new Promise(r=>setTimeout(r, 200));
     expect(page.getByText(/error loading resources/i)).toBeInTheDocument()
-    
+
   });
 
 ///////////////
@@ -94,9 +90,9 @@ it("opens the crime type filter and selects a crime type", async () => {
 
 
     render(<Stub initialEntries={["/learn"]} />);
-  
+
     await new Promise(r => setTimeout(r, 200));
-  
+
     const allResourcesButton = document.querySelector('[data-testid="all-resources-button"]');
     expect(allResourcesButton).toBeDefined();
     //await userEvent.click(allResourcesButton);
@@ -107,10 +103,10 @@ it("opens the crime type filter and selects a crime type", async () => {
         console.error("Click failed:", err);
       }
 
-  
+
     await new Promise(r => setTimeout(r, 1500));
-  
-    
+
+
 
     const filterButton = document.querySelector('[data-testid="filter-toggle-button"]');
     expect(filterButton).toBeDefined();
@@ -122,19 +118,19 @@ it("opens the crime type filter and selects a crime type", async () => {
         console.error("Click failed:", err);
       }
 
-  
+
     await new Promise(r => setTimeout(r, 200));
-  
+
     const burglaryButton = document.querySelector('[data-testid="crime-option-burglary"]');
     expect(burglaryButton).toBeDefined();
     await userEvent.click(burglaryButton);
-  
+
     await new Promise(r => setTimeout(r, 200));
-  
+
     const burglaryResource = Array.from(document.querySelectorAll("div.space-y-6 h2"))
       .find(h2 => h2.textContent === "Burglary Tips");
     expect(burglaryResource).toBeDefined();
-  
+
     const robberyResource = Array.from(document.querySelectorAll("div.space-y-6 h2"))
       .find(h2 => h2.textContent === "Robbery Tips");
     expect(robberyResource).toBeUndefined();

@@ -5,7 +5,7 @@ import {Chart as ChartJS, ArcElement, Tooltip, Legend} from 'chart.js';
 import {Pie} from "react-chartjs-2";
 import '@deck.gl/widgets/stylesheet.css';
 import Icons from "../components/Icons.jsx";
-import {useMap} from "../contexts/MapContext.jsx";
+import {initialPosition, useMap} from "../contexts/MapContext.jsx";
 import {getHexData, getUserProfile} from "../api/api.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -28,24 +28,36 @@ export default function Home(){
   const [crimeData, setCrimeData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
+  const {setLocation} = useMap();
 
   const closeModal = () => setCrimeData(null);
 
   useEffect(() => {
     const fetchAndSetUserLocation = async () => {
+      let success = false;
       try {
         const data = await getUserProfile();
-        
+
         if (data.user && data.user.h3) {
           try {
             const h3Module = await import('h3-js');
-          
+
             const [lat, lng] = h3Module.cellToLatLng(data.user.h3);
-            setUserLocation({ lat, lng });
+            setLocation({
+              longitude: lng,
+              latitude: lat,
+              zoom: 12,
+              pitch: 40.5,
+              bearing: -27,
+              maxZoom: 18,
+              offset: undefined
+            });
+            success = true;
           } catch (importError) {
             console.error('Failed to import h3-js or convert H3 to coordinates:', importError);
           }
         }
+        if(!success) setLocation(initialPosition);
       } catch (error) {
         console.error('Failed to get user location:', error);
       }
@@ -128,8 +140,6 @@ export default function Home(){
 
   return (
     <>
-      <Map userLocation={userLocation} onClick={handleClick} />
-
       {isLoading && (
         <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
           <div className="rounded-lg bg-black/80 text-white px-4 py-2 text-lg">
@@ -208,7 +218,7 @@ export default function Home(){
               <h2 className="text-center mb-4 text-xl font-semibold">
                 Closest Emergency Services
               </h2>
-              
+
               <div className="space-y-4">
 
                 {crimeData.emergencyServices.police && (
