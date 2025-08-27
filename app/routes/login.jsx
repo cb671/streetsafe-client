@@ -32,7 +32,7 @@ export default function Login(){
             <h2 className="text-lg font-semibold text-center">Sign In</h2>
 
 
-            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+            <form onSubmit={handleSubmit} data-testid="form" className="mt-6 space-y-4">
 
                 <div className="px-8">
                     <label htmlFor="username" className="block text-sm">Email</label>
