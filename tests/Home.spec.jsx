@@ -46,15 +46,29 @@ test("icons render", async() => {
   await expect.element(page.getByTestId("nav-icons")).toBeInTheDocument();
 });
 
+
 test("pop-up close button hides the modal when clicked", async() => {
-  let popUpCloseButton;
-  const closeModal = new Promise(r => popUpCloseButton = r);
-  const page = render(<MapProvider>
-    <Stub initialEntries={["/"]}/>
-  </MapProvider>);
-  expect.element(getByRole("button")).toBeInTheDocument
-  await user.click(getByRole("button", { name: /Close modal/i }))
+
+  // open the modal pop-up window
+  let closePopUpModalButton;
+  const clickPromise = new Promise((r) => (closePopUpModalButton = r));
+
+  const { getByTestId, queryByTestId} = render(
+    <MapProvider>
+      <Stub initialEntries={["/"]} />
+      <ExpectMapClick onFinish={closePopUpModalButton} />
+  </MapProvider>
+  );
+
+  await clickPromise;
+
+
+  // Pop-up modal is visible
+  await expect.element(getByTestId("map-data-model")).toBeInTheDocument();
+
+  // Click the close button; getByRole can match accessible name of element (aria-label="close modal")
+  await user.click(getByRole("button", { name: /close modal/i }))
   
   // Modal disappears
-  expect(queryByRole("button")).not.toBeInTheDocument();
+  expect(queryByTestId("map-data-model")).not.toBeInTheDocument();
 });
