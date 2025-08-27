@@ -53,18 +53,18 @@ test("pop-up close button hides the modal when clicked", async() => {
   let closePopUpModalButton;
   const clickPromise = new Promise((r) => (closePopUpModalButton = r));
 
-  const { getByTestId, queryByTestId} = render(
+  const { getByTestId, queryByTestId, getByRole, user} = await render(
     <MapProvider>
       <Stub initialEntries={["/"]} />
       <ExpectMapClick onFinish={closePopUpModalButton} />
   </MapProvider>
   );
 
+  // wait for the simulated hexagon click to finish
   await clickPromise;
 
-
   // Pop-up modal is visible
-  await expect.element(getByTestId("map-data-model")).toBeInTheDocument();
+  await expect.element(getByTestId("map-data-modal")).toBeInTheDocument();
 
   // Click the close button; getByRole can match accessible name of element (aria-label="close modal")
   await user.click(getByRole("button", { name: /close modal/i }))
