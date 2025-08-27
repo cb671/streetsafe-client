@@ -10,7 +10,7 @@ const Sidebar = () => {
   const navItems = [
     { to: "/", icon: Home, label: "Home" },
     { to: "/go", icon: LandPlot, label: "Go" },
-    { to: "/trends", icon: ChartPie, label: "Chart" },
+    { to: "/trends", icon: ChartPie, label: "Trends" },
     { to: "/learn", icon: GraduationCap, label: "Learn" },
   ];
 
@@ -59,15 +59,15 @@ const Sidebar = () => {
                 <li key={item.to}>
                   <Link
                     to={item.to}
-                    onClick={() => setIsOpen(false)} 
+                    onClick={() => setIsOpen(false)}
                     className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 group ${
                       isActive(item.to)
                         ? 'bg-blue-500 text-white shadow-lg'
                         : 'text-whiteish/70 hover:text-whiteish hover:bg-grey/60'
                     }`}
                   >
-                    <IconComponent 
-                      size={20} 
+                    <IconComponent
+                      size={20}
                       className={`transition-transform duration-300 ${
                         isActive(item.to) ? 'scale-110' : 'group-hover:scale-105'
                       }`}

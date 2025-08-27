@@ -40,8 +40,8 @@ export default function TrendFilter({ filter, handleFilter, onClose }) {
 
   console.log(localFilter);
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center bg-whiteish bg-opacity-80'>
-  <div className='relative bg-grey  text-white p-6 rounded-xl w-full max-w-md shadow-lg flex flex-col min-h-[500px] overflow-y-auto max-h-[80vh]'>
+    <div className='fixed inset-0 p-4 z-50 flex items-center justify-center bg-black/10 backdrop-blur-2xl'>
+     <div className='relative bg-black/75  text-white p-6 rounded-xl w-full max-w-md shadow-lg flex flex-col min-h-[500px] overflow-y-auto max-h-[80vh]'>
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -83,7 +83,7 @@ export default function TrendFilter({ filter, handleFilter, onClose }) {
         {/* Date Range */}
         <div className='mb-4'>
           <label className='block text-sm mb-1'>Date</label>
-          <div className='flex gap-2 items-center'>
+          <div className='flex gap-2 items-center text-sm'>
             <input
               type='date'
               value={localFilter.startDate}

@@ -55,6 +55,7 @@ export default function Barchart({ filter }) {
     maintainAspectRatio: false,
     responsive: true,
     indexAxis: 'y',
+    innerHeight: 400,
     plugins: {
       title: { display: true, text: 'Crime Totals', color: 'white' },
       legend: {
@@ -82,7 +83,7 @@ export default function Barchart({ filter }) {
   };
 
   if (labels.length === 0 || years.length === 0) {
-    return <div>Loading...</div>;
+    return <div className='text-whiteish'>Loading...</div>;
   }
 
   return <Bar data={data} options={options} />;

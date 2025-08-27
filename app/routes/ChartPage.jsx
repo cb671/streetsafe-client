@@ -3,8 +3,9 @@ import PieChart from '../components/PieChart';
 import LineChart from '../components/LineChart';
 import { ListFilter } from 'lucide-react';
 import '../app.css';
-import TrendFilter from '../components/TrendFilter.jsx';
+import TrendFilter from '../components/TrendFilter';
 import { useState } from 'react';
+import Sidebar from '../components/Sidebar';
 
 const ChartPage = () => {
   const [showFilter, setShowFilter] = useState(false);
@@ -22,68 +23,33 @@ const ChartPage = () => {
     setShowFilter(false); // Close popup after applying
   };
   return (
-    <div className='relative height-full'>
-      <div
-        className='bg-grey text-whiteish flex justify-end'
-        style={{
-          border: '2px solid #fff',
-          borderRadius: '12px',
-          padding: '16px',
-          width: '350px',
-          margin: '30px auto',
-        }}
-      >
-        <ListFilter
-          style={{ cursor: 'pointer' }}
-          onClick={() => setShowFilter(!showFilter)}
-        />
+    <>
+      <Sidebar />
+      <div className='relative h-full px-4 flex flex-col gap-4 text-whiteish'>
+        <div className='bg-black/75 text-whiteish flex justify-end border-2 border-whiteish/30 rounded-xl p-4 mx-auto w-full'>
+          <ListFilter
+            style={{ cursor: 'pointer' }}
+            onClick={() => setShowFilter(!showFilter)}
+          />
+        </div>
+        <div className='bg-black/75 border-2 border-whiteish/30 rounded-xl p-4 mx-auto w-full h-96'>
+          <Bar className='border border-white' filter={filter} />
+        </div>
+        <div className='bg-black/75 border-2 border-whiteish/30 rounded-xl p-4 mx-auto w-full h-auto'>
+          <PieChart filter={filter} />
+        </div>
+        <div className='bg-black/75 border-2 border-whiteish/30 rounded-xl p-4 mx-auto w-full'>
+          <LineChart filter={filter} />
+        </div>
+        {showFilter && (
+          <TrendFilter
+            filter={filter}
+            handleFilter={handleFilter}
+            onClose={() => setShowFilter(false)}
+          />
+        )}
       </div>
-      <div
-        className='bg-grey'
-        style={{
-          border: '2px solid #fff',
-          borderRadius: '12px', // Rounded corners
-          padding: '16px',
-          width: '350px',
-          height: '350px', // Smaller widt             // Smaller height          // Optional: dark background
-          margin: '30px auto',
-        }}
-      >
-        <Bar className='border border-white' filter={filter} height={350}/>
-      </div>
-      <div
-        className='bg-grey'
-        style={{
-          border: '2px solid #fff', // White border
-          borderRadius: '12px', // Rounded corners
-          padding: '5px',
-          width: '350px',
-          height: '350px', // Smaller widt             // Smaller height          // Optional: dark background
-          margin: '30px auto',
-        }}
-      >
-        <PieChart filter={filter} />
-      </div>
-      <div
-        className='bg-grey'
-        style={{
-          border: '2px solid #fff', // White border
-          borderRadius: '12px', // Rounded corners
-          padding: '16px',
-          width: '350px', // Smaller widt             // Smaller height          // Optional: dark background
-          margin: '30px auto',
-        }}
-      >
-        <LineChart filter={filter} />
-      </div>
-      {showFilter && (
-        <TrendFilter
-          filter={filter}
-          handleFilter={handleFilter}
-          onClose={() => setShowFilter(false)}
-        />
-      )}
-    </div>
+    </>
   );
 };
 
