@@ -1,6 +1,6 @@
 import { describe, it, expect, test, vi} from "vitest";
 import {register} from '../app/api/api.js';
-import {login} from '..app/api/api.js';
+import {login} from '../app/api/api.js';
 import {render} from "vitest-browser-react";
 import {useEffect} from "react";
 import { userEvent } from '@vitest/browser/context';
