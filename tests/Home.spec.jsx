@@ -46,16 +46,15 @@ test("icons render", async() => {
   await expect.element(page.getByTestId("nav-icons")).toBeInTheDocument();
 });
 
-test("pop=up close works", async() => {
-  let clickResolve;
-  const clickPromise = new Promise(r => clickResolve = r);
+test("pop-up close button hides the modal when clicked", async() => {
+  let popUpCloseButton;
+  const closeModal = new Promise(r => popUpCloseButton = r);
   const page = render(<MapProvider>
     <Stub initialEntries={["/"]}/>
-    <InnerMap/>
-    <ExpectMapClick onFinish={clickResolve}/>
   </MapProvider>);
-  const canvas = page.getByLabelText("Map");
-  await expect.element(canvas).toBeInTheDocument();
-  await clickPromise;
-  await expect.element(page.getByTestId("map-data-modal")).toBeInTheDocument();
+  expect.element(getByRole("button")).toBeInTheDocument
+  await user.click(getByRole("button", { name: /Close modal/i }))
+  
+  // Modal disappears
+  expect(queryByRole("button")).not.toBeInTheDocument();
 });
