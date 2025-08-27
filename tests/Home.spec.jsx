@@ -69,8 +69,8 @@ test("pop-up close button hides the modal when clicked", async() => {
   await expect.element(getByTestId("map-data-modal")).toBeInTheDocument();
 
   // Click the close button; getByRole can match accessible name of element (aria-label="close modal")
-  await userEvent.click(getByRole("button", { name: /Close modal/i }))
+  await userEvent.click(getByRole("button", { name: /close modal/i }))
   
   // Modal disappears
-  expect(queryByTestId("map-data-model")).not.toBeInTheDocument();
+  expect(queryByTestId("map-data-modal")).not.toBeInTheDocument();
 });
