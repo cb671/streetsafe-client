@@ -22,7 +22,7 @@ const ChartPage = () => {
     setShowFilter(false); // Close popup after applying
   };
   return (
-    <>
+    <div className='relative height-full'>
       <div
         className='bg-grey text-whiteish flex justify-end'
         style={{
@@ -83,7 +83,7 @@ const ChartPage = () => {
           onClose={() => setShowFilter(false)}
         />
       )}
-    </>
+    </div>
   );
 };
 
