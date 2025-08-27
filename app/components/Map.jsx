@@ -33,10 +33,10 @@ const material = {
   specularColor: [51, 51, 51]
 };
 
-export default function MapComponent({onClick, mode, userPosition, position, bounds, routes, resolveMapRef}){
+export default function MapComponent({onClick, mode, userPosition, position, bounds, routes, resolveMapRef, userLocation}){
   const [data, setData] = useState([]);
   const [geoPos, setGeoPos] = useState(userPosition);
-  const [mapPos, setMapPos] = useState(position);
+  const [mapPos, setMapPos] = useState(position || initialPosition); 
   const [mapLoaded, setMapLoaded] = useState(false);
   const [lastFlight, setLastFlight] = useState(null);
   const mapRef = useRef();
@@ -152,6 +152,8 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
   }, [routes]);
 
   const updateMapPos = (pos) => {
+    if (!pos) return;
+    
     const flyTo = {}
     if(pos.longitude !== undefined || pos.latitude !== undefined){
       flyTo.center = {
@@ -173,8 +175,8 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
   }
 
   useEffect(() => {
-    if(mapLoaded) updateMapPos(position);
-    setMapPos(position);
+    if(mapLoaded && position) updateMapPos(position);
+    setMapPos(position || initialPosition);
   }, [position]);
 
   const onMapLoad = useCallback(() => {
@@ -186,17 +188,44 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
     resolveMapRef && resolveMapRef(mapRef?.current || false);
   },[resolveMapRef]);
 
+
+  useEffect(() => {
+    if (userLocation && mapRef.current && mapLoaded) {
+      mapRef.current.flyTo({
+        center: [userLocation.lng, userLocation.lat],
+        zoom: 11,
+        duration: 2000
+      });
+    }
+  }, [userLocation, mapLoaded]);
+
+
+  const getInitialViewState = () => {
+    if (userLocation) {
+      return {
+        longitude: userLocation.lng,
+        latitude: userLocation.lat,
+        zoom: 11,
+        bearing: 0,
+        pitch: 0,
+      };
+    }
+    
+
+    return {
+      longitude: mapPos?.longitude ?? initialPosition.longitude,
+      latitude: mapPos?.latitude ?? initialPosition.latitude,
+      zoom: mapPos?.zoom ?? initialPosition.zoom,
+      bearing: mapPos?.bearing ?? initialPosition.bearing,
+      pitch: mapPos?.pitch ?? initialPosition.pitch,
+    };
+  };
+
   return (
     <Map
       style={{width: '100%', height: '100vh'}}
       mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
-      initialViewState={{
-        longitude: mapPos.longitude,
-        latitude: mapPos.latitude,
-        zoom: mapPos.zoom,
-        bearing: mapPos.bearing,
-        pitch: mapPos.pitch,
-      }}
+      initialViewState={getInitialViewState()}
       ref={mapRef}
       minZoom={5}
       maxZoom={initialPosition.maxZoom}

@@ -135,3 +135,18 @@ function filterParamsBuilder({
   }
   return search;
 }
+
+export function getUserProfile() {
+  return fetch(API_ROOT + '/auth/profile', {
+    credentials: 'include'
+  }).then(r => {
+    if (r.ok) {
+      return r.json();
+    } else {
+      throw new Error('User not authenticated');
+    }
+  }).catch(err => {
+    console.error('Failed to fetch user profile:', err);
+    throw err;
+  });
+}
