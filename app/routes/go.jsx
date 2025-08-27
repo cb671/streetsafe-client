@@ -365,7 +365,6 @@ export default function Go(){
     });
 
     return () => {
-      setLocation(initialPosition);
       setRoutes(null);
     };
   }, []);
