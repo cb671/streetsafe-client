@@ -34,7 +34,7 @@ export default function Home(){
 
   useEffect(() => {
     const fetchAndSetUserLocation = async () => {
-      let success = false;
+      let pos = initialPosition;
       try {
         const data = await getUserProfile();
 
@@ -43,24 +43,18 @@ export default function Home(){
             const h3Module = await import('h3-js');
 
             const [lat, lng] = h3Module.cellToLatLng(data.user.h3);
-            setLocation({
-              longitude: lng,
-              latitude: lat,
-              zoom: 12,
-              pitch: 40.5,
-              bearing: -27,
-              maxZoom: 18,
-              offset: undefined
-            });
-            success = true;
+            pos.latitude = lat;
+            pos.longitude = lng;
+            pos.zoom = 12;
+            pos.bearing = 0;
           } catch (importError) {
             console.error('Failed to import h3-js or convert H3 to coordinates:', importError);
           }
         }
-        if(!success) setLocation(initialPosition);
       } catch (error) {
         console.error('Failed to get user location:', error);
       }
+      setLocation(pos);
     };
 
     fetchAndSetUserLocation();
