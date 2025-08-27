@@ -7,6 +7,8 @@ import { createRoutesStub } from "react-router";
 import Login from "../app/routes/login.jsx";
 import Register from "../app/routes/register.jsx";
 import AuthLayout from "../app/routes/auth.jsx";
+import {Outlet} from "../app/routes/auth.jsx";
+
 
 
 const RegistrationStub = createRoutesStub([
@@ -82,19 +84,30 @@ describe("Login component works", () => {
 
 })
 
+function DummyChild() {
+    return <div data-testid="dummy">Some child content here</div>;
+}
+
 const AuthLayoutStub = createRoutesStub([
-    { path: "/auth", Component: AuthLayout },
+    { 
+        path: "/auth", 
+        Component: AuthLayout,
+        children: [
+            { path: "/child", Component: DummyChild },
+        ]
+    },
 ])
 
 describe("Auth Layout parent component to login and registration works", () => {
 
-    test("renders the Outlet child route component", async () => {
+    test("renders the Outlet component to child routes", async () => {
 
-        const outletComponent = render(<>
+        const outletComponent = render(
+        <>
             <AuthLayoutStub>
                 <Outlet/>
             </AuthLayoutStub>
-    </>);
+        </>);
         await expect.element(outletComponent).toBeInTheDocument()
 
     });
