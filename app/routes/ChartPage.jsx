@@ -44,18 +44,19 @@ const ChartPage = () => {
           border: '2px solid #fff',
           borderRadius: '12px', // Rounded corners
           padding: '16px',
-          width: '350px', // Smaller widt             // Smaller height          // Optional: dark background
+          width: '350px',
+          height: '350px', // Smaller widt             // Smaller height          // Optional: dark background
           margin: '30px auto',
         }}
       >
-        <Bar className='border border-white' filter={filter} />
+        <Bar className='border border-white' filter={filter} height={350}/>
       </div>
       <div
         className='bg-grey'
         style={{
           border: '2px solid #fff', // White border
           borderRadius: '12px', // Rounded corners
-          padding: '16px',
+          padding: '5px',
           width: '350px',
           height: '350px', // Smaller widt             // Smaller height          // Optional: dark background
           margin: '30px auto',

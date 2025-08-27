@@ -8,6 +8,8 @@
   --color-darkgrey: rgba(5, 5, 5, 0.8);
   --color-whiteish: #F6F7F9;
   --color-grey: #2C353C;
+  --color-lightgrey: rgb(84,84,84);
+ --color-lightgreywithopacity: rgba(84,84,84,0.5);
   --font-heading: "Jersey 25", sans-serif;
 }
 

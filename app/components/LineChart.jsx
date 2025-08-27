@@ -37,11 +37,20 @@ const LineChart = ({filter}) => {
     ],
   };
 
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom',
+      },
+    }
+  };
+
   if (labels.length === 0 || years.length === 0) {
     return <div>Loading...</div>;
   }
 
-  return <Line data={data} />;
+  return <Line data={data} options={options} />;
 };
 
 export default LineChart;

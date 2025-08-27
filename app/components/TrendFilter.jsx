@@ -24,12 +24,24 @@ export default function TrendFilter({ filter, handleFilter, onClose }) {
     handleFilter(localFilter);
   };
 
-  const crimeOptions = ['burglary', 'vehicle', 'violent'];
+  const crimeOptions = [
+  { value: 'burglary', label: 'Burglary' },
+  { value: 'personal_theft', label: 'Personal Theft' },
+  { value: 'weapon_crime', label: 'Weapon Crime' },
+  { value: 'bicycle_theft', label: 'Bicycle Theft' },
+  { value: 'damage', label: 'Damage' },
+  { value: 'robbery', label: 'Robbery' },
+  { value: 'shoplifting', label: 'Shoplifting' },
+  { value: 'violent', label: 'Violent' },
+  { value: 'anti_social', label: 'Anti Social' },
+  { value: 'drugs', label: 'Drugs' },
+  { value: 'vehicle_crime', label: 'Vehicle Crime' },
+];
 
   console.log(localFilter);
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center bg-grey bg-opacity-80'>
-      <div className='relative bg-gray-900 text-white p-6 rounded-xl w-full max-w-md shadow-lg flex flex-col min-h-[500px]'>
+    <div className='fixed inset-0 z-50 flex items-center justify-center bg-whiteish bg-opacity-80'>
+  <div className='relative bg-grey  text-white p-6 rounded-xl w-full max-w-md shadow-lg flex flex-col min-h-[500px] overflow-y-auto max-h-[80vh]'>
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -50,21 +62,21 @@ export default function TrendFilter({ filter, handleFilter, onClose }) {
             value={localFilter.location}
             onChange={handleChanges}
             name='location'
-            placeholder='Hinted search text'
-            className='w-full p-2 rounded-lg bg-gray-800 text-white outline-none'
+            placeholder='Enter a location'
+            className='w-full p-2 rounded-lg bg-lightgrey  text-white outline-none'
           />
         </div>
 
         {/* Radius */}
         <div className='mb-4'>
-          <label className='block text-sm mb-1'>Radius (KM)</label>
+          <label className='block text-sm mb-1'>Radius</label>
           <input
             type='number'
             value={localFilter.radius}
             onChange={handleChanges}
             name='radius'
             placeholder='Enter radius'
-            className='w-full p-2 rounded-lg bg-gray-800 text-white outline-none'
+            className='w-full p-2 rounded-lg bg-lightgrey  text-white outline-none'
           />
         </div>
 
@@ -77,7 +89,7 @@ export default function TrendFilter({ filter, handleFilter, onClose }) {
               value={localFilter.startDate}
               onChange={handleChanges}
               name='startDate'
-              className='p-2 rounded-lg bg-gray-800 text-white outline-none flex-1'
+              className='p-2 rounded-lg bg-lightgrey  text-white outline-none flex-1'
             />
             <span>-</span>
             <input
@@ -85,7 +97,7 @@ export default function TrendFilter({ filter, handleFilter, onClose }) {
               value={localFilter.endDate}
               onChange={handleChanges}
               name='endDate'
-              className='p-2 rounded-lg bg-gray-800 text-white outline-none flex-1'
+              className='p-2 rounded-lg bg-lightgrey  text-white outline-none flex-1'
             />
           </div>
         </div>
@@ -95,15 +107,15 @@ export default function TrendFilter({ filter, handleFilter, onClose }) {
           <label className='block text-sm mb-2'>Crime</label>
           <div className='flex flex-col gap-2'>
             {crimeOptions.map((crime) => (
-              <label key={crime} className='flex items-center gap-2'>
+              <label key={crime.value} className='flex items-center gap-2'>
                 <input
                   type='checkbox'
-                  checked={localFilter.crimeTypes.includes(crime)}
+                  checked={localFilter.crimeTypes.includes(crime.value)}
                   onChange={handleChanges}
                   name='crimeTypes'
-                  value={crime}
+                  value={crime.value}
                 />
-                {crime}
+                {crime.label}
               </label>
             ))}
           </div>
@@ -112,7 +124,7 @@ export default function TrendFilter({ filter, handleFilter, onClose }) {
         {/* Filter Button */}
         <button
           onClick={() => handleFilter(localFilter)}
-          className='bg-white text-black font-semibold rounded-xl py-2'
+          className='bg-lightgrey text-whiteish font-semibold rounded-xl py-2'
         >
           Filter
         </button>
