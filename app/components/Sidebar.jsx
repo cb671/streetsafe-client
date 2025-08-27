@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LandPlot, ChartPie, GraduationCap, Home, Menu, X } from 'lucide-react';
+import { LandPlot, ChartPie, GraduationCap, Home, Menu, X, LogIn } from 'lucide-react';
 import { Link, useLocation } from 'react-router';
 import "../app.css";
 
@@ -12,6 +12,7 @@ const Sidebar = () => {
     { to: "/go", icon: LandPlot, label: "Go" },
     { to: "/trends", icon: ChartPie, label: "Trends" },
     { to: "/learn", icon: GraduationCap, label: "Learn" },
+    { to: "/login", icon: LogIn, label: "Login" },
   ];
 
   const isActive = (path) => location.pathname === path;
