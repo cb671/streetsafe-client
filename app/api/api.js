@@ -20,9 +20,6 @@ export function getBarChartData(filter) {
     r.json()
   );
 }
-export function getMapData(){
-  return fetch(API_ROOT + '/map').then(r => r.json())
-}
 
 export function getHexData(h3){
   return fetch(`${API_ROOT}/map/hexagon/${h3}`).then(r => r.json())
