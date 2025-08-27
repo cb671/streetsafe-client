@@ -84,31 +84,24 @@ describe("Login component works", () => {
 
 })
 
-function DummyChild() {
-    return <div data-testid="dummy">Some child content here</div>;
-}
+
 
 const AuthLayoutStub = createRoutesStub([
     { 
         path: "/auth", 
         Component: AuthLayout,
-        children: [
-            { path: "/child", Component: DummyChild },
-        ]
     },
 ])
 
 describe("Auth Layout parent component to login and registration works", () => {
 
-    test("renders the Outlet component to child routes", async () => {
+    it("renders Auth Layout component to child routes", () => {
 
-        const outletComponent = render(
-        <>
-            <AuthLayoutStub>
-                <Outlet/>
-            </AuthLayoutStub>
-        </>);
-        await expect.element(outletComponent).toBeInTheDocument()
+        const { getByTestId } = render(
+            <AuthLayoutStub initialEntries={["/auth"]} />
+        );
+        
+        expect(getByTestId("authheading")).toBeInTheDocument()
 
     });
 

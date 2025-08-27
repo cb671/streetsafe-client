@@ -45,3 +45,17 @@ test("icons render", async() => {
   </MapProvider>);
   await expect.element(page.getByTestId("nav-icons")).toBeInTheDocument();
 });
+
+test("pop=up close works", async() => {
+  let clickResolve;
+  const clickPromise = new Promise(r => clickResolve = r);
+  const page = render(<MapProvider>
+    <Stub initialEntries={["/"]}/>
+    <InnerMap/>
+    <ExpectMapClick onFinish={clickResolve}/>
+  </MapProvider>);
+  const canvas = page.getByLabelText("Map");
+  await expect.element(canvas).toBeInTheDocument();
+  await clickPromise;
+  await expect.element(page.getByTestId("map-data-modal")).toBeInTheDocument();
+});
