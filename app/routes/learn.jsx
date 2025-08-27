@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from "../components/Sidebar.jsx";
-import { getEducationalResources, getEducationalResourcesByCrimeType } from "../api/api.js";
+import { getEducationalResources, getEducationalResourcesByCrimeType, getUserProfile } from "../api/api.js";
 
 export default function Learn() {
   const [resources, setResources] = useState([]);
@@ -10,8 +10,21 @@ export default function Learn() {
   const [showPersonalised, setShowPersonalised] = useState(true);
   const [selectedCrimeType, setSelectedCrimeType] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        await getUserProfile();
+        setIsLoggedIn(true);
+      } catch (error) {
+        setIsLoggedIn(false);
+      }
+    };
+    
+    checkAuthStatus();
+  }, []);
+
   const crimeTypes = [
     { value: 'all', label: 'All Crime Types' },
     { value: 'violent', label: 'Violent Crime' },
@@ -33,6 +46,11 @@ export default function Learn() {
       setIsLoading(true);
       let data;
       
+
+      if (!isLoggedIn) {
+        personalised = false;
+      }
+      
       if (!personalised && crimeType !== 'all') {
         data = await getEducationalResourcesByCrimeType(crimeType);
       } else {
@@ -52,8 +70,8 @@ export default function Learn() {
   };
 
   useEffect(() => {
-    fetchResources(showPersonalised, selectedCrimeType);
-  }, [showPersonalised, selectedCrimeType]); 
+    fetchResources(showPersonalised && isLoggedIn, selectedCrimeType);
+  }, [showPersonalised, selectedCrimeType, isLoggedIn]); 
 
 
   useEffect(() => {
@@ -163,7 +181,8 @@ export default function Learn() {
           </div>
 
 
-          {personalisation?.isPersonalised !== null && (
+
+          {isLoggedIn && personalisation?.isPersonalised !== null && (
             <div className="flex justify-center mb-8">
               <div className="bg-grey/40 rounded-full p-1 border border-whiteish/10">
                 <div className="flex items-center">
@@ -194,7 +213,8 @@ export default function Learn() {
           )}
 
 
-          {!showPersonalised && (
+    
+          {(!showPersonalised || !isLoggedIn) && (
             <div className="flex justify-center mb-8">
               <div className="relative">
                 <button

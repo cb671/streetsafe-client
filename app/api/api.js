@@ -150,3 +150,29 @@ export function getUserProfile() {
     throw err;
   });
 }
+
+
+export const logout = async () => {
+  try {
+    const response = await fetch(API_ROOT + '/auth/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include', 
+    });
+
+    if (!response.ok) {
+      throw new Error('Logout failed');
+    }
+
+
+    localStorage.removeItem('authToken');
+
+
+    return await response.json();
+  } catch (error) {
+    console.error('Logout error:', error);
+    throw error;
+  }
+};
