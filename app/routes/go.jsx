@@ -169,7 +169,7 @@ function ChooseRoute({routes, onDecision}){
             r.active = ri === cri;
             return r;
           }));
-        }} key={ri}
+        }} key={ri} id={`route-${r.crime_factor}`}
                 className={`${chosenRoute === ri ? "outline-whiteish/75" : "outline-grey"} rounded-md outline-1 -outline-offset-1 flex gap-2 overflow-hidden bg-black/75`}>
           <div style={{
             background: `rgb(${color[0]},${color[1]},${color[2]})`
@@ -195,7 +195,7 @@ function ChooseRoute({routes, onDecision}){
     })}
     <button disabled={chosenRoute === undefined} onClick={() => {
       onDecision(chosenRoute);
-    }} className={"btn mt-auto"}>
+    }} className={"btn mt-auto"} id={"begin-journey"}>
       <h2>Begin journey</h2>
     </button>
     </> : <>

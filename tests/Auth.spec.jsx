@@ -7,9 +7,6 @@ import { createRoutesStub } from "react-router";
 import Login from "../app/routes/login.jsx";
 import Register from "../app/routes/register.jsx";
 import AuthLayout from "../app/routes/auth.jsx";
-import {Outlet} from "../app/routes/auth.jsx";
-
-
 
 const RegistrationStub = createRoutesStub([
     { path: "/register", Component: Register },
@@ -33,7 +30,7 @@ describe("Register component works", () => {
         vi.mock('../app/api/api.js', {spy: true});
 
         const page = render(<RegistrationStub initialEntries={["/register"]} />);
-        
+
         const form = page.getByTestId("form");
 
         await userEvent.fill(document.querySelector('input[name=username]'), 'bob@bob.com')
@@ -71,7 +68,7 @@ describe("Login component works", () => {
         vi.mock('../app/api/api.js', {spy: true});
 
         const page = render(<LoginStub initialEntries={["/login"]} />);
-        
+
         const form = page.getByTestId("form");
 
         await userEvent.fill(document.querySelector('input[name=username]'), 'bob@bob.com')
@@ -87,8 +84,8 @@ describe("Login component works", () => {
 
 
 const AuthLayoutStub = createRoutesStub([
-    { 
-        path: "/auth", 
+    {
+        path: "/auth",
         Component: AuthLayout,
     },
 ])
@@ -100,7 +97,7 @@ describe("Auth Layout parent component to login and registration works", () => {
         const { getByTestId } = render(
             <AuthLayoutStub initialEntries={["/auth"]} />
         );
-        
+
         expect(getByTestId("authheading")).toBeInTheDocument()
 
     });
