@@ -6,8 +6,7 @@ import {Pie} from "react-chartjs-2";
 import '@deck.gl/widgets/stylesheet.css';
 import Icons from "../components/Icons.jsx";
 import {useMap} from "../contexts/MapContext.jsx";
-import {getHexData} from "../api/api.js";
-
+import {getHexData, getUserProfile} from "../api/api.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -28,11 +27,34 @@ const CRIME_LABELS = [
 export default function Home(){
   const [crimeData, setCrimeData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [userLocation, setUserLocation] = useState(null);
 
   const closeModal = () => setCrimeData(null);
 
-  async function handleClick(info){
+  useEffect(() => {
+    const fetchAndSetUserLocation = async () => {
+      try {
+        const data = await getUserProfile();
+        
+        if (data.user && data.user.h3) {
+          try {
+            const h3Module = await import('h3-js');
+          
+            const [lat, lng] = h3Module.cellToLatLng(data.user.h3);
+            setUserLocation({ lat, lng });
+          } catch (importError) {
+            console.error('Failed to import h3-js or convert H3 to coordinates:', importError);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to get user location:', error);
+      }
+    };
 
+    fetchAndSetUserLocation();
+  }, []);
+
+  async function handleClick(info){
     try{
       setIsLoading(true);
 
@@ -94,7 +116,6 @@ export default function Home(){
     };
   }, [crimeData]);
 
-
   const {setClickHandler, clearClickHandler} = useMap();
   useEffect(()=>{
     setClickHandler(handleClick);
@@ -107,6 +128,7 @@ export default function Home(){
 
   return (
     <>
+      <Map userLocation={userLocation} onClick={handleClick} />
 
       {isLoading && (
         <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
@@ -131,7 +153,7 @@ export default function Home(){
         >
         {/* Close button */}
         <button type="button"
-          class="absolute right-3 top-3 inline-flex h-2 w-9 items-center justify-center
+          className="absolute right-3 top-3 inline-flex h-2 w-9 items-center justify-center
                  rounded-full text-white transform transition duration-500 hover:scale-125"
           aria-label="Close modal"
           onClick={closeModal}
