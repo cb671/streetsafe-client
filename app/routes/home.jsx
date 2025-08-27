@@ -131,7 +131,7 @@ export default function Home(){
         >
         {/* Close button */}
         <button type="button"
-          class="absolute right-3 top-3 inline-flex h-2 w-9 items-center justify-center
+          className="absolute right-3 top-3 inline-flex h-2 w-9 items-center justify-center
                  rounded-full text-white transform transition duration-500 hover:scale-125"
           aria-label="Close modal"
           onClick={closeModal}
