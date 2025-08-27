@@ -62,6 +62,27 @@ export function reverseGeo(lon, lat){
     credentials: "include"
   }).then(r => r.json()).catch(err => ({message: err.toString()}))
 }
+export function getEducationalResources(personalised = true) {
+    const url = personalised
+      ? API_ROOT + '/educational'
+      : API_ROOT + '/educational?personalised=false';
+
+    return fetch(url, {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    }).then(r => r.json())
+}
+
+export function getEducationalResourcesByCrimeType(crimeType) {
+    return fetch(API_ROOT + `/educational/crime-type/${crimeType}`, {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    }).then(r => r.json())
+}
 
 export function getPieChartData(filter) {
   const search = filterParamsBuilder(filter);

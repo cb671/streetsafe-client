@@ -6,7 +6,7 @@ import "../app.css"
 const Icons = ({page}) => {
   return (
     <div
-      className={`flex text-whiteish fill-whiteish w-full align-items p-2 rounded-t-lg justify-center gap-10 align-items absolute bottom-0 bg-darkgrey z-50 text-center`}
+      className={`flex text-whiteish fill-whiteish w-full align-items p-2 rounded-t-lg justify-center gap-10 align-items absolute bottom-0 bg-darkgrey z-50 fixed text-center`}
       data-testid={"nav-icons"}
     >
       <div>
@@ -21,7 +21,7 @@ const Icons = ({page}) => {
         <p>Go</p>
       </div>}
       <div>
-        <Link to="/education"> <GraduationCap size={48}/></Link>
+        <Link to="/learn"> <GraduationCap size={48}/></Link>
         <p>Learn</p>
       </div>
     </div>

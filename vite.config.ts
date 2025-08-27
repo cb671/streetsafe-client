@@ -7,8 +7,26 @@ export default defineConfig({
   plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
   server: {
     proxy: {
-      '/api': 'http://localhost:3000',
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        secure: false,
+        configure: (proxy, _options) => {
+          proxy.on('proxyReq', (proxyReq, req, _res) => {
+            console.log('Proxying request:', req.method, req.url);
+            if (req.headers.cookie) {
+              proxyReq.setHeader('cookie', req.headers.cookie);
+              console.log('Forwarded cookies:', req.headers.cookie);
+            }
+          });
+          proxy.on('proxyRes', (proxyRes, req, _res) => {
+            console.log('Response from backend:', proxyRes.statusCode, req.url);
+            if (proxyRes.headers['set-cookie']) {
+              console.log('Setting cookies:', proxyRes.headers['set-cookie']);
+            }
+          });
+        },
+      }
     }
   }
-
 });
