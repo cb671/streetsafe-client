@@ -178,6 +178,7 @@ export default function Learn() {
                     Personalised for You
                   </button>
                   <button
+                    data-testid="all-resources-button"
                     onClick={() => setShowPersonalised(false)}
                     className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                       !showPersonalised
@@ -197,11 +198,12 @@ export default function Learn() {
             <div className="flex justify-center mb-8">
               <div className="relative">
                 <button
+                  data-testid="filter-toggle-button"
                   onClick={() => setShowFilters(!showFilters)}
                   className="flex items-center space-x-2 bg-grey/40 border border-whiteish/10 rounded-full px-6 py-3 text-whiteish hover:bg-grey/60 transition-all duration-300"
                 >
                   <span className="text-blue-300">🔍</span>
-                  <span className="font-medium">
+                  <span className="font-medium" data-testid="selected-crime-type">
                     {crimeTypes.find(ct => ct.value === selectedCrimeType)?.label || 'Filter by Crime Type'}
                   </span>
                   <span className={`transform transition-transform duration-200 ${showFilters ? 'rotate-180' : ''}`}>
@@ -210,11 +212,14 @@ export default function Learn() {
                 </button>
 
                 {showFilters && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-grey/90 border border-whiteish/20 rounded-2xl backdrop-blur shadow-xl z-50 overflow-hidden">
+                  <div 
+                  data-testid="filter-dropdown"
+                  className="absolute top-full left-0 right-0 mt-2 bg-grey/90 border border-whiteish/20 rounded-2xl backdrop-blur shadow-xl z-50 overflow-hidden">
                     <div className="max-h-64 overflow-y-auto">
                       {crimeTypes.map((crimeType) => (
                         <button
                           key={crimeType.value}
+                          data-testid={`crime-option-${crimeType.value}`}
                           onClick={() => handleCrimeTypeChange(crimeType.value)}
                           className={`w-full text-left px-4 py-3 hover:bg-blue-500/20 transition-colors ${
                             selectedCrimeType === crimeType.value

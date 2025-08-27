@@ -3,19 +3,20 @@ import {describe, expect, test, it} from "vitest";
 import {render} from "vitest-browser-react";
 import Learn from "../app/routes/learn.jsx";
 import {createRoutesStub} from "react-router";
+import { userEvent } from '@vitest/browser/context';
+
 
 vi.mock("../app/api/api.js", () => ({
     getEducationalResources: vi.fn(),
-  getEducationalResourcesByCrimeType: vi.fn(),
-  spy: true
+    getEducationalResourcesByCrimeType: vi.fn(),
+    spy: true
 }));
 
 
-import { getEducationalResources } from "../app/api/api.js";
+import { getEducationalResources, getEducationalResourcesByCrimeType } from "../app/api/api.js";
 
 describe("Learn page", async () => {
 
-    //const {default: Learn} = await import("../app/routes/learn.jsx")
     const Stub = createRoutesStub([
         {
           path: "/learn",
@@ -23,13 +24,7 @@ describe("Learn page", async () => {
         },
       ]);
 
-    /*vi.mock("../app/api/api.js", () => ({
-        getEducationalResources: vi.fn(),
-        getEducationalResourcesByCrimeType: vi.fn()
-      }));
-    */
-    //const {getEducationalResources} = await import("../app/api/api.js")
-
+    
   it("shows a loading message", () => {
 
     const page = render(<Stub initialEntries={["/learn"]}/>);
@@ -64,4 +59,85 @@ describe("Learn page", async () => {
     expect(page.getByText(/error loading resources/i)).toBeInTheDocument()
     
   });
+
+///////////////
+
+it("opens the crime type filter and selects a crime type", async () => {
+    const mock = vi.mocked(getEducationalResources);
+    mock.mockResolvedValue({
+      resources: [
+        { id: 1, title: "Burglary Tips", type: "guide", description: "Stay safe", target_crime_type: "burglary", url: "#" },
+        { id: 2, title: "Robbery Tips", type: "guide", description: "Be careful", target_crime_type: "robbery", url: "#" }
+      ],
+      personalisation: { isPersonalised: false },
+    });
+
+    const mock2 = vi.mocked(getEducationalResourcesByCrimeType);
+    mock2.mockImplementation(crimetype => {
+        if (crimetype == 'burglary')
+            return {
+                resources: [
+                { id: 1, title: "Burglary Tips", type: "guide", description: "Stay safe", target_crime_type: "burglary", url: "#" },
+              ],
+              personalisation: { isPersonalised: false },
+            }
+        return {
+            resources: [
+              { id: 1, title: "Burglary Tips", type: "guide", description: "Stay safe", target_crime_type: "burglary", url: "#" },
+              { id: 2, title: "Robbery Tips", type: "guide", description: "Be careful", target_crime_type: "robbery", url: "#" }
+            ],
+            personalisation: { isPersonalised: false },
+          }
+
+    })
+
+
+
+    render(<Stub initialEntries={["/learn"]} />);
+  
+    await new Promise(r => setTimeout(r, 200));
+  
+    const allResourcesButton = document.querySelector('[data-testid="all-resources-button"]');
+    expect(allResourcesButton).toBeDefined();
+    //await userEvent.click(allResourcesButton);
+    try {
+        await userEvent.click(allResourcesButton);
+        console.log("Click successful!");
+      } catch (err) {
+        console.error("Click failed:", err);
+      }
+
+  
+    await new Promise(r => setTimeout(r, 1500));
+  
+    
+
+    const filterButton = document.querySelector('[data-testid="filter-toggle-button"]');
+    expect(filterButton).toBeDefined();
+    //await userEvent.click(filterButton);
+    try {
+        await userEvent.click(filterButton);
+        console.log("Click successful!");
+      } catch (err) {
+        console.error("Click failed:", err);
+      }
+
+  
+    await new Promise(r => setTimeout(r, 200));
+  
+    const burglaryButton = document.querySelector('[data-testid="crime-option-burglary"]');
+    expect(burglaryButton).toBeDefined();
+    await userEvent.click(burglaryButton);
+  
+    await new Promise(r => setTimeout(r, 200));
+  
+    const burglaryResource = Array.from(document.querySelectorAll("div.space-y-6 h2"))
+      .find(h2 => h2.textContent === "Burglary Tips");
+    expect(burglaryResource).toBeDefined();
+  
+    const robberyResource = Array.from(document.querySelectorAll("div.space-y-6 h2"))
+      .find(h2 => h2.textContent === "Robbery Tips");
+    expect(robberyResource).toBeUndefined();
+  });
+
 });
