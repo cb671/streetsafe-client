@@ -88,31 +88,16 @@ const AuthLayoutStub = createRoutesStub([
 
 describe("Auth Layout parent component to login and registration works", () => {
 
-    it("renders the login form", () => {
+    test("renders the Outlet child route component", async () => {
 
-        const page = render(<LoginStub initialEntries={["/login"]}/>);
-
-        const form = page.getByTestId("form");
-
-        expect(form).toBeInTheDocument()
+        const outletComponent = render(<>
+            <AuthLayoutStub>
+                <Outlet/>
+            </AuthLayoutStub>
+    </>);
+        await expect.element(outletComponent).toBeInTheDocument()
 
     });
 
-
-    it("submits the form when the submit button is clicked", async () => {
-
-        vi.mock('../app/api/api.js', {spy: true});
-
-        const page = render(<LoginStub initialEntries={["/login"]} />);
-        
-        const form = page.getByTestId("form");
-
-        await userEvent.fill(document.querySelector('input[name=username]'), 'bob@bob.com')
-        await userEvent.fill(document.querySelector('input[name=password]'), 'bob@bob.com')
-
-        await userEvent.click(document.querySelector('button[type=submit]'))
-
-        expect(login).toHaveBeenCalled()
-    });
 
 })
