@@ -2,6 +2,23 @@ import {dev} from "../util/const.js";
 
 const API_ROOT = !dev ? '/api' : 'http://localhost:3000/api';
 
+export function getMapData() {
+  return fetch(API_ROOT + '/map').then((r) => r.json());
+}
+
+export function getLineChartData(filter) {
+  const search = filterParamsBuilder(filter);
+  return fetch(API_ROOT + '/graphs/trends?' + search.toString()).then((r) =>
+    r.json()
+  );
+}
+
+export function getBarChartData(filter) {
+  const search = filterParamsBuilder(filter);
+  console.log(search);
+  return fetch(API_ROOT + '/graphs/totals?'+ search.toString()).then((r) =>
+    r.json()
+  );
 export function getMapData(){
   return fetch(API_ROOT + '/map').then(r => r.json())
 }

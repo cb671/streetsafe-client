@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Bar } from "react-chartjs-2";
+import React, { useState, useEffect } from 'react';
+import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -8,69 +8,82 @@ import {
   Title,
   Tooltip,
   Legend,
-} from "chart.js";
+} from 'chart.js';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+import { getBarChartData } from '../api/api.js';
 
-export default function Barchart() {
-  const [chartData, setChartData] = useState(null);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
+export default function Barchart({ filter }) {
+  const [labels, setLabels] = useState([]);
+  const [years, setYears] = useState([]);
   useEffect(() => {
-    fetch("api/graphs/totals")
-      .then((res) => res.json())
-      .then((data) => {
-        // ⚡ Adjust depending on your API response
-        const labels = data.map((item) => item.category);
-        const values = data.map((item) => item.count);
+    const fetchData = async () => {
+      try {
+        const data = await getBarChartData(filter);
+        setLabels(data.map((item) => item.category));
+        setYears(data.map((item) => item.count));
+        console.log(labels);
+        console.log(years);
+      } catch (error) {
+        console.error('Error fetching bar chart data:', error);
+      }
+    };
+    fetchData();
+  }, [filter]);
 
-        setChartData({
-          labels,
-          datasets: [
-            {
-              label: "Total Crimes",
-              data: values,
-              backgroundColor: "rgb(84,84,84)",
-              borderColor: "rgb(84,84,84)",
-              borderWidth: 2,
-            },
-          ],
-        });
-      });
-  }, []);
-
+  const data = {
+    labels: labels,
+    datasets: [
+      {
+        label: 'Total Crimes',
+        data: years,
+        backgroundColor: 'rgb(84,84,84)',
+        borderColor: 'rgb(84,84,84)',
+        borderWidth: 2,
+      },
+    ],
+  };
   const options = {
+    maintainAspectRatio: false,
     responsive: true,
+    indexAxis: 'y',
     plugins: {
-      title: { display: true, text: "Crime Totals", color:"white" },
+      title: { display: true, text: 'Crime Totals', color: 'white' },
       legend: {
-        position: "top",
-        labels: { color: "white" }
-       },
+        position: 'bottom',
+        labels: { color: 'white' },
+      },
     },
     scales: {
       x: {
-        ticks: { color: "white" },
+        ticks: { color: 'white' },
         grid: {
-          color: "rgba(255,255,255,0.2)",   // ✅ x-axis grid lines
-          borderColor: "white",             // ✅ x-axis border line
-        }
+          color: 'rgba(255,255,255,0.2)',
+          borderColor: 'white',
+        },
       },
       y: {
-        ticks: { color: "white" },
+        beginAtZero: true,
+        ticks: { color: 'white', autoSkip: false, maxTicksLimit: 20, font: { size: 12 } },
         grid: {
-         color: "rgba(255,255,255,0.2)",   // ✅ x-axis grid lines
-         borderColor: "white",             // ✅ x-axis border line
-        }
+          color: 'rgba(255,255,255,0.2)', // ✅ x-axis grid lines
+          borderColor: 'white', // ✅ x-axis border line
+        },
       },
-    }
+    },
   };
 
-  
+  if (labels.length === 0 || years.length === 0) {
+    return <div>Loading...</div>;
+  }
 
-  return (
-    <div>
-      {chartData ? <Bar data={chartData} options={options} />
-       : <p>Loading...</p>}
-    </div>
-  );
+  return <Bar data={data} options={options} />;
 }

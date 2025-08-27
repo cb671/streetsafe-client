@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
+import {getPieChartData} from '../api/api.js'
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const PieChart = () => {
+const PieChart = ({filter}) => {
   const [labels, setLabels] = useState([]);
   const [values, setValues] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch("/api/graphs/proportions");
-        const data = await res.json();
-
+        const data = await getPieChartData(filter);
         setLabels(data.map((item) => item.category));
         setValues(data.map((item) => item.percentage));
       } catch (error) {
@@ -21,7 +20,7 @@ const PieChart = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [filter]);
 
   const data = {
     labels: labels,
