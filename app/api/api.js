@@ -1,4 +1,4 @@
-import {dev} from "../util/const.js";
+import { dev } from '../util/const.js';
 
 const API_ROOT = !dev ? '/api' : 'http://localhost:3000/api';
 
@@ -15,101 +15,108 @@ export function getLineChartData(filter) {
 
 export function getBarChartData(filter) {
   const search = filterParamsBuilder(filter);
-  console.log(search);
-  return fetch(API_ROOT + '/graphs/totals?'+ search.toString()).then((r) =>
+  return fetch(API_ROOT + '/graphs/totals?' + search.toString()).then((r) =>
     r.json()
   );
 }
 
-
 export async function login(email, password) {
-    const response = await fetch(API_ROOT + '/auth/login', {
-        method: 'POST',
-        headers: {"Content-Type": "application/json"},
-        credentials: 'include',
-        body: JSON.stringify({ email, password })
-    });
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Login failed');
-    }
-    return response.json();
+  const response = await fetch(API_ROOT + '/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ email, password }),
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Login failed');
+  }
+  return response.json();
 }
-
-
 
 export async function register(name, email, password, postcode) {
-    const response = await fetch(API_ROOT + '/auth/register', {
-        method: 'POST',
-        headers: {"Content-Type": "application/json"},
-        credentials: 'include',
-        body: JSON.stringify({ name, email, password, postcode })
-    });
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Register failed');
-    }
-    return response.json();
+  const response = await fetch(API_ROOT + '/auth/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ name, email, password, postcode }),
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Register failed');
+  }
+  return response.json();
 }
 
-export async function getHexData(h3){
-  return fetch(`${API_ROOT}/map/hexagon/${h3}`).then(r => r.json())
+export async function getHexData(h3) {
+  return fetch(`${API_ROOT}/map/hexagon/${h3}`).then((r) => r.json());
 }
 
-export async function calculateRoutes(from, to){
+export async function calculateRoutes(from, to) {
   return fetch(`${API_ROOT}/go`, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json"
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify([from, to])
-  }).then(r => r.json()).catch(err => ({message: err.toString()}))
+    body: JSON.stringify([from, to]),
+  })
+    .then((r) => r.json())
+    .catch((err) => ({ message: err.toString() }));
 }
 
-export async function searchLocation(query, bias){
-  return fetch(`${API_ROOT}/go/search?q=${encodeURIComponent(query)}${bias ? ("&bias=" + bias.longitude + "," + bias.latitude) : ""}`, {
-    method: "POST",
-    credentials: "include"
-  }).then(r => r.json()).catch(err => ({message: err.toString()}))
+export async function searchLocation(query, bias) {
+  return fetch(
+    `${API_ROOT}/go/search?q=${encodeURIComponent(query)}${bias ? '&bias=' + bias.longitude + ',' + bias.latitude : ''}`,
+    {
+      method: 'POST',
+      credentials: 'include',
+    }
+  )
+    .then((r) => r.json())
+    .catch((err) => ({ message: err.toString() }));
 }
 
-export async function geocode(place){
+export async function geocode(place) {
   return fetch(`${API_ROOT}/go/geocode?place=${encodeURIComponent(place)}`, {
-    method: "POST",
-    credentials: "include"
-  }).then(r => r.json()).catch(err => ({message: err.toString()}))
+    method: 'POST',
+    credentials: 'include',
+  })
+    .then((r) => r.json())
+    .catch((err) => ({ message: err.toString() }));
 }
 
-export async function reverseGeo(lon, lat){
+export async function reverseGeo(lon, lat) {
   return fetch(`${API_ROOT}/go/reverse`, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json"
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify([lon, lat]),
-    credentials: "include"
-  }).then(r => r.json()).catch(err => ({message: err.toString()}))
+    credentials: 'include',
+  })
+    .then((r) => r.json())
+    .catch((err) => ({ message: err.toString() }));
 }
 export function getEducationalResources(personalised = true) {
-    const url = personalised
-      ? API_ROOT + '/educational'
-      : API_ROOT + '/educational?personalised=false';
+  const url = personalised
+    ? API_ROOT + '/educational'
+    : API_ROOT + '/educational?personalised=false';
 
-    return fetch(url, {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include'
-    }).then(r => r.json())
+  return fetch(url, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  }).then((r) => r.json());
 }
 
 export function getEducationalResourcesByCrimeType(crimeType) {
-    return fetch(API_ROOT + `/educational/crime-type/${crimeType}`, {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include'
-    }).then(r => r.json())
+  return fetch(API_ROOT + `/educational/crime-type/${crimeType}`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+  }).then((r) => r.json());
 }
 
 export function getPieChartData(filter) {
@@ -138,19 +145,20 @@ function filterParamsBuilder({
 
 export function getUserProfile() {
   return fetch(API_ROOT + '/auth/profile', {
-    credentials: 'include'
-  }).then(r => {
-    if (r.ok) {
-      return r.json();
-    } else {
-      throw new Error('User not authenticated');
-    }
-  }).catch(err => {
-    console.error('Failed to fetch user profile:', err);
-    throw err;
-  });
+    credentials: 'include',
+  })
+    .then((r) => {
+      if (r.ok) {
+        return r.json();
+      } else {
+        throw new Error('User not authenticated');
+      }
+    })
+    .catch((err) => {
+      console.error('Failed to fetch user profile:', err);
+      throw err;
+    });
 }
-
 
 export const logout = async () => {
   try {
@@ -159,16 +167,14 @@ export const logout = async () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      credentials: 'include', 
+      credentials: 'include',
     });
 
     if (!response.ok) {
       throw new Error('Logout failed');
     }
 
-
     localStorage.removeItem('authToken');
-
 
     return await response.json();
   } catch (error) {

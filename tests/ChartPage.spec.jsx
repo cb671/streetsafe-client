@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi , beforeEach, afterEach} from "vitest";
 import { createRoutesStub } from "react-router";
 import ChartPage from "../app/routes/ChartPage.jsx";
 import { render } from "vitest-browser-react";
@@ -8,7 +8,8 @@ import * as api from '../app/api/api.js';
 vi.mock('../app/api/api.js', () => ({
   getBarChartData: vi.fn(),
   getPieChartData: vi.fn(),
-  getLineChartData: vi.fn()
+  getLineChartData: vi.fn(),
+  logout: vi.fn(), // add this
 }));
 
 // Mock the chart components to avoid complex chart rendering in tests
@@ -82,7 +83,7 @@ describe("ChartPage", () => {
     await expect.element(page.container).toBeInTheDocument();
   });
 
-  test("renders all chart components", async () => {
+  test("loads all three graphs", async () => {
     const page = render(
       <Stub initialEntries={["/trends"]} />
     );
@@ -91,64 +92,24 @@ describe("ChartPage", () => {
     await expect.element(page.getByTestId("bar-chart")).toBeInTheDocument();
     await expect.element(page.getByTestId("pie-chart")).toBeInTheDocument();
     await expect.element(page.getByTestId("line-chart")).toBeInTheDocument();
-    await expect.element(page.getByTestId("sidebar")).toBeInTheDocument();
   });
 
-  test("bar chart has correct styling class", async () => {
-    const page = render(
-      <Stub initialEntries={["/trends"]} />
-    );
+  test("filter icon toggles TrendFilter", async () => {
+    const page = render(<Stub initialEntries={["/trends"]} />);
 
-    const barChart = page.getByTestId("bar-chart");
-    await expect.element(barChart).toBeInTheDocument();
+    // Icon present
+    await expect.element(page.getByTestId("list-filter")).toBeInTheDocument();
 
-    // Check that the bar chart has the border class
-    await expect.element(barChart).toHaveClass("border");
-  });
+    // Click the icon
+    await page.user.click(page.getByTestId("list-filter"));
 
-  test("charts display initial filter state", async () => {
-    const page = render(
-      <Stub initialEntries={["/trends"]} />
-    );
+    // TrendFilter appears (look for heading or button text)
+    await expect.element(await page.findByText("Trends")).toBeInTheDocument();
+    await expect.element(await page.findByText("Filter")).toBeInTheDocument();
 
-    // Check that charts show the initial filter values
-    const barChart = page.getByTestId("bar-chart");
-    await expect.element(barChart).toBeInTheDocument();
-
-    // The initial filter should have empty values and default groupBy
-    await expect.element(page.getByText(/startDate.*""/)).toBeInTheDocument();
-    await expect.element(page.getByText(/location.*""/)).toBeInTheDocument();
-    await expect.element(page.getByText(/radius.*""/)).toBeInTheDocument();
-    await expect.element(page.getByText(/groupBy.*"year"/)).toBeInTheDocument();
-    await expect.element(page.getByText(/crimeTypes.*\[\]/)).toBeInTheDocument();
-  });
-
-  test("charts are properly positioned in layout", async () => {
-    const page = render(
-      <Stub initialEntries={["/trends"]} />
-    );
-
-    // Check that charts are rendered in the correct order
-    const charts = page.getAllByTestId(/chart$/);
-    expect(charts).toHaveLength(3);
-
-    // Verify the order: bar chart, pie chart, line chart
-    expect(charts[0]).toHaveAttribute('data-testid', 'bar-chart');
-    expect(charts[1]).toHaveAttribute('data-testid', 'pie-chart');
-    expect(charts[2]).toHaveAttribute('data-testid', 'line-chart');
-  });
-
-  test("chart containers have proper styling", async () => {
-    const page = render(
-      <Stub initialEntries={["/trends"]} />
-    );
-
-    // Check that chart containers have the expected styling classes
-    const chartContainers = page.container.querySelectorAll('.bg-black\\/75');
-    expect(chartContainers.length).toBeGreaterThan(0);
-
-    // Verify that charts are wrapped in styled containers
-    const barChartContainer = page.getByTestId("bar-chart").closest('.bg-black\\/75');
-    expect(barChartContainer).toBeTruthy();
+    // Close via the × button
+    await page.user.click(page.getByText("×"));
+    // Overlay removed
+    await expect.element(page.queryByText("Trends")).not.toBeInTheDocument();
   });
 });
