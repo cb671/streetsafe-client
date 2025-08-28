@@ -65,7 +65,8 @@ it("opens the crime type filter and selects a crime type", async () => {
         { id: 1, title: "Burglary Tips", type: "guide", description: "Stay safe", target_crime_type: "burglary", url: "#" },
         { id: 2, title: "Robbery Tips", type: "guide", description: "Be careful", target_crime_type: "robbery", url: "#" }
       ],
-      personalisation: { isPersonalised: false },
+      personalisation: { isPersonalised: true, topLocalCrimes: ["robbery"] },
+
     });
 
     const mock2 = vi.mocked(getEducationalResourcesByCrimeType);

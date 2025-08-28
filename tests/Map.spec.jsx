@@ -16,3 +16,13 @@ test("map renders", async () => {
   const canvas = page.getByLabelText("Map");
   await expect.element(canvas).toBeInTheDocument()
 });
+
+test("map renders (go)", async () => {
+  const page = render(<>
+    <MapProvider>
+      <InnerMap page={"go"}/>
+    </MapProvider>
+  </>);
+  const canvas = page.getByLabelText("Map");
+  await expect.element(canvas).toBeInTheDocument()
+});
