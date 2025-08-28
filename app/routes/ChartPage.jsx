@@ -28,6 +28,7 @@ const ChartPage = () => {
       <div className='relative h-full px-4 flex flex-col gap-4 text-whiteish'>
         <div className='bg-black/75 text-whiteish flex justify-end border-2 border-whiteish/30 rounded-xl p-4 mx-auto w-full'>
           <ListFilter
+            data-testid="list-filter"
             style={{ cursor: 'pointer' }}
             onClick={() => setShowFilter(!showFilter)}
           />
