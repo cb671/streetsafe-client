@@ -1,40 +1,97 @@
-# Welcome to React Router!
+# StreetSafe
 
-A modern, production-ready template for building full-stack React applications using React Router.
-
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+A web application that provides crime data visualization, safe route planning, and educational resources to help users stay informed about local safety conditions.
 
 ## Features
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+**Interactive Crime Map** - Visualize crime data on an interactive map with hexagonal overlays  
+**Safe Route Planning** - Get walking directions with real-time navigation  
+**Crime Analytics** - View crime trends through interactive charts and visualizations  
+**Educational Resources** - Access personalized safety guides and crime prevention materials  
+**User Authentication** - Secure login and registration system  
+**Responsive Design** - Optimized for desktop and mobile devices  
+
+## Tech Stack
+
+- **Frontend**: React 19 with React Router 7
+- **Styling**: Tailwind CSS with custom theme
+- **Maps**: MapLibre GL with react-map-gl
+- **Charts**: Chart.js with react-chartjs-2
+- **Icons**: Lucide React
+- **Testing**: Vitest with browser testing
+- **Build Tool**: Vite
+
+
+```
 
 ## Getting Started
 
+### Prerequisites
+
+- Node.js 18+ 
+- npm 
+
 ### Installation
 
-Install the dependencies:
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd streetsafe-client
+```
 
+2. Install dependencies:
 ```bash
 npm install
 ```
 
-### Development
-
-Start the development server with HMR:
-
+3. Start the development server:
 ```bash
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
+The application will be available at `http://localhost:5173`.
 
-## Building for Production
+### Environment Setup
+
+The application expects an API server running at:
+- Development: `http://localhost:3000/api`
+- Production: `/api`
+
+## Available Scripts
+
+- `npm run dev` - Start development server with HMR
+- `npm run build` - Create production build
+- `npm run start` - Start production server
+- `npm run test` - Run test suite
+- `npm run coverage` - Generate test coverage report
+
+
+## Testing
+
+The project uses Vitest for testing with browser-based testing capabilities:
+
+```bash
+# Run tests
+npm run test
+
+# Run tests with coverage
+npm run coverage
+```
+
+Test files are located in the `tests/` directory.
+
+## Deployment
+
+### Docker Deployment
+
+Build and run using Docker:
+
+```bash
+docker build -t streetsafe-client .
+docker run -p 3000:3000 streetsafe-client
+```
+
+### Production Build
 
 Create a production build:
 
@@ -42,46 +99,7 @@ Create a production build:
 npm run build
 ```
 
-## Deployment
+Deploy the contents of the `build/` directory to your hosting platform.
 
-### Docker Deployment
 
-To build and run using Docker:
 
-```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
-```
-
-The containerized application can be deployed to any platform that supports Docker, including:
-
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
-```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
-
----
-
-Built with ❤️ using React Router.
