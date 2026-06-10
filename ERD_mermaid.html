@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mermaid Example</title>
+     <script type="module" defer>
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({ startOnLoad: true });
+    </script>
+</head>
+<body>
+    <div class="mermaid">
+        erDiagram
+            USERS {
+                int id PK "Primary Key, NOT NULL"
+                string name "NOT NULL"
+                string email "NOT NULL"
+                string h3 "NOT NULL"
+                string password "NOT NULL"
+                date created_at "NOT NULL"
+            }
+        
+            CRIME_AREAS {
+                string h3 PK "Composite key part"
+                date crime_date PK "Composite key part"
+                int burglary "NOT NULL"
+                int personal_theft "NOT NULL"
+                int weapon_crime "NOT NULL"
+                int bicycle_theft "NOT NULL"
+                int damage "NOT NULL"
+                int robbery "NOT NULL"
+                int shoplifting "NOT NULL"
+                int violent "NOT NULL"
+                int anti_social "NOT NULL"
+                int drugs "NOT NULL"
+                int vehicle_crime "NOT NULL"
+            }
+        
+            EMERGENCY_SERVICES {
+                int id PK "NOT NULL"
+                string name "NOT NULL"
+                string type "NOT NULL"
+                string h3 "NOT NULL"
+            }
+        
+            EDUCATIONAL_SOURCES {
+                int id PK "NOT NULL"
+                string title "NOT NULL"
+                string url "NOT NULL"
+                string description "NOT NULL"
+                string type "NOT NULL"
+                string target_crime_type "NOT NULL"
+                date added_at "NOT NULL"
+            }
+
+            POP_AREAS {
+                string h3 PK "Primary Key, NOT NULL"
+                float population "NOT NULL"
+            }
+    
+</div>
+     
+
+<div class="mermaid">
+    flowchart TD
+    U[User] --> A[Select area or location]
+    A --> C[CRIME_AREAS: retrieve crime stats]
+    C --> V[Visualise stats: charts and graphs]
+    C --> T[Top crimes calculation]
+    C --> E1[EMERGENCY_SERVICES: show local services]
+    T --> E2[EDUCATIONAL_SOURCES: show relevant info]
+</div>
+
+</body>
+</html>

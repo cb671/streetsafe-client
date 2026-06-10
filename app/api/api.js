@@ -1,6 +1,11 @@
 import { dev } from '../util/const.js';
 
-const API_ROOT = !dev ? '/api' : 'http://localhost:3000/api';
+const configuredApiUrl = import.meta.env.VITE_API_URL?.trim();
+const DEFAULT_PROD_API_URL = 'https://streetsafe-z3mu.onrender.com/api';
+const API_ROOT = (configuredApiUrl || (dev ? '/api' : DEFAULT_PROD_API_URL)).replace(
+  /\/+$/,
+  ''
+);
 
 export function getMapData() {
   return fetch(API_ROOT + '/map').then((r) => r.json());
