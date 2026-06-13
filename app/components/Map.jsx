@@ -38,6 +38,7 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
   const [geoPos, setGeoPos] = useState(userPosition);
   const [mapPos, setMapPos] = useState(position || initialPosition); 
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [mapDataLoaded, setMapDataLoaded] = useState(mode === "go");
   const [lastFlight, setLastFlight] = useState(null);
   const mapRef = useRef();
   const activeIdx = 1;
@@ -124,14 +125,25 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
   }
 
   useEffect(() => {
+    let isCancelled = false;
     setData([]);
     if(mode !== "go"){
-      getMapData().then(d => {
-        setData(d);
-      });
+      setMapDataLoaded(false);
+      getMapData()
+        .then(d => {
+          if(isCancelled) return;
+          setData(d);
+          setMapDataLoaded(true);
+        })
+        .catch((error) => {
+          console.error("Failed to fetch map data", error);
+        });
+    } else {
+      setMapDataLoaded(true);
     }
 
     return () => {
+      isCancelled = true;
     };
   }, [mode]);
 
@@ -222,23 +234,43 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
   };
 
   return (
-    <Map
-      style={{width: '100%', height: '100vh'}}
-      mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
-      initialViewState={getInitialViewState()}
-      ref={mapRef}
-      minZoom={5}
-      maxZoom={initialPosition.maxZoom}
-      doubleClickZoom={false}
-      attributionControl={false}
-      onLoad={onMapLoad}
-    >
-      <DeckGLOverlay
-        layers={layers}
-        interleaved={false}
-      />
-      <NavigationControl/>
-      <ScaleControl position={"top-left"}/>
-    </Map>
+    <div style={{position: "relative"}}>
+      {!mapDataLoaded && (
+        <div
+          style={{
+            position: "absolute",
+            top: 16,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 1,
+            padding: "0.75rem 1rem",
+            borderRadius: "0.75rem",
+            backgroundColor: "rgba(15, 23, 42, 0.9)",
+            color: "#f8fafc",
+            fontWeight: 600
+          }}
+        >
+          Loading map data...
+        </div>
+      )}
+      <Map
+        style={{width: '100%', height: '100vh'}}
+        mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
+        initialViewState={getInitialViewState()}
+        ref={mapRef}
+        minZoom={5}
+        maxZoom={initialPosition.maxZoom}
+        doubleClickZoom={false}
+        attributionControl={false}
+        onLoad={onMapLoad}
+      >
+        <DeckGLOverlay
+          layers={layers}
+          interleaved={false}
+        />
+        <NavigationControl/>
+        <ScaleControl position={"top-left"}/>
+      </Map>
+    </div>
   )
 }
