@@ -10,21 +10,27 @@ const Icons = ({page}) => {
       data-testid={"nav-icons"}
     >
       <div>
-        <Link to="/trends"><ChartPie size={48}/></Link>
-        <p>Trends</p>
+        <Link to="/trends" className="flex flex-col items-center gap-1">
+          <ChartPie size={48}/>
+          <p>Trends</p>
+        </Link>
       </div>
       {page === "go" ? <div>
-        <Link to="/"><Map size={48}/></Link>
-        <p>Crime</p>
+        <Link to="/" className="flex flex-col items-center gap-1">
+          <Map size={48}/>
+          <p>Crime</p>
+        </Link>
       </div> : <div>
-        <Link to="/go"><LandPlot size={48}/></Link>
-        <p>Go</p>
+        <Link to="/go" className="flex flex-col items-center gap-1">
+          <LandPlot size={48}/>
+          <p>Go</p>
+        </Link>
       </div>}
       <div>
-        <Link to="/learn">
-        <GraduationCap size={48}/>
-        <p>Learn</p>
-      </Link>
+        <Link to="/learn" className="flex flex-col items-center gap-1">
+          <GraduationCap size={48}/>
+          <p>Learn</p>
+        </Link>
       </div>
     </div>
   );
