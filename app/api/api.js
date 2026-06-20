@@ -179,8 +179,6 @@ export const logout = async () => {
       throw new Error('Logout failed');
     }
 
-    localStorage.removeItem('authToken');
-
     return await response.json();
   } catch (error) {
     console.error('Logout error:', error);

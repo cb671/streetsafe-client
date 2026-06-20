@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import { LandPlot, ChartPie, GraduationCap, Home, Menu, X, LogIn, LogOut } from 'lucide-react';
+import {
+  LandPlot,
+  ChartPie,
+  GraduationCap,
+  Home,
+  Menu,
+  X,
+  LogIn,
+  LogOut,
+} from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { logout } from '../api/api.js';
 import "../app.css";
@@ -37,14 +46,12 @@ const Sidebar = () => {
 
   return (
     <>
-
       <button
         onClick={toggleSidebar}
         className="fixed bottom-4 left-4 z-[60] bg-darkgrey border border-whiteish/10 rounded-xl p-3 text-whiteish hover:bg-grey/60 transition-all duration-300 shadow-lg backdrop-blur"
       >
         {isOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
-
 
       {isOpen && (
         <div
@@ -53,18 +60,15 @@ const Sidebar = () => {
         />
       )}
 
-
       <div
         className={`fixed left-0 top-0 h-full w-64 bg-darkgrey border-r border-whiteish/10 z-50 flex flex-col transform transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-
         <div className="p-6 border-b border-whiteish/10">
           <h1 className="text-2xl font-heading text-whiteish">StreetSafe</h1>
           <p className="text-xs text-whiteish/60 mt-1">Stay informed. Stay safe.</p>
         </div>
-
 
         <nav className="flex-1 p-4">
           <ul className="space-y-2">
@@ -95,7 +99,6 @@ const Sidebar = () => {
           </ul>
         </nav>
 
-
         <div className="p-4 border-t border-whiteish/10 space-y-2">
           <button
             onClick={handleLogout}
@@ -107,9 +110,9 @@ const Sidebar = () => {
             />
             <span className="font-medium">Logout</span>
           </button>
-          
+
           <div className="text-xs text-whiteish/40 text-center">
-            © 2025 StreetSafe
+            (c) 2025 StreetSafe
           </div>
         </div>
       </div>

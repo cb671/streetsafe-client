@@ -14,4 +14,4 @@ export const routeNames = {
   200: "Cautious"
 }
 
-export const dev = process.env.NODE_ENV !== "production";
+export const dev = import.meta.env.DEV;

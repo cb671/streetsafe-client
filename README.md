@@ -108,6 +108,12 @@ Set this environment variable on the frontend service:
 
 Because this client sends authenticated requests with `credentials: 'include'`, the backend must also allow the frontend's Render URL as an allowed origin and support credentials in CORS/cookie settings.
 
+Example backend setting:
+
+```bash
+FRONTEND_URLS=https://streetsafe-client.onrender.com,http://localhost:5173
+```
+
 ## Docker
 
 Build and run using Docker:
