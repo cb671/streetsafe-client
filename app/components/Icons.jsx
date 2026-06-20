@@ -1,37 +1,39 @@
 // import React from 'react';
 import {LandPlot, ChartPie, GraduationCap, Map} from 'lucide-react'
-import {Link} from 'react-router'
+import {useNavigate} from 'react-router'
 import "../app.css"
 
 const Icons = ({page}) => {
+  const navigate = useNavigate();
+
+  const navItems = [
+    { to: "/trends", label: "Trends", Icon: ChartPie },
+    page === "go"
+      ? { to: "/", label: "Crime", Icon: Map }
+      : { to: "/go", label: "Go", Icon: LandPlot },
+    { to: "/learn", label: "Learn", Icon: GraduationCap },
+  ];
+
   return (
     <div
-      className={`flex text-whiteish fill-whiteish w-full align-items p-2 rounded-t-lg justify-center gap-10 align-items absolute bottom-0 bg-darkgrey z-50 fixed text-center`}
+      className={`fixed bottom-0 left-0 z-[1000] flex w-full justify-center gap-10 rounded-t-lg bg-darkgrey p-2 text-center text-whiteish fill-whiteish pointer-events-auto`}
       data-testid={"nav-icons"}
     >
-      <div>
-        <Link to="/trends" className="flex flex-col items-center gap-1">
-          <ChartPie size={48}/>
-          <p>Trends</p>
-        </Link>
-      </div>
-      {page === "go" ? <div>
-        <Link to="/" className="flex flex-col items-center gap-1">
-          <Map size={48}/>
-          <p>Crime</p>
-        </Link>
-      </div> : <div>
-        <Link to="/go" className="flex flex-col items-center gap-1">
-          <LandPlot size={48}/>
-          <p>Go</p>
-        </Link>
-      </div>}
-      <div>
-        <Link to="/learn" className="flex flex-col items-center gap-1">
-          <GraduationCap size={48}/>
-          <p>Learn</p>
-        </Link>
-      </div>
+      {navItems.map(({to, label, Icon}) => (
+        <button
+          key={to}
+          type="button"
+          className="flex cursor-pointer flex-col items-center gap-1"
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            navigate(to);
+          }}
+        >
+          <Icon size={48}/>
+          <p>{label}</p>
+        </button>
+      ))}
     </div>
   );
 };

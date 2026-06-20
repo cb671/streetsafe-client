@@ -1,6 +1,7 @@
 import {describe, expect, test} from "vitest";
 import {createRoutesStub} from "react-router";
 import Home from "../app/routes/home.jsx";
+import Learn from "../app/routes/learn.jsx";
 import {render} from "vitest-browser-react";
 import {MapProvider, useMap} from "../app/contexts/MapContext.jsx";
 import {InnerMap} from "./common.jsx";
@@ -27,6 +28,10 @@ const Stub = createRoutesStub([
     path: "/",
     Component: Home,
   },
+  {
+    path: "/learn",
+    Component: Learn,
+  },
 ]);
 
 test("hexagon click works", async() => {
@@ -47,6 +52,20 @@ test("icons render", async() => {
     <Stub initialEntries={["/"]}/>
   </MapProvider>);
   await expect.element(page.getByTestId("nav-icons")).toBeInTheDocument();
+});
+
+test("learn icon navigates to learn page", async() => {
+  const page = render(
+    <MapProvider>
+      <Stub initialEntries={["/"]}/>
+    </MapProvider>
+  );
+
+  await userEvent.click(page.getByRole("button", { name: /learn/i }));
+
+  await waitFor(async () => {
+    await expect.element(page.getByText(/learn about crime and safety/i)).toBeInTheDocument();
+  });
 });
 
 
