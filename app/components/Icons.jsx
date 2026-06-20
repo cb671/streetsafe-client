@@ -21,7 +21,8 @@ const Icons = ({page}) => {
         <p>Go</p>
       </div>}
       <div>
-        <Link to="/learn"> <GraduationCap size={48}/>
+        <Link to="/learn">
+        <GraduationCap size={48}/>
         <p>Learn</p>
       </Link>
       </div>
