@@ -1,7 +1,7 @@
 import 'maplibre-gl/dist/maplibre-gl.css';
 import Map from "../components/Map.jsx";
 import Icons from "../components/Icons.jsx";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {initialPosition, useMap} from "../contexts/MapContext.jsx";
 import {Link, useNavigate} from "react-router";
 import {calculateRoutes, geocode, reverseGeo, searchLocation} from "../api/api.js";
@@ -42,18 +42,23 @@ function GoInput({id, children, value, onChange, required}){
 function LocationEntry({id, children, onDecision, forceValue, bias}){
   const [potential, setPotential] = useState([]);
   const [chosen, setChosen] = useState();
+  const apiTimeoutRef = useRef();
   useEffect(() => {
     forceValue && setChosen(forceValue)
   }, [forceValue]);
-  let apiTimeout;
+  useEffect(() => {
+    return () => {
+      if(apiTimeoutRef.current) clearTimeout(apiTimeoutRef.current);
+    };
+  }, []);
   return <div className={`relative ${potential?.suggestions?.length > 0 ? "has-results" : ""}`}>
     <GoInput id={id} onChange={(value => {
-      clearTimeout(apiTimeout);
+      if(apiTimeoutRef.current) clearTimeout(apiTimeoutRef.current);
       if(value.length < 3){
         setPotential([]);
         return setChosen(undefined);
       }
-      apiTimeout = setTimeout(async() => {
+      apiTimeoutRef.current = setTimeout(async() => {
         const res = await searchLocation(value, bias);
         setPotential(res);
         setChosen(undefined);

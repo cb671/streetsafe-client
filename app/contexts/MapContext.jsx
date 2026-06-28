@@ -1,4 +1,4 @@
-import {createContext, useContext, useEffect, useMemo, useState} from "react";
+import {createContext, useCallback, useContext, useMemo, useState} from "react";
 
 const MapInteractionContext = createContext(undefined);
 
@@ -28,61 +28,77 @@ export function MapProvider({ children }) {
     routes: null
   });
 
+  const setClickHandler = useCallback((handler) => {
+    setMapProps(prev => ({
+      ...prev,
+      onClick: handler
+    }));
+  }, []);
+
+  const clearClickHandler = useCallback(() => {
+    setMapProps(prev => ({
+      ...prev,
+      onClick: null
+    }));
+  }, []);
+
+  const updateMapProps = useCallback((props) => {
+    setMapProps(prev => ({
+      ...prev,
+      ...props,
+      onClick: prev.onClick
+    }));
+  }, []);
+
+  const setLocation = useCallback((pos) => {
+    setMapProps(prev => ({
+      ...prev,
+      position: pos
+    }));
+  }, []);
+
+  const fitBounds = useCallback((bounds) => {
+    setMapProps(prev => ({
+      ...prev,
+      bounds
+    }));
+  }, []);
+
+  const setRoutes = useCallback((routes) => {
+    setMapProps(prev => ({
+      ...prev,
+      routes
+    }));
+  }, []);
+
+  const getMapRef = useCallback(() => {
+    return new Promise(r=>{
+      setMapProps(prev => ({
+        ...prev,
+        resolveMapRef: r
+      }));
+    });
+  }, []);
+
   const contextValue = useMemo(() => ({
     mapProps,
-
-    setClickHandler: (handler) => {
-      setMapProps(prev => ({
-        ...prev,
-        onClick: handler
-      }));
-    },
-
-    clearClickHandler: () => {
-      setMapProps(prev => ({
-        ...prev,
-        onClick: null
-      }));
-    },
-
-    updateMapProps: (props) => {
-      setMapProps(prev => ({
-        ...prev,
-        ...props,
-        onClick: prev.onClick
-      }))
-    },
-
-    setLocation: (pos) => {
-      setMapProps(prev => ({
-        ...prev,
-        position: pos
-      }))
-    },
-
-    fitBounds: (bounds) => {
-      setMapProps(prev => ({
-        ...prev,
-        bounds
-      }))
-    },
-
-    setRoutes: (routes) => {
-      setMapProps(prev => ({
-        ...prev,
-        routes
-      }))
-    },
-
-    getMapRef: () => {
-      return new Promise(r=>{
-        setMapProps(prev => ({
-          ...prev,
-          resolveMapRef: r
-        }));
-      });
-    }
-  }), [mapProps]);
+    setClickHandler,
+    clearClickHandler,
+    updateMapProps,
+    setLocation,
+    fitBounds,
+    setRoutes,
+    getMapRef
+  }), [
+    mapProps,
+    setClickHandler,
+    clearClickHandler,
+    updateMapProps,
+    setLocation,
+    fitBounds,
+    setRoutes,
+    getMapRef
+  ]);
 
   return (
     <MapInteractionContext.Provider value={contextValue}>
