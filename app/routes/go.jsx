@@ -19,6 +19,23 @@ import {dev, routeColors, routeNames} from "../util/const.js";
 import {formatSecs} from "../util/time.jsx";
 import {calculateStepProgress} from "../util/go-progress.js";
 
+const GREATER_LONDON_BOUNDS = {
+  minLongitude: -0.563,
+  maxLongitude: 0.280,
+  minLatitude: 51.261,
+  maxLatitude: 51.686
+};
+
+function isWithinGreaterLondon(location){
+  if(!location) return false;
+  return (
+    location.longitude >= GREATER_LONDON_BOUNDS.minLongitude &&
+    location.longitude <= GREATER_LONDON_BOUNDS.maxLongitude &&
+    location.latitude >= GREATER_LONDON_BOUNDS.minLatitude &&
+    location.latitude <= GREATER_LONDON_BOUNDS.maxLatitude
+  );
+}
+
 function GoInput({id, children, value, onChange, required}){
   const [content, setContent] = useState(value || "");
   const [lastValue, setLastValue] = useState(value || "");
@@ -343,6 +360,7 @@ export default function Go(){
   const [fromTo, setFromTo] = useState(undefined);
   const [routes, setRoutesState] = useState(undefined);
   const [chosenRoute, setChosenRoute] = useState(undefined);
+  const [routeMessage, setRouteMessage] = useState("");
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(geo => {
@@ -378,11 +396,27 @@ export default function Go(){
     <div
       className={`${chosenRoute === undefined ? (!!fromTo && !!routes) ? "h-2/3" : "h-96" : "h-32"} go`}>
       {!fromTo ? <ChooseDestinations userPosition={userPosition} onDecision={async(from, to) => {
+        setRouteMessage("");
         setFromTo([from, to]);
+        const fromLocation = from.location;
+        const toLocation = to.location;
+        if(!isWithinGreaterLondon(fromLocation) || !isWithinGreaterLondon(toLocation)){
+          setRoutesState([]);
+          setRouteMessage("Route planning currently only works within Greater London.");
+          return;
+        }
         const calculated = await calculateRoutes(
-          [from.location.longitude, from.location.latitude].map(parseFloat),
-          [to.location.longitude, to.location.latitude].map(parseFloat)
+          [fromLocation.longitude, fromLocation.latitude].map(parseFloat),
+          [toLocation.longitude, toLocation.latitude].map(parseFloat)
         );
+        if(!Array.isArray(calculated)){
+          setRoutesState([]);
+          setRouteMessage("We couldn't calculate that route right now. Route planning currently only works within Greater London.");
+          return;
+        }
+        if(calculated.length === 0){
+          setRouteMessage("No route is available for that journey. Route planning currently only works within Greater London.");
+        }
         setRoutesState(calculated);
       }}/> : chosenRoute === undefined ? <>
         <div className="flex gap-1 items-center">
@@ -390,6 +424,7 @@ export default function Go(){
             setFromTo(undefined);
             setRoutes(null);
             setRoutesState(null);
+            setRouteMessage("");
           }}>
             <ChevronLeft/>
           </button>
@@ -402,6 +437,9 @@ export default function Go(){
             <span>{placeToDisplay(fromTo[1])}</span>
           </div>
         </div>
+        {routeMessage ? <div className={"rounded-md bg-amber-500/15 px-3 py-2 text-sm text-amber-100 outline outline-1 -outline-offset-1 outline-amber-400/40"}>
+          {routeMessage}
+        </div> : null}
         {!routes ? <div className={"m-auto"}>
           <LoaderPinwheel size={96} className={"spin"} strokeWidth={1.5}/>
         </div> : <>
