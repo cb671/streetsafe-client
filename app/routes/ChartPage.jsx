@@ -25,21 +25,21 @@ const ChartPage = () => {
   return (
     <>
       <Sidebar />
-      <div className='relative h-full px-4 flex flex-col gap-4 text-whiteish'>
-        <div className='bg-black/75 text-whiteish flex justify-end border-2 border-whiteish/30 rounded-xl p-4 mx-auto w-full'>
+      <div className='relative min-h-full px-4 pb-4 flex flex-col gap-4 text-whiteish'>
+        <div className='shrink-0 bg-black/75 text-whiteish flex justify-end border-2 border-whiteish/30 rounded-xl p-4 mx-auto w-full'>
           <ListFilter
             data-testid="list-filter"
             style={{ cursor: 'pointer' }}
             onClick={() => setShowFilter(!showFilter)}
           />
         </div>
-        <div className='bg-black/75 border-2 border-whiteish/30 rounded-xl p-4 mx-auto w-full min-h-96'>
+        <div className='shrink-0 bg-black/75 border-2 border-whiteish/30 rounded-xl p-4 mx-auto w-full min-h-96 overflow-hidden'>
           <Bar className='border border-white' filter={filter} />
         </div>
-        <div className='bg-black/75 border-2 border-whiteish/30 rounded-xl p-4 mx-auto w-full h-auto'>
+        <div className='shrink-0 bg-black/75 border-2 border-whiteish/30 rounded-xl p-4 mx-auto w-full h-auto'>
           <PieChart filter={filter} />
         </div>
-        <div className='bg-black/75 border-2 border-whiteish/30 rounded-xl p-4 mx-auto w-full'>
+        <div className='shrink-0 bg-black/75 border-2 border-whiteish/30 rounded-xl p-4 mx-auto w-full'>
           <LineChart filter={filter} />
         </div>
         {showFilter && (
