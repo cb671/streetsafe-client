@@ -42,6 +42,7 @@ test("shows loading map data message until data resolves", async () => {
   );
 
   await expect.element(page.getByText("Loading map data...")).toBeInTheDocument();
+  await expect.element(page.getByText("0%") ).toBeInTheDocument();
 
   resolveMapData([]);
   await new Promise((resolve) => setTimeout(resolve, 0));

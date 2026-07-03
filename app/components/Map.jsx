@@ -39,6 +39,7 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
   const [mapPos, setMapPos] = useState(position || initialPosition); 
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapDataLoaded, setMapDataLoaded] = useState(mode === "go");
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const [lastFlight, setLastFlight] = useState(null);
   const mapRef = useRef();
   const activeIdx = 1;
@@ -126,17 +127,36 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
 
   useEffect(() => {
     let isCancelled = false;
+    let progressTimer;
+    let completeTimer;
+
     setData([]);
+    setLoadingProgress(0);
+
     if(mode !== "go"){
       setMapDataLoaded(false);
+
+      progressTimer = window.setInterval(() => {
+        setLoadingProgress((prev) => Math.min(prev + 6, 95));
+      }, 140);
+
+      const completeLoading = () => {
+        if(isCancelled) return;
+        setLoadingProgress(100);
+        completeTimer = window.setTimeout(() => {
+          if(!isCancelled) setMapDataLoaded(true);
+        }, 180);
+      };
+
       getMapData()
         .then(d => {
           if(isCancelled) return;
           setData(d);
-          setMapDataLoaded(true);
+          completeLoading();
         })
         .catch((error) => {
           console.error("Failed to fetch map data", error);
+          completeLoading();
         });
     } else {
       setMapDataLoaded(true);
@@ -144,6 +164,8 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
 
     return () => {
       isCancelled = true;
+      if(progressTimer) window.clearInterval(progressTimer);
+      if(completeTimer) window.clearTimeout(completeTimer);
     };
   }, [mode]);
 
@@ -247,10 +269,35 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
             borderRadius: "0.75rem",
             backgroundColor: "rgba(15, 23, 42, 0.9)",
             color: "#f8fafc",
-            fontWeight: 600
+            fontWeight: 600,
+            display: "flex",
+            alignItems: "center",
+            gap: "0.75rem",
+            boxShadow: "0 8px 24px rgba(15, 23, 42, 0.2)"
           }}
+          aria-live="polite"
         >
-          Loading map data...
+          <span>Loading map data...</span>
+          <div
+            style={{
+              width: 140,
+              height: 6,
+              borderRadius: 999,
+              backgroundColor: "rgba(248, 250, 252, 0.2)",
+              overflow: "hidden"
+            }}
+          >
+            <div
+              style={{
+                width: `${loadingProgress}%`,
+                height: "100%",
+                borderRadius: 999,
+                backgroundColor: "#38bdf8",
+                transition: "width 0.2s ease-out"
+              }}
+            />
+          </div>
+          <span>{loadingProgress}%</span>
         </div>
       )}
       <Map
