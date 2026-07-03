@@ -98,11 +98,13 @@ export default function Barchart({ filter }) {
     return <div className='text-whiteish'>Loading...</div>;
   }
 
-  const chartHeight = Math.max(320, chartData.labels.length * 48);
+  const chartHeight = Math.max(320, chartData.labels.length * 44);
 
   return (
-    <div style={{ height: `${chartHeight}px` }}>
-      <Bar data={data} options={options} redraw />
+    <div className='w-full overflow-auto md:overflow-visible md:max-h-none max-h-[70vh]'>
+      <div className='min-w-[640px]' style={{ height: `${chartHeight}px` }}>
+        <Bar data={data} options={options} redraw />
+      </div>
     </div>
   );
 }
