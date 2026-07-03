@@ -33,7 +33,7 @@ const ChartPage = () => {
             onClick={() => setShowFilter(!showFilter)}
           />
         </div>
-        <div className='bg-black/75 border-2 border-whiteish/30 rounded-xl p-4 mx-auto w-full h-96'>
+        <div className='bg-black/75 border-2 border-whiteish/30 rounded-xl p-4 mx-auto w-full min-h-96'>
           <Bar className='border border-white' filter={filter} />
         </div>
         <div className='bg-black/75 border-2 border-whiteish/30 rounded-xl p-4 mx-auto w-full h-auto'>
