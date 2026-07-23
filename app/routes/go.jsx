@@ -1,6 +1,6 @@
 import 'maplibre-gl/dist/maplibre-gl.css';
 import Map from "../components/Map.jsx";
-import Icons from "../components/Icons.jsx";
+import Sidebar from "../components/Sidebar.jsx";
 import {useEffect, useRef, useState} from "react";
 import {initialPosition, useMap} from "../contexts/MapContext.jsx";
 import {Link, useNavigate} from "react-router";
@@ -393,6 +393,7 @@ export default function Go(){
   }, []);
 
   return <>
+    <Sidebar />
     <div
       className={`${chosenRoute === undefined ? (!!fromTo && !!routes) ? "h-2/3" : "h-96" : "h-32"} go`}>
       {!fromTo ? <ChooseDestinations userPosition={userPosition} onDecision={async(from, to) => {
