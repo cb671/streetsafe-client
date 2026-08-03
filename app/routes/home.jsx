@@ -1,27 +1,28 @@
 import { useEffect, useMemo, useState } from "react";
-import 'maplibre-gl/dist/maplibre-gl.css';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { X } from 'lucide-react';
+import "maplibre-gl/dist/maplibre-gl.css";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { X } from "lucide-react";
 import { Pie } from "react-chartjs-2";
-import '@deck.gl/widgets/stylesheet.css';
+import "@deck.gl/widgets/stylesheet.css";
 import Icons from "../components/Icons.jsx";
 import { initialPosition, useMap } from "../contexts/MapContext.jsx";
 import { getHexData, getUserProfile } from "../api/api.js";
+import Sidebar from "../components/Sidebar.jsx";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const CRIME_LABELS = [
-  'Burglary',
-  'Personal Theft',
-  'Weapon Crime',
-  'Bicycle Theft',
-  'Damage',
-  'Robbery',
-  'Shoplifting',
-  'Violent Crime',
-  'Antisocial',
-  'Drugs',
-  'Vehicle Crime',
+  "Burglary",
+  "Personal Theft",
+  "Weapon Crime",
+  "Bicycle Theft",
+  "Damage",
+  "Robbery",
+  "Shoplifting",
+  "Violent Crime",
+  "Antisocial",
+  "Drugs",
+  "Vehicle Crime",
 ];
 
 export default function Home() {
@@ -39,7 +40,7 @@ export default function Home() {
 
         if (data.user && data.user.h3) {
           try {
-            const h3Module = await import('h3-js');
+            const h3Module = await import("h3-js");
             const [lat, lng] = h3Module.cellToLatLng(data.user.h3);
 
             pos.latitude = lat;
@@ -47,11 +48,14 @@ export default function Home() {
             pos.zoom = 12;
             pos.bearing = 0;
           } catch (importError) {
-            console.error('Failed to import h3-js or convert H3 to coordinates:', importError);
+            console.error(
+              "Failed to import h3-js or convert H3 to coordinates:",
+              importError,
+            );
           }
         }
       } catch (error) {
-        console.error('Failed to get user location:', error);
+        console.error("Failed to get user location:", error);
       }
 
       setLocation(pos);
@@ -125,8 +129,9 @@ export default function Home() {
 
   return (
     <>
+      <Sidebar />
       {isLoading && (
-        <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
+        <div className="fixed inset-0 z-[1050] pointer-events-none flex items-center justify-center">
           <div className="rounded-lg bg-black/80 text-white px-4 py-2 text-lg">
             Loading data...
           </div>
@@ -135,7 +140,7 @@ export default function Home() {
 
       {crimeData ? (
         <div
-          className="fixed bottom-0 left-0 w-[100vw] h-[60vh] bg-black/75 text-white backdrop-blur-2xl z-10 rounded-t-2xl overflow-y-auto"
+          className="fixed bottom-0 left-0 w-[100vw] h-[60vh] bg-black/75 text-white backdrop-blur-2xl z-[1000] rounded-t-2xl overflow-y-auto"
           role="dialog"
           aria-modal="true"
           aria-labelledby="crime-modal-title"
@@ -172,13 +177,13 @@ export default function Home() {
                     responsive: true,
                     plugins: {
                       legend: {
-                        position: 'right',
+                        position: "right",
                         labels: {
-                          color: '#fff',
+                          color: "#fff",
                           boxWidth: 20,
                           padding: 15,
                           usePointStyle: true,
-                          pointStyle: 'circle',
+                          pointStyle: "circle",
                         },
                       },
                     },
@@ -203,13 +208,25 @@ export default function Home() {
                   <div className="bg-blue-900/30 rounded-lg p-4 border border-blue-600/30">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                        <svg
+                          className="w-5 h-5 text-white"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                            clipRule="evenodd"
+                          />
                         </svg>
                       </div>
                       <div>
-                        <h3 className="font-semibold text-blue-300">Police Station</h3>
-                        <p className="text-sm text-gray-300">{crimeData.emergencyServices.police.name}</p>
+                        <h3 className="font-semibold text-blue-300">
+                          Police Station
+                        </h3>
+                        <p className="text-sm text-gray-300">
+                          {crimeData.emergencyServices.police.name}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -219,14 +236,26 @@ export default function Home() {
                   <div className="bg-red-900/30 rounded-lg p-4 border border-red-600/30">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
-                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" clipRule="evenodd" />
+                        <svg
+                          className="w-5 h-5 text-white"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"
+                            clipRule="evenodd"
+                          />
                         </svg>
                       </div>
                       <div>
                         <h3 className="font-semibold text-red-300">Hospital</h3>
-                        <p className="text-sm text-gray-300">{crimeData.emergencyServices.hospital.name}</p>
-                        <p className="text-xs text-gray-400">{crimeData.emergencyServices.hospital.type}</p>
+                        <p className="text-sm text-gray-300">
+                          {crimeData.emergencyServices.hospital.name}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          {crimeData.emergencyServices.hospital.type}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -235,7 +264,9 @@ export default function Home() {
             </div>
           )}
         </div>
-      ) : <Icons />}
+      ) : (
+        <Icons />
+      )}
     </>
   );
 }
