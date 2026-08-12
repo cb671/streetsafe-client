@@ -1,15 +1,20 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {Map, NavigationControl, ScaleControl, useControl} from 'react-map-gl/maplibre';
-import 'maplibre-gl/dist/maplibre-gl.css';
-import {H3HexagonLayer} from '@deck.gl/geo-layers';
-import {getTweenedColorHsl} from "../util/color.js";
-import {MapboxOverlay} from '@deck.gl/mapbox';
-import '@deck.gl/widgets/stylesheet.css';
-import {getMapData} from '../api/api.js';
-import {PathLayer, PointCloudLayer} from "@deck.gl/layers";
-import {COORDINATE_SYSTEM} from "@deck.gl/core";
-import {routeColors} from "../util/const.js";
-import {initialPosition} from "../contexts/MapContext.jsx";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Map,
+  NavigationControl,
+  ScaleControl,
+  useControl,
+} from "react-map-gl/maplibre";
+import "maplibre-gl/dist/maplibre-gl.css";
+import { H3HexagonLayer } from "@deck.gl/geo-layers";
+import { getTweenedColorHsl } from "../util/color.js";
+import { MapboxOverlay } from "@deck.gl/mapbox";
+import "@deck.gl/widgets/stylesheet.css";
+import { getMapData } from "../api/api.js";
+import { PathLayer, PointCloudLayer } from "@deck.gl/layers";
+import { COORDINATE_SYSTEM } from "@deck.gl/core";
+import { routeColors } from "../util/const.js";
+import { initialPosition } from "../contexts/MapContext.jsx";
 
 export const colorRange = [
   [1, 152, 189, 255],
@@ -20,7 +25,7 @@ export const colorRange = [
   [209, 55, 78, 255],
 ];
 
-function DeckGLOverlay(props){
+function DeckGLOverlay(props) {
   const overlay = useControl(() => new MapboxOverlay(props));
   overlay.setProps(props);
   return null;
@@ -30,13 +35,22 @@ const material = {
   ambient: 0.64,
   diffuse: 0.6,
   shininess: 32,
-  specularColor: [51, 51, 51]
+  specularColor: [51, 51, 51],
 };
 
-export default function MapComponent({onClick, mode, userPosition, position, bounds, routes, resolveMapRef, userLocation}){
+export default function MapComponent({
+  onClick,
+  mode,
+  userPosition,
+  position,
+  bounds,
+  routes,
+  resolveMapRef,
+  userLocation,
+}) {
   const [data, setData] = useState([]);
   const [geoPos, setGeoPos] = useState(userPosition);
-  const [mapPos, setMapPos] = useState(position || initialPosition); 
+  const [mapPos, setMapPos] = useState(position || initialPosition);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapDataLoaded, setMapDataLoaded] = useState(mode === "go");
   const [loadingProgress, setLoadingProgress] = useState(0);
@@ -46,8 +60,8 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
 
   const layers = [];
 
-  if(mode === "go"){
-    if(data.length === 0 || data[0].crime_factor !== undefined){
+  if (mode === "go") {
+    if (data.length === 0 || data[0].crime_factor !== undefined) {
       const routesLayer = new PathLayer({
         id: "routes",
         data,
@@ -60,12 +74,14 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
         capRounded: true,
         jointRounded: true,
         getColor: (d) => {
-          if(d.go) return routeColors[-1];
-          return routeColors[d.crime_factor].map((v, i) => i === 3 ? d.hidden ? 0 : v : d.active ? v : v / 3);
+          if (d.go) return routeColors[-1];
+          return routeColors[d.crime_factor].map((v, i) =>
+            i === 3 ? (d.hidden ? 0 : v) : d.active ? v : v / 3,
+          );
         },
         getPath: (d) => {
-          return d.routes[0].geometry.coordinates.map(c => {
-            return [c[0], c[1], d.go ? 0 : d.active ? 1 : 0]
+          return d.routes[0].geometry.coordinates.map((c) => {
+            return [c[0], c[1], d.go ? 0 : d.active ? 1 : 0];
           });
         },
       });
@@ -73,11 +89,11 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
       layers.push(routesLayer);
     }
 
-    if(geoPos){
+    if (geoPos) {
       const layer = new PointCloudLayer({
-        id: 'PointCloudLayer',
+        id: "PointCloudLayer",
         data: [
-          {"position": [0, 0, 0], "normal": [1, 1, 1], "color": [96, 165, 250]},
+          { position: [0, 0, 0], normal: [1, 1, 1], color: [96, 165, 250] },
         ],
 
         getColor: (d) => d.color,
@@ -85,29 +101,33 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
         getPosition: (d) => d.position,
         pointSize: 6,
         parameters: {
-          depthTest: false
+          depthTest: false,
         },
         coordinateOrigin: geoPos,
         coordinateSystem: COORDINATE_SYSTEM.METER_OFFSETS,
         material,
-        layerIndex: 1000
+        layerIndex: 1000,
       });
 
       layers.push(layer);
     }
-  }else{
+  } else {
     const layer = new H3HexagonLayer({
       id: "hexagons",
       data,
       pickable: true,
-      getHexagon: d => d[0],
-      getElevation: d => d[activeIdx],
-      getFillColor: d => getTweenedColorHsl(Math.min(1, Math.max(0, d[activeIdx] / 10)), colorRange),
+      getHexagon: (d) => d[0],
+      getElevation: (d) => d[activeIdx],
+      getFillColor: (d) =>
+        getTweenedColorHsl(
+          Math.min(1, Math.max(0, d[activeIdx] / 10)),
+          colorRange,
+        ),
       extruded: true,
       material,
 
       transitions: {
-        elevationScale: 1000
+        elevationScale: 1000,
       },
       opacity: 0.4,
       coverage: 0.8,
@@ -115,8 +135,8 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
       highlightColor: [255, 255, 255, 100],
       elevationScale: 250,
 
-      onClick: info => {
-        if(info.object){
+      onClick: (info) => {
+        if (info.object) {
           onClick && onClick(info.object);
         }
       },
@@ -133,7 +153,7 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
     setData([]);
     setLoadingProgress(0);
 
-    if(mode !== "go"){
+    if (mode !== "go") {
       setMapDataLoaded(false);
 
       progressTimer = window.setInterval(() => {
@@ -141,16 +161,16 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
       }, 140);
 
       const completeLoading = () => {
-        if(isCancelled) return;
+        if (isCancelled) return;
         setLoadingProgress(100);
         completeTimer = window.setTimeout(() => {
-          if(!isCancelled) setMapDataLoaded(true);
+          if (!isCancelled) setMapDataLoaded(true);
         }, 180);
       };
 
       getMapData()
-        .then(d => {
-          if(isCancelled) return;
+        .then((d) => {
+          if (isCancelled) return;
           setData(d);
           completeLoading();
         })
@@ -164,8 +184,8 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
 
     return () => {
       isCancelled = true;
-      if(progressTimer) window.clearInterval(progressTimer);
-      if(completeTimer) window.clearTimeout(completeTimer);
+      if (progressTimer) window.clearInterval(progressTimer);
+      if (completeTimer) window.clearTimeout(completeTimer);
     };
   }, [mode]);
 
@@ -174,42 +194,48 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
   }, [userPosition]);
 
   useEffect(() => {
-    if(!!bounds && mapRef.current) mapRef.current.fitBounds(bounds, {
-      padding: {bottom: (window.screen.availHeight / 3) * 2 + 32, top: 32, left: 32, right: 32},
-      pitch: 0
-    })
+    if (!!bounds && mapRef.current)
+      mapRef.current.fitBounds(bounds, {
+        padding: {
+          bottom: (window.screen.availHeight / 3) * 2 + 32,
+          top: 32,
+          left: 32,
+          right: 32,
+        },
+        pitch: 0,
+      });
   }, [bounds]);
 
   useEffect(() => {
-    if(!routes) return setData([]);
+    if (!routes) return setData([]);
     setData(routes);
   }, [routes]);
 
   const updateMapPos = (pos) => {
     if (!pos) return;
-    
-    const flyTo = {}
-    if(pos.longitude !== undefined || pos.latitude !== undefined){
+
+    const flyTo = {};
+    if (pos.longitude !== undefined || pos.latitude !== undefined) {
       flyTo.center = {
         lon: pos.longitude,
-        lat: pos.latitude
+        lat: pos.latitude,
       };
     }
-    if(pos.zoom !== undefined) flyTo.zoom = pos.zoom;
-    if(pos.pitch !== undefined) flyTo.pitch = pos.pitch;
-    if(pos.bearing !== undefined) flyTo.bearing = pos.bearing;
-    if(pos.offset) flyTo.offset = pos.offset;
+    if (pos.zoom !== undefined) flyTo.zoom = pos.zoom;
+    if (pos.pitch !== undefined) flyTo.pitch = pos.pitch;
+    if (pos.bearing !== undefined) flyTo.bearing = pos.bearing;
+    if (pos.offset) flyTo.offset = pos.offset;
 
     setLastFlight(pos);
 
-    if(mapRef.current.isMoving() || mapRef.current.isRotating()) return;
-    if(pos.direct) mapRef.current.jumpTo(flyTo);
+    if (mapRef.current.isMoving() || mapRef.current.isRotating()) return;
+    if (pos.direct) mapRef.current.jumpTo(flyTo);
     else mapRef.current.flyTo(flyTo);
-    if(pos.callback) pos.callback();
-  }
+    if (pos.callback) pos.callback();
+  };
 
   useEffect(() => {
-    if(mapLoaded && position) updateMapPos(position);
+    if (mapLoaded && position) updateMapPos(position);
     setMapPos(position || initialPosition);
   }, [position]);
 
@@ -218,21 +244,19 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
     updateMapPos(mapPos);
   }, [mapPos]);
 
-  useEffect(()=>{
+  useEffect(() => {
     resolveMapRef && resolveMapRef(mapRef?.current || false);
-  },[resolveMapRef]);
-
+  }, [resolveMapRef]);
 
   useEffect(() => {
     if (userLocation && mapRef.current && mapLoaded) {
       mapRef.current.flyTo({
         center: [userLocation.lng, userLocation.lat],
         zoom: 11,
-        duration: 2000
+        duration: 2000,
       });
     }
   }, [userLocation, mapLoaded]);
-
 
   const getInitialViewState = () => {
     if (userLocation) {
@@ -244,7 +268,6 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
         pitch: 0,
       };
     }
-    
 
     return {
       longitude: mapPos?.longitude ?? initialPosition.longitude,
@@ -256,7 +279,7 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
   };
 
   return (
-    <div style={{position: "relative"}}>
+    <div style={{ position: "relative" }}>
       {!mapDataLoaded && (
         <div
           style={{
@@ -273,7 +296,7 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
             display: "flex",
             alignItems: "center",
             gap: "0.75rem",
-            boxShadow: "0 8px 24px rgba(15, 23, 42, 0.2)"
+            boxShadow: "0 8px 24px rgba(15, 23, 42, 0.2)",
           }}
           aria-live="polite"
         >
@@ -284,7 +307,7 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
               height: 6,
               borderRadius: 999,
               backgroundColor: "rgba(248, 250, 252, 0.2)",
-              overflow: "hidden"
+              overflow: "hidden",
             }}
           >
             <div
@@ -293,15 +316,21 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
                 height: "100%",
                 borderRadius: 999,
                 backgroundColor: "#38bdf8",
-                transition: "width 0.2s ease-out"
+                transition: "width 0.2s ease-out",
               }}
             />
           </div>
           <span>{loadingProgress}%</span>
+
+          {loadingProgress >= 95 && (
+            <span>
+              Please do not refresh your browser, the data will load shortly
+            </span>
+          )}
         </div>
       )}
       <Map
-        style={{width: '100%', height: '100vh'}}
+        style={{ width: "100%", height: "100vh" }}
         mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
         initialViewState={getInitialViewState()}
         ref={mapRef}
@@ -311,13 +340,10 @@ export default function MapComponent({onClick, mode, userPosition, position, bou
         attributionControl={false}
         onLoad={onMapLoad}
       >
-        <DeckGLOverlay
-          layers={layers}
-          interleaved={false}
-        />
-        <NavigationControl/>
-        <ScaleControl position={"top-left"}/>
+        <DeckGLOverlay layers={layers} interleaved={false} />
+        <NavigationControl />
+        <ScaleControl position={"top-left"} />
       </Map>
     </div>
-  )
+  );
 }
