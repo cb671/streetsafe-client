@@ -1,106 +1,115 @@
-import { describe, it, expect, test, vi } from "vitest";
-import { register } from '../app/api/api.js';
-import { login } from '../app/api/api.js';
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render } from "vitest-browser-react";
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from "@vitest/browser/context";
+import { waitFor } from "@testing-library/react";
 import { createRoutesStub } from "react-router";
+import * as api from "../app/api/api.js";
 import Login from "../app/routes/login.jsx";
 import Register from "../app/routes/register.jsx";
 import AuthLayout from "../app/routes/auth.jsx";
 
-const RegistrationStub = createRoutesStub([
-    { path: "/register", Component: Register },
-])
+vi.mock("../app/api/api.js", { spy: true });
 
-describe("Register component works", () => {
+const AuthRoutes = createRoutesStub([
+  { path: "/", Component: () => <p>Home page</p> },
+  { path: "/login", Component: Login },
+  { path: "/register", Component: Register },
+]);
 
-    it("renders the registration form", () => {
+async function completeRegistrationForm() {
+  await userEvent.fill(document.querySelector('input[name="username"]'), "Bob");
+  await userEvent.fill(document.querySelector('input[name="email"]'), "bob@example.com");
+  await userEvent.fill(document.querySelector('input[name="password"]'), "password123");
+  await userEvent.fill(document.querySelector('input[name="postcode"]'), "N16 5JJ");
+}
 
-        const page = render(<RegistrationStub initialEntries={["/register"]}/>);
+beforeEach(() => vi.clearAllMocks());
 
-        const form = page.getByTestId("form");
+describe("Register", () => {
+  it("renders the registration form", () => {
+    const page = render(<AuthRoutes initialEntries={["/register"]} />);
+    expect(page.getByTestId("form")).toBeInTheDocument();
+  });
 
-        expect(form).toBeInTheDocument()
-
+  it("shows check-email guidance and does not navigate home", async () => {
+    api.register.mockResolvedValue({
+      message: "Registration successful. Please check your email.",
+      requiresEmailConfirmation: true,
+      confirmationEmailSent: true,
     });
+    const page = render(<AuthRoutes initialEntries={["/register"]} />);
 
+    await completeRegistrationForm();
+    await userEvent.click(page.getByRole("button", { name: "Submit" }));
 
-    it("submits the form when the submit button is clicked", async () => {
+    await waitFor(() => expect(api.register).toHaveBeenCalled());
+    expect(api.register).toHaveBeenCalledWith("Bob", "bob@example.com", "password123", "N16 5JJ");
+    await expect.element(page.getByRole("heading", { name: "Check your email" })).toBeInTheDocument();
+    expect(document.body.textContent).not.toContain("Home page");
+  });
 
-        vi.mock('../app/api/api.js', {spy: true});
-
-        const page = render(<RegistrationStub initialEntries={["/register"]} />);
-
-        const form = page.getByTestId("form");
-
-        await userEvent.fill(document.querySelector('input[name=username]'), 'bob@bob.com')
-        await userEvent.fill(document.querySelector('input[name=email]'), '   bob@bob.com')
-        await userEvent.fill(document.querySelector('input[name=password]'), 'bob@bob.com')
-        await userEvent.fill(document.querySelector('input[name=postcode]'), 'N16 5JJ')
-
-        await userEvent.click(document.querySelector('button[type=submit]'))
-
-        expect(register).toHaveBeenCalled()
+  it("offers a resend action when initial email delivery fails", async () => {
+    api.register.mockResolvedValue({
+      message: "Registration succeeded, but the email could not be sent.",
+      requiresEmailConfirmation: true,
+      confirmationEmailSent: false,
     });
+    const page = render(<AuthRoutes initialEntries={["/register"]} />);
 
-})
+    await completeRegistrationForm();
+    await userEvent.click(page.getByRole("button", { name: "Submit" }));
 
-const LoginStub = createRoutesStub([
-    { path: "/login", Component: Login },
-])
+    await expect.element(page.getByRole("button", { name: "Resend confirmation email" })).toBeInTheDocument();
+  });
 
-
-describe("Login component works", () => {
-
-    it("renders the login form", () => {
-
-        const page = render(<LoginStub initialEntries={["/login"]}/>);
-
-        const form = page.getByTestId("form");
-
-        expect(form).toBeInTheDocument()
-
+  it("resends confirmation to the registered email", async () => {
+    api.register.mockResolvedValue({
+      message: "Please check your email.",
+      requiresEmailConfirmation: true,
+      confirmationEmailSent: true,
     });
+    api.resendConfirmation.mockResolvedValue({ message: "A new confirmation email has been sent." });
+    const page = render(<AuthRoutes initialEntries={["/register"]} />);
 
+    await completeRegistrationForm();
+    await userEvent.click(page.getByRole("button", { name: "Submit" }));
+    await userEvent.click(page.getByRole("button", { name: "Resend confirmation email" }));
 
-    it("submits the form when the submit button is clicked", async () => {
+    await waitFor(() => expect(api.resendConfirmation).toHaveBeenCalledWith("bob@example.com"));
+    await expect.element(page.getByText("A new confirmation email has been sent.")).toBeInTheDocument();
+  });
+});
 
-        vi.mock('../app/api/api.js', {spy: true});
+describe("Login", () => {
+  it("submits email and password and navigates home", async () => {
+    api.login.mockResolvedValue({ message: "Login successful" });
+    const page = render(<AuthRoutes initialEntries={["/login"]} />);
 
-        const page = render(<LoginStub initialEntries={["/login"]} />);
+    await userEvent.fill(document.querySelector('input[name="username"]'), "bob@example.com");
+    await userEvent.fill(document.querySelector('input[name="password"]'), "password123");
+    await userEvent.click(page.getByRole("button", { name: "Submit" }));
 
-        const form = page.getByTestId("form");
+    await waitFor(() => expect(api.login).toHaveBeenCalledWith("bob@example.com", "password123"));
+    await expect.element(page.getByText("Home page")).toBeInTheDocument();
+  });
 
-        await userEvent.fill(document.querySelector('input[name=username]'), 'bob@bob.com')
-        await userEvent.fill(document.querySelector('input[name=password]'), 'bob@bob.com')
+  it("shows confirmation guidance when login rejects an unconfirmed email", async () => {
+    api.login.mockRejectedValue(new Error("Email address has not been confirmed"));
+    const page = render(<AuthRoutes initialEntries={["/login"]} />);
 
-        await userEvent.click(document.querySelector('button[type=submit]'))
+    await userEvent.fill(document.querySelector('input[name="username"]'), "bob@example.com");
+    await userEvent.fill(document.querySelector('input[name="password"]'), "password123");
+    await userEvent.click(page.getByRole("button", { name: "Submit" }));
 
-        expect(login).toHaveBeenCalled()
-    });
+    await expect.element(page.getByText("Email address has not been confirmed")).toBeInTheDocument();
+    await expect.element(page.getByText("Check your inbox for the confirmation link before signing in.")).toBeInTheDocument();
+  });
+});
 
-})
-
-
-
-const AuthLayoutStub = createRoutesStub([
-    {
-        path: "/auth",
-        Component: AuthLayout,
-    },
-])
-
-describe("Auth Layout parent component to login and registration works", () => {
-
-    it("renders Auth Layout component to child routes", () => {
-
-        const { getByTestId } = render(
-            <AuthLayoutStub initialEntries={["/auth"]} />
-        );
-
-        expect(getByTestId("authheading")).toBeInTheDocument()
-
-    });
-
-
-})
+describe("Auth layout", () => {
+  it("renders its heading", () => {
+    const AuthLayoutStub = createRoutesStub([{ path: "/auth", Component: AuthLayout }]);
+    const page = render(<AuthLayoutStub initialEntries={["/auth"]} />);
+    expect(page.getByTestId("authheading")).toBeInTheDocument();
+  });
+});

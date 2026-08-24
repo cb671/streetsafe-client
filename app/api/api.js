@@ -70,30 +70,13 @@ export async function confirmEmail(token) {
   return data;
 }
 
-export async function confirmEmail(token) {
-  const response = await fetch(
-    `${API_ROOT}/auth/confirm-email?token=${encodeURIComponent(token)}`,
-    {
-      method: "GET",
-      credentials: "include",
-    },
-  );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.error || data.message || "Email confirmation failed");
-  }
-
-  return data;
-}
-
 export async function resendConfirmation(email) {
   const response = await fetch(`${API_ROOT}/auth/resend-confirmation`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
     body: JSON.stringify({ email }),
   });
 

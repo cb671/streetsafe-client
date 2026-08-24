@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { register } from "../api/api.js";
+import { Link } from "react-router";
+import { register, resendConfirmation } from "../api/api.js";
 
 export default function Register() {
   const [registrationResult, setRegistrationResult] = useState(null);
@@ -8,6 +9,8 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [postcode, setPostcode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [resendMessage, setResendMessage] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
@@ -28,6 +31,21 @@ export default function Register() {
     }
   };
 
+  const handleResend = async () => {
+    setIsResending(true);
+    setError("");
+    setResendMessage("");
+
+    try {
+      const data = await resendConfirmation(email);
+      setResendMessage(data.message);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsResending(false);
+    }
+  };
+
   if (registrationResult) {
     return (
       <div className="text-center">
@@ -39,7 +57,19 @@ export default function Register() {
           We sent a confirmation link to {email}.
         </p>
 
-        <Link to="/login" className="mt-4 inline-block underline">
+        <button
+          type="button"
+          onClick={handleResend}
+          disabled={isResending}
+          className="mt-4 rounded-full bg-gray-500 px-4 py-2 font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {isResending ? "Resending..." : "Resend confirmation email"}
+        </button>
+
+        {resendMessage && <p className="mt-3">{resendMessage}</p>}
+        {error && <p className="mt-3 text-red-500">{error}</p>}
+
+        <Link to="/login" className="mt-4 block underline">
           Go to login
         </Link>
       </div>

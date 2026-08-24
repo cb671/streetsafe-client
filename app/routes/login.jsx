@@ -83,6 +83,11 @@ export default function Login() {
       </form>
 
       {error && <div className="text-center text-red-500">{error}</div>}
+      {error.toLowerCase().includes("confirm") && (
+        <p className="mt-3 text-center text-sm text-gray-500">
+          Check your inbox for the confirmation link before signing in.
+        </p>
+      )}
 
       <p className="mt-6 text-center text-sm text-gray-500">Forgot password?</p>
 
