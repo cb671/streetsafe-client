@@ -16,7 +16,7 @@ const Icons = ({page}) => {
 
   return (
     <div
-      className={`fixed bottom-0 left-0 z-[1000] flex w-full justify-center gap-10 rounded-t-lg bg-darkgrey p-2 text-center text-whiteish fill-whiteish pointer-events-auto`}
+      className={`fixed bottom-0 left-0 z-[1000] flex w-full justify-center gap-10 rounded-t-lg bg-darkgrey p-2 text-center text-whiteish fill-whiteish pointer-events-auto md:hidden`}
       data-testid={"nav-icons"}
     >
       {navItems.map(({to, label, Icon}) => (

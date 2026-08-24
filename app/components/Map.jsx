@@ -330,7 +330,7 @@ export default function MapComponent({
         </div>
       )}
       <Map
-        style={{ width: "100%", height: "100vh" }}
+        className="streetsafe-map"
         mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
         initialViewState={getInitialViewState()}
         ref={mapRef}

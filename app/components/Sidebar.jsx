@@ -1,126 +1,140 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
-  LandPlot,
   ChartPie,
   GraduationCap,
   Home,
-  Menu,
-  X,
+  LandPlot,
   LogIn,
   LogOut,
+  Menu,
+  X,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router";
 import { logout } from "../api/api.js";
 import "../app.css";
 
+const navItems = [
+  { to: "/", icon: Home, label: "Home" },
+  { to: "/go", icon: LandPlot, label: "Go" },
+  { to: "/trends", icon: ChartPie, label: "Trends" },
+  { to: "/learn", icon: GraduationCap, label: "Learn" },
+  { to: "/login", icon: LogIn, label: "Login" },
+];
+
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-
-  const navItems = [
-    { to: "/", icon: Home, label: "Home" },
-    { to: "/go", icon: LandPlot, label: "Go" },
-    { to: "/trends", icon: ChartPie, label: "Trends" },
-    { to: "/learn", icon: GraduationCap, label: "Learn" },
-    { to: "/login", icon: LogIn, label: "Login" },
-  ];
+  const menuButtonRef = useRef(null);
 
   const isActive = (path) => location.pathname === path;
 
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+        menuButtonRef.current?.focus();
+      }
+    };
+
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [isOpen]);
 
   const handleLogout = async () => {
     try {
       await logout();
-      setIsOpen(false);
-      navigate("/login");
     } catch (error) {
       console.error("Logout failed:", error);
+    } finally {
       setIsOpen(false);
       navigate("/login");
     }
   };
 
+  const navigationLinks = (mobile = false) =>
+    navItems.map(({ to, icon: Icon, label }) => (
+      <li key={to}>
+        <Link
+          to={to}
+          aria-current={isActive(to) ? "page" : undefined}
+          className={`flex items-center gap-2 rounded-lg font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300 ${
+            mobile ? "px-4 py-3" : "px-4 py-2"
+          } ${
+            isActive(to)
+              ? "bg-blue-500 text-white shadow-sm"
+              : "text-whiteish/75 hover:bg-grey/60 hover:text-whiteish"
+          }`}
+        >
+          <Icon size={18} aria-hidden="true" />
+          <span>{label}</span>
+        </Link>
+      </li>
+    ));
+
   return (
-    <>
-      <button
-        onClick={toggleSidebar}
-        className="fixed bottom-24 left-4 z-[1100] bg-darkgrey border border-whiteish/10 rounded-xl p-3 text-whiteish hover:bg-grey/60 transition-all duration-300 shadow-lg backdrop-blur"
+    <header className="sticky top-0 z-[1100] border-b border-whiteish/10 bg-darkgrey text-whiteish shadow-lg backdrop-blur-xl">
+      <div className="flex min-h-16 items-center justify-between px-4 md:px-6">
+        <Link
+          to="/"
+          className="rounded-md font-heading text-3xl tracking-wide focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-300"
+          aria-label="StreetSafe home"
+        >
+          StreetSafe
+        </Link>
+
+        <button
+          ref={menuButtonRef}
+          type="button"
+          onClick={() => setIsOpen((open) => !open)}
+          className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-whiteish/15 text-whiteish transition-colors hover:bg-grey/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300 md:hidden"
+          aria-label={isOpen ? "Close navigation" : "Open navigation"}
+          aria-expanded={isOpen}
+          aria-controls="mobile-navigation"
+        >
+          {isOpen ? <X size={22} aria-hidden="true" /> : <Menu size={22} aria-hidden="true" />}
+        </button>
+      </div>
+
+      <nav
+        className="hidden min-h-12 items-center border-t border-whiteish/10 px-6 md:flex"
+        aria-label="Primary navigation"
       >
-        {isOpen ? <X size={20} /> : <Menu size={20} />}
-      </button>
+        <ul className="flex items-center gap-1">{navigationLinks()}</ul>
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="ml-auto flex items-center gap-2 rounded-lg px-4 py-2 font-medium text-whiteish/75 transition-colors hover:bg-red-500/20 hover:text-whiteish focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300"
+        >
+          <LogOut size={18} aria-hidden="true" />
+          <span>Logout</span>
+        </button>
+      </nav>
 
       {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-[1040] backdrop-blur-sm"
-          onClick={toggleSidebar}
-        />
-      )}
-
-      <div
-        className={`fixed left-0 top-0 h-full w-64 bg-darkgrey border-r border-whiteish/10 z-[1050] flex flex-col transform transition-transform duration-300 ease-in-out ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <div className="p-6 border-b border-whiteish/10">
-          <h1 className="text-2xl font-heading text-whiteish">StreetSafe</h1>
-          <p className="text-xs text-whiteish/60 mt-1">
-            Stay informed. Stay safe.
-          </p>
-        </div>
-
-        <nav className="flex-1 p-4">
-          <ul className="space-y-2">
-            {navItems.map((item) => {
-              const IconComponent = item.icon;
-              return (
-                <li key={item.to}>
-                  <Link
-                    to={item.to}
-                    onClick={() => setIsOpen(false)}
-                    className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 group ${
-                      isActive(item.to)
-                        ? "bg-blue-500 text-white shadow-lg"
-                        : "text-whiteish/70 hover:text-whiteish hover:bg-grey/60"
-                    }`}
-                  >
-                    <IconComponent
-                      size={20}
-                      className={`transition-transform duration-300 ${
-                        isActive(item.to)
-                          ? "scale-110"
-                          : "group-hover:scale-105"
-                      }`}
-                    />
-                    <span className="font-medium">{item.label}</span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-
-        <div className="p-4 border-t border-whiteish/10 space-y-2">
+        <nav
+          id="mobile-navigation"
+          className="border-t border-whiteish/10 p-3 md:hidden"
+          aria-label="Mobile navigation"
+        >
+          <ul className="space-y-1">{navigationLinks(true)}</ul>
           <button
+            type="button"
             onClick={handleLogout}
-            className="flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 group w-full text-whiteish/70 hover:text-whiteish hover:bg-red-500/20"
+            className="mt-1 flex w-full items-center gap-2 rounded-lg px-4 py-3 font-medium text-whiteish/75 transition-colors hover:bg-red-500/20 hover:text-whiteish focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300"
           >
-            <LogOut
-              size={20}
-              className="transition-transform duration-300 group-hover:scale-105"
-            />
-            <span className="font-medium">Logout</span>
+            <LogOut size={18} aria-hidden="true" />
+            <span>Logout</span>
           </button>
-
-          <div className="text-xs text-whiteish/40 text-center">
-            (c) 2025 StreetSafe
-          </div>
-        </div>
-      </div>
-    </>
+        </nav>
+      )}
+    </header>
   );
 };
 
