@@ -1,56 +1,111 @@
-import { dev } from '../util/const.js';
+import { dev } from "../util/const.js";
 
 const configuredApiUrl = import.meta.env.VITE_API_URL?.trim();
-const DEFAULT_PROD_API_URL = 'https://streetsafe-z3mu.onrender.com/api';
-const API_ROOT = (configuredApiUrl || (dev ? '/api' : DEFAULT_PROD_API_URL)).replace(
-  /\/+$/,
-  ''
-);
+const DEFAULT_PROD_API_URL = "https://streetsafe-z3mu.onrender.com/api";
+const API_ROOT = (
+  configuredApiUrl || (dev ? "/api" : DEFAULT_PROD_API_URL)
+).replace(/\/+$/, "");
 
 export function getMapData() {
-  return fetch(API_ROOT + '/map').then((r) => r.json());
+  return fetch(API_ROOT + "/map").then((r) => r.json());
 }
 
 export function getLineChartData(filter) {
   const search = filterParamsBuilder(filter);
-  return fetch(API_ROOT + '/graphs/trends?' + search.toString()).then((r) =>
-    r.json()
+  return fetch(API_ROOT + "/graphs/trends?" + search.toString()).then((r) =>
+    r.json(),
   );
 }
 
 export function getBarChartData(filter) {
   const search = filterParamsBuilder(filter);
-  return fetch(API_ROOT + '/graphs/totals?' + search.toString()).then((r) =>
-    r.json()
+  return fetch(API_ROOT + "/graphs/totals?" + search.toString()).then((r) =>
+    r.json(),
   );
 }
 
 export async function login(email, password) {
-  const response = await fetch(API_ROOT + '/auth/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
+  const response = await fetch(API_ROOT + "/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({ email, password }),
   });
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Login failed');
+    throw new Error(error.error || "Login failed");
   }
   return response.json();
 }
 
 export async function register(name, email, password, postcode) {
-  const response = await fetch(API_ROOT + '/auth/register', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
+  const response = await fetch(API_ROOT + "/auth/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({ name, email, password, postcode }),
   });
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.error || 'Register failed');
+    throw new Error(error.error || "Register failed");
   }
   return response.json();
+}
+
+export async function confirmEmail(token) {
+  const response = await fetch(
+    `${API_ROOT}/auth/confirm-email?token=${encodeURIComponent(token)}`,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || data.message || "Email confirmation failed");
+  }
+
+  return data;
+}
+
+export async function confirmEmail(token) {
+  const response = await fetch(
+    `${API_ROOT}/auth/confirm-email?token=${encodeURIComponent(token)}`,
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || data.message || "Email confirmation failed");
+  }
+
+  return data;
+}
+
+export async function resendConfirmation(email) {
+  const response = await fetch(`${API_ROOT}/auth/resend-confirmation`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data.error || data.message || "Unable to resend confirmation email",
+    );
+  }
+
+  return data;
 }
 
 export async function getHexData(h3) {
@@ -59,9 +114,9 @@ export async function getHexData(h3) {
 
 export async function calculateRoutes(from, to) {
   return fetch(`${API_ROOT}/go`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify([from, to]),
   })
@@ -71,11 +126,11 @@ export async function calculateRoutes(from, to) {
 
 export async function searchLocation(query, bias) {
   return fetch(
-    `${API_ROOT}/go/search?q=${encodeURIComponent(query)}${bias ? '&bias=' + bias.longitude + ',' + bias.latitude : ''}`,
+    `${API_ROOT}/go/search?q=${encodeURIComponent(query)}${bias ? "&bias=" + bias.longitude + "," + bias.latitude : ""}`,
     {
-      method: 'POST',
-      credentials: 'include',
-    }
+      method: "POST",
+      credentials: "include",
+    },
   )
     .then((r) => r.json())
     .catch((err) => ({ message: err.toString() }));
@@ -83,8 +138,8 @@ export async function searchLocation(query, bias) {
 
 export async function geocode(place) {
   return fetch(`${API_ROOT}/go/geocode?place=${encodeURIComponent(place)}`, {
-    method: 'POST',
-    credentials: 'include',
+    method: "POST",
+    credentials: "include",
   })
     .then((r) => r.json())
     .catch((err) => ({ message: err.toString() }));
@@ -92,42 +147,42 @@ export async function geocode(place) {
 
 export async function reverseGeo(lon, lat) {
   return fetch(`${API_ROOT}/go/reverse`, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify([lon, lat]),
-    credentials: 'include',
+    credentials: "include",
   })
     .then((r) => r.json())
     .catch((err) => ({ message: err.toString() }));
 }
 export function getEducationalResources(personalised = true) {
   const url = personalised
-    ? API_ROOT + '/educational'
-    : API_ROOT + '/educational?personalised=false';
+    ? API_ROOT + "/educational"
+    : API_ROOT + "/educational?personalised=false";
 
   return fetch(url, {
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
-    credentials: 'include',
+    credentials: "include",
   }).then((r) => r.json());
 }
 
 export function getEducationalResourcesByCrimeType(crimeType) {
   return fetch(API_ROOT + `/educational/crime-type/${crimeType}`, {
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
-    credentials: 'include',
+    credentials: "include",
   }).then((r) => r.json());
 }
 
 export function getPieChartData(filter) {
   const search = filterParamsBuilder(filter);
-  return fetch(API_ROOT + '/graphs/proportions?' + search.toString()).then(
-    (r) => r.json()
+  return fetch(API_ROOT + "/graphs/proportions?" + search.toString()).then(
+    (r) => r.json(),
   );
 }
 function filterParamsBuilder({
@@ -138,50 +193,50 @@ function filterParamsBuilder({
   crimeTypes,
 }) {
   const search = new URLSearchParams();
-  if (startDate) search.set('startDate', startDate);
-  if (endDate) search.set('endDate', endDate);
-  if (location) search.set('location', location);
-  if (radius) search.set('radius', radius);
+  if (startDate) search.set("startDate", startDate);
+  if (endDate) search.set("endDate", endDate);
+  if (location) search.set("location", location);
+  if (radius) search.set("radius", radius);
   if (crimeTypes && Array.isArray(crimeTypes) && crimeTypes.length > 0) {
-    crimeTypes.forEach((type) => search.append('crimeTypes', type));
+    crimeTypes.forEach((type) => search.append("crimeTypes", type));
   }
   return search;
 }
 
 export function getUserProfile() {
-  return fetch(API_ROOT + '/auth/profile', {
-    credentials: 'include',
+  return fetch(API_ROOT + "/auth/profile", {
+    credentials: "include",
   })
     .then((r) => {
       if (r.ok) {
         return r.json();
       } else {
-        throw new Error('User not authenticated');
+        throw new Error("User not authenticated");
       }
     })
     .catch((err) => {
-      console.error('Failed to fetch user profile:', err);
+      console.error("Failed to fetch user profile:", err);
       throw err;
     });
 }
 
 export const logout = async () => {
   try {
-    const response = await fetch(API_ROOT + '/auth/logout', {
-      method: 'POST',
+    const response = await fetch(API_ROOT + "/auth/logout", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      credentials: 'include',
+      credentials: "include",
     });
 
     if (!response.ok) {
-      throw new Error('Logout failed');
+      throw new Error("Logout failed");
     }
 
     return await response.json();
   } catch (error) {
-    console.error('Logout error:', error);
+    console.error("Logout error:", error);
     throw error;
   }
 };
