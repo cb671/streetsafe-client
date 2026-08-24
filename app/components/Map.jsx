@@ -215,11 +215,9 @@ export default function MapComponent({
     if (!pos) return;
 
     const flyTo = {};
-    if (pos.longitude !== undefined || pos.latitude !== undefined) {
-      flyTo.center = {
-        lon: pos.longitude,
-        lat: pos.latitude,
-      };
+
+    if (pos.longitude !== undefined && pos.latitude !== undefined) {
+      flyTo.center = [pos.longitude, pos.latitude];
     }
     if (pos.zoom !== undefined) flyTo.zoom = pos.zoom;
     if (pos.pitch !== undefined) flyTo.pitch = pos.pitch;
@@ -240,6 +238,14 @@ export default function MapComponent({
   }, [position]);
 
   const onMapLoad = useCallback(() => {
+    const center = mapRef.current?.getCenter();
+
+    console.log("Map loaded:", {
+      center,
+      mapPos,
+      zoom: mapRef.current?.getZoom(),
+    });
+
     setMapLoaded(true);
     updateMapPos(mapPos);
   }, [mapPos]);
@@ -279,7 +285,9 @@ export default function MapComponent({
   };
 
   return (
-    <div style={{ position: "relative" }}>
+    <div className="streetsafe-map" style={{ position: "relative" }}>
+      {/* Loading indicator */}
+
       {!mapDataLoaded && (
         <div
           style={{
@@ -330,7 +338,7 @@ export default function MapComponent({
         </div>
       )}
       <Map
-        className="streetsafe-map"
+        style={{ width: "100%", height: "100%" }}
         mapStyle="https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
         initialViewState={getInitialViewState()}
         ref={mapRef}
@@ -340,7 +348,7 @@ export default function MapComponent({
         attributionControl={false}
         onLoad={onMapLoad}
       >
-        <DeckGLOverlay layers={layers} interleaved={false} />
+        <DeckGLOverlay layers={mapLoaded ? layers : []} interleaved={false} />
         <NavigationControl />
         <ScaleControl position={"top-left"} />
       </Map>
