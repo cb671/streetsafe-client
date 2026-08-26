@@ -8,6 +8,7 @@ import Icons from "../components/Icons.jsx";
 import { initialPosition, useMap } from "../contexts/MapContext.jsx";
 import { getHexData, getUserProfile } from "../api/api.js";
 import Sidebar from "../components/Sidebar.jsx";
+import { getHexagonLocationLabel } from "../util/locationLabel.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -68,7 +69,7 @@ export default function Home() {
     try {
       setIsLoading(true);
       const data = await getHexData(info[0]);
-      setCrimeData(data);
+      setCrimeData({ ...data, h3: data.h3 || info[0] });
     } catch (err) {
       console.error("Failed to fetch crime data", err);
     } finally {
@@ -160,7 +161,7 @@ export default function Home() {
 
           {crimeData && (
             <h1 className="text-center m-4 text-2xl font-bold">
-              {crimeData.name}
+              {getHexagonLocationLabel(crimeData)}
             </h1>
           )}
 
