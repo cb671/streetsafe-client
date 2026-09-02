@@ -7,6 +7,9 @@ export default [
   ]),
   route("/learn", "routes/learn.jsx"),
   route("/trends", "routes/ChartPage.jsx"),
+
+  layout("routes/protected.jsx", [route("/dashboard", "routes/dashboard.jsx")]),
+
   layout("routes/auth.jsx", [
     route("/login", "routes/login.jsx"),
     route("/register", "routes/register.jsx"),

@@ -7,7 +7,6 @@ import "@deck.gl/widgets/stylesheet.css";
 import Icons from "../components/Icons.jsx";
 import { initialPosition, useMap } from "../contexts/MapContext.jsx";
 import { getHexData, getUserProfile } from "../api/api.js";
-import Sidebar from "../components/Sidebar.jsx";
 import { getHexagonLocationLabel } from "../util/locationLabel.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -130,15 +129,6 @@ export default function Home() {
 
   return (
     <>
-      <Sidebar />
-      {isLoading && (
-        <div className="fixed inset-0 z-[1050] pointer-events-none flex items-center justify-center">
-          <div className="rounded-lg bg-black/80 text-white px-4 py-2 text-lg">
-            Loading data...
-          </div>
-        </div>
-      )}
-
       {crimeData ? (
         <div
           className="fixed bottom-0 left-0 w-[100vw] h-[60vh] bg-black/75 text-white backdrop-blur-2xl z-[1000] rounded-t-2xl overflow-y-auto"

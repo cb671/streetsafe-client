@@ -5,10 +5,10 @@ import {
   GraduationCap,
   Home,
   LandPlot,
+  LayoutDashboard,
   LogIn,
   LogOut,
   Menu,
-  User,
   UserRound,
   X,
 } from "lucide-react";
@@ -171,6 +171,7 @@ const Sidebar = () => {
             }`}
           />
         </button>
+
         {isProfileOpen && (
           <div
             role="menu"
@@ -191,27 +192,45 @@ const Sidebar = () => {
             </div>
 
             {user ? (
-              <button
-                type="button"
-                role="menuitem"
-                onClick={handleLogout}
-                className="mt-1 flex w-full items-center gap-2 rounded-lg px-3 py-2
-              text-left font-medium text-whiteish/75 transition-colors
-              hover:bg-red-500/20 hover:text-whiteish
-              focus-visible:outline-2 focus-visible:outline-blue-300"
-              >
-                <LogOut size={18} aria-hidden="true" />
-                <span>Logout</span>
-              </button>
+              <>
+                <Link
+                  to="/dashboard"
+                  role="menuitem"
+                  aria-current={isActive("/dashboard") ? "page" : undefined}
+                  className={`mt-1 flex w-full items-center gap-2 rounded-lg px-3 py-2
+                  font-medium transition-colors
+                  focus-visible:outline-2 focus-visible:outline-blue-300 ${
+                    isActive("/dashboard")
+                      ? "bg-blue-500 text-white"
+                      : "text-whiteish/75 hover:bg-grey/60 hover:text-whiteish"
+                  }`}
+                >
+                  <LayoutDashboard size={18} aria-hidden="true" />
+                  <span>Dashboard</span>
+                </Link>
+
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={handleLogout}
+                  className="mt-1 flex w-full items-center gap-2 rounded-lg px-3 py-2
+                text-left font-medium text-whiteish/75 transition-colors
+                hover:bg-grey/60 hover:text-whiteish
+                focus-visible:outline-2 focus-visible:outline-blue-300"
+                >
+                  <LogOut size={18} aria-hidden="true" />
+                  <span>Logout</span>
+                </button>
+              </>
             ) : (
               <>
                 <Link
                   to="/login"
                   role="menuitem"
-                  className="mt-1 flex w-full items-center gap-2 rounded-lg px-3 py-2
-                font-medium text-whiteish/75 transition-colors
-                hover:bg-grey/60 hover:text-whiteish
-                focus-visible:outline-2 focus-visible:outline-blue-300"
+                  className="mt-1 flex w-full items-center gap-2 rounded-lg px-3 py-2 
+                  font-medium text-whiteish/75 transition-colors
+                  hover:bg-grey/60 hover:text-whiteish
+                  focus-visible:outline-2 focus-visible:outline-blue-300"
                 >
                   <LogIn size={18} aria-hidden="true" />
                   <span>Login</span>

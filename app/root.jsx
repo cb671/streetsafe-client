@@ -1,3 +1,5 @@
+import Sidebar from "./components/Sidebar";
+
 import {
   isRouteErrorResponse,
   Links,
@@ -41,7 +43,12 @@ export function Layout({ children }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <>
+      <Sidebar />
+      <Outlet />
+    </>
+  );
 }
 
 export function ErrorBoundary({ error }) {

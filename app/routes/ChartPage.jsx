@@ -1,19 +1,18 @@
-import Bar from '../components/BarChart';
-import PieChart from '../components/PieChart';
-import LineChart from '../components/LineChart';
-import { ListFilter } from 'lucide-react';
-import '../app.css';
-import TrendFilter from '../components/TrendFilter';
-import { useState } from 'react';
-import Sidebar from '../components/Sidebar';
+import Bar from "../components/BarChart";
+import PieChart from "../components/PieChart";
+import LineChart from "../components/LineChart";
+import { ListFilter } from "lucide-react";
+import "../app.css";
+import TrendFilter from "../components/TrendFilter";
+import { useState } from "react";
 
 const ChartPage = () => {
   const [showFilter, setShowFilter] = useState(false);
   const [filter, setFilter] = useState({
-    startDate: '',
-    location: '',
-    radius: '',
-    groupBy: 'year',
+    startDate: "",
+    location: "",
+    radius: "",
+    groupBy: "year",
     crimeTypes: [],
   });
 
@@ -24,22 +23,30 @@ const ChartPage = () => {
   };
   return (
     <>
-      <Sidebar />
-      <div className='relative min-h-full px-4 pb-4 flex flex-col gap-4 text-whiteish'>
-        <div className='shrink-0 bg-black/75 text-whiteish flex justify-end border-2 border-whiteish/30 rounded-xl p-4 mx-auto w-full'>
-          <ListFilter
+      <div className="relative min-h-full px-4 pb-4 flex flex-col gap-4 text-whiteish">
+        <div className="shrink-0 bg-black/75 text-whiteish flex justify-end border-2 border-whiteish/30 rounded-xl p-4 mx-auto w-full">
+          <button
+            type="button"
             data-testid="list-filter"
-            style={{ cursor: 'pointer' }}
-            onClick={() => setShowFilter(!showFilter)}
-          />
+            onClick={() => setShowFilter(true)}
+            className="flex items-center gap-2 rounded-lg px-3 py-2
+            text-whiteish/75 transition-colors
+            hover:bg-grey/60 hover:text-whiteish
+            focus-visible:outline-2 focus-visible:outline-blue-300"
+            aria-haspopup="dialog"
+            aria-expanded={showFilter}
+          >
+            <ListFilter size={20} aria-hidden="true" />
+            <span>Click to filter crime trends</span>
+          </button>
         </div>
-        <div className='shrink-0 bg-black/75 border-2 border-whiteish/30 rounded-xl p-4 mx-auto w-full min-h-96 overflow-hidden'>
-          <Bar className='border border-white' filter={filter} />
+        <div className="shrink-0 bg-black/75 border-2 border-whiteish/30 rounded-xl p-4 mx-auto w-full min-h-96 overflow-hidden">
+          <Bar className="border border-white" filter={filter} />
         </div>
-        <div className='shrink-0 bg-black/75 border-2 border-whiteish/30 rounded-xl p-4 mx-auto w-full h-auto'>
+        <div className="shrink-0 bg-black/75 border-2 border-whiteish/30 rounded-xl p-4 mx-auto w-full h-auto">
           <PieChart filter={filter} />
         </div>
-        <div className='shrink-0 bg-black/75 border-2 border-whiteish/30 rounded-xl p-4 mx-auto w-full'>
+        <div className="shrink-0 bg-black/75 border-2 border-whiteish/30 rounded-xl p-4 mx-auto w-full">
           <LineChart filter={filter} />
         </div>
         {showFilter && (

@@ -1,6 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { ArrowRight, BookOpen, ChevronDown, MapPin, Search, X } from 'lucide-react';
-import Sidebar from "../components/Sidebar.jsx";
+import React, { useEffect, useState } from "react";
+import {
+  ArrowRight,
+  BookOpen,
+  ChevronDown,
+  MapPin,
+  Search,
+  X,
+} from "lucide-react";
 import {
   getEducationalResources,
   getEducationalResourcesByCrimeType,
@@ -13,7 +19,7 @@ export default function Learn() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showPersonalised, setShowPersonalised] = useState(true);
-  const [selectedCrimeType, setSelectedCrimeType] = useState('all');
+  const [selectedCrimeType, setSelectedCrimeType] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -31,22 +37,22 @@ export default function Learn() {
   }, []);
 
   const crimeTypes = [
-    { value: 'all', label: 'All Crime Types' },
-    { value: 'violent', label: 'Violent Crime' },
-    { value: 'burglary', label: 'Burglary' },
-    { value: 'personal_theft', label: 'Personal Theft' },
-    { value: 'anti_social', label: 'Anti Social Behaviour' },
-    { value: 'damage', label: 'Criminal Damage' },
-    { value: 'shoplifting', label: 'Shoplifting' },
-    { value: 'robbery', label: 'Robbery' },
-    { value: 'vehicle_crime', label: 'Vehicle Crime' },
-    { value: 'drugs', label: 'Drug Offences' },
-    { value: 'sexual_offences', label: 'Sexual Offences' },
-    { value: 'weapon_crime', label: 'Weapon Crime' },
-    { value: 'bicycle_theft', label: 'Bicycle Theft' },
+    { value: "all", label: "All Crime Types" },
+    { value: "violent", label: "Violent Crime" },
+    { value: "burglary", label: "Burglary" },
+    { value: "personal_theft", label: "Personal Theft" },
+    { value: "anti_social", label: "Anti Social Behaviour" },
+    { value: "damage", label: "Criminal Damage" },
+    { value: "shoplifting", label: "Shoplifting" },
+    { value: "robbery", label: "Robbery" },
+    { value: "vehicle_crime", label: "Vehicle Crime" },
+    { value: "drugs", label: "Drug Offences" },
+    { value: "sexual_offences", label: "Sexual Offences" },
+    { value: "weapon_crime", label: "Weapon Crime" },
+    { value: "bicycle_theft", label: "Bicycle Theft" },
   ];
 
-  const fetchResources = async (personalised = true, crimeType = 'all') => {
+  const fetchResources = async (personalised = true, crimeType = "all") => {
     try {
       setIsLoading(true);
       setError(null);
@@ -56,7 +62,7 @@ export default function Learn() {
         personalised = false;
       }
 
-      if (!personalised && crimeType !== 'all') {
+      if (!personalised && crimeType !== "all") {
         data = await getEducationalResourcesByCrimeType(crimeType);
       } else {
         data = await getEducationalResources(personalised);
@@ -65,7 +71,7 @@ export default function Learn() {
       setResources(data.resources || []);
       setPersonalisation(data.personalisation || null);
     } catch (err) {
-      console.error('Error fetching educational resources:', err);
+      console.error("Error fetching educational resources:", err);
       setError(err.message);
     } finally {
       setIsLoading(false);
@@ -77,40 +83,40 @@ export default function Learn() {
   }, [showPersonalised, selectedCrimeType, isLoggedIn]);
 
   useEffect(() => {
-    if (showPersonalised && selectedCrimeType !== 'all') {
-      setSelectedCrimeType('all');
+    if (showPersonalised && selectedCrimeType !== "all") {
+      setSelectedCrimeType("all");
     }
   }, [showPersonalised, selectedCrimeType]);
 
   const getTypeColor = (type) => {
     switch (type) {
-      case 'guide':
-        return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
-      case 'article':
-        return 'bg-sky-500/20 text-sky-300 border-sky-500/30';
-      case 'video':
-        return 'bg-gray-500/20 text-gray-300 border-gray-500/30';
-      case 'tool':
-        return 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30';
+      case "guide":
+        return "bg-blue-500/20 text-blue-300 border-blue-500/30";
+      case "article":
+        return "bg-sky-500/20 text-sky-300 border-sky-500/30";
+      case "video":
+        return "bg-gray-500/20 text-gray-300 border-gray-500/30";
+      case "tool":
+        return "bg-cyan-500/20 text-cyan-300 border-cyan-500/30";
       default:
-        return 'bg-gray-500/20 text-gray-300 border-gray-500/30';
+        return "bg-gray-500/20 text-gray-300 border-gray-500/30";
     }
   };
 
   const getCrimeTypeDisplayName = (crimeType) => {
     const crimeTypeMap = {
-      violent: 'Violent Crime',
-      damage: 'Criminal Damage',
-      anti_social: 'Anti Social Behaviour',
-      shoplifting: 'Shoplifting',
-      burglary: 'Burglary',
-      personal_theft: 'Personal Theft',
-      robbery: 'Robbery',
-      vehicle_crime: 'Vehicle Crime',
-      drugs: 'Drug Offences',
-      sexual_offences: 'Sexual Offences',
-      weapon_crime: 'Weapon Crime',
-      bicycle_theft: 'Bicycle Theft',
+      violent: "Violent Crime",
+      damage: "Criminal Damage",
+      anti_social: "Anti Social Behaviour",
+      shoplifting: "Shoplifting",
+      burglary: "Burglary",
+      personal_theft: "Personal Theft",
+      robbery: "Robbery",
+      vehicle_crime: "Vehicle Crime",
+      drugs: "Drug Offences",
+      sexual_offences: "Sexual Offences",
+      weapon_crime: "Weapon Crime",
+      bicycle_theft: "Bicycle Theft",
     };
 
     if (crimeTypeMap[crimeType]) {
@@ -118,9 +124,9 @@ export default function Learn() {
     }
 
     return crimeType
-      .split('_')
+      .split("_")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+      .join(" ");
   };
 
   const isRelevantToUser = (resource) => {
@@ -128,9 +134,14 @@ export default function Learn() {
       return false;
     }
 
-    return personalisation.topLocalCrimes.some((localCrime) =>
-      resource.target_crime_type.toLowerCase().includes(localCrime.toLowerCase()) ||
-      localCrime.toLowerCase().includes(resource.target_crime_type.toLowerCase())
+    return personalisation.topLocalCrimes.some(
+      (localCrime) =>
+        resource.target_crime_type
+          .toLowerCase()
+          .includes(localCrime.toLowerCase()) ||
+        localCrime
+          .toLowerCase()
+          .includes(resource.target_crime_type.toLowerCase()),
     );
   };
 
@@ -142,11 +153,12 @@ export default function Learn() {
   if (isLoading) {
     return (
       <>
-        <Sidebar />
         <div className="min-h-screen bg-gray-950 text-whiteish flex items-center justify-center p-6">
           <div className="flex flex-col items-center space-y-4">
             <div className="w-8 h-8 border-2 border-whiteish/30 border-t-whiteish rounded-full animate-spin"></div>
-            <p className="text-lg font-medium">Loading educational resources...</p>
+            <p className="text-lg font-medium">
+              Loading educational resources...
+            </p>
           </div>
         </div>
       </>
@@ -156,7 +168,6 @@ export default function Learn() {
   if (error) {
     return (
       <>
-        <Sidebar />
         <div className="min-h-screen bg-gray-950 text-whiteish p-6">
           <div className="container mx-auto max-w-4xl">
             <h1 className="text-4xl font-heading text-center mb-8 text-whiteish">
@@ -164,7 +175,9 @@ export default function Learn() {
             </h1>
             <div className="text-center">
               <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-6 backdrop-blur">
-                <p className="text-red-300 text-lg">Error loading resources: {error}</p>
+                <p className="text-red-300 text-lg">
+                  Error loading resources: {error}
+                </p>
               </div>
             </div>
           </div>
@@ -177,7 +190,6 @@ export default function Learn() {
 
   return (
     <>
-      <Sidebar />
       <div className="min-h-screen bg-gray-950 text-whiteish p-6">
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-12">
@@ -195,8 +207,8 @@ export default function Learn() {
                     onClick={() => setShowPersonalised(true)}
                     className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                       showPersonalised
-                        ? 'bg-blue-500 text-white shadow-lg'
-                        : 'text-whiteish/60 hover:text-whiteish'
+                        ? "bg-blue-500 text-white shadow-lg"
+                        : "text-whiteish/60 hover:text-whiteish"
                     }`}
                   >
                     Personalised for You
@@ -206,8 +218,8 @@ export default function Learn() {
                     onClick={() => setShowPersonalised(false)}
                     className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                       !showPersonalised
-                        ? 'bg-blue-500 text-white shadow-lg'
-                        : 'text-whiteish/60 hover:text-whiteish'
+                        ? "bg-blue-500 text-white shadow-lg"
+                        : "text-whiteish/60 hover:text-whiteish"
                     }`}
                   >
                     All Resources
@@ -226,12 +238,16 @@ export default function Learn() {
                   className="flex items-center space-x-2 bg-grey/40 border border-whiteish/10 rounded-full px-6 py-3 text-whiteish hover:bg-grey/60 transition-all duration-300"
                 >
                   <Search size={16} className="text-blue-300" />
-                  <span className="font-medium" data-testid="selected-crime-type">
-                    {crimeTypes.find((ct) => ct.value === selectedCrimeType)?.label || 'Filter by Crime Type'}
+                  <span
+                    className="font-medium"
+                    data-testid="selected-crime-type"
+                  >
+                    {crimeTypes.find((ct) => ct.value === selectedCrimeType)
+                      ?.label || "Filter by Crime Type"}
                   </span>
                   <ChevronDown
                     size={16}
-                    className={`transform transition-transform duration-200 ${showFilters ? 'rotate-180' : ''}`}
+                    className={`transform transition-transform duration-200 ${showFilters ? "rotate-180" : ""}`}
                   />
                 </button>
 
@@ -248,8 +264,8 @@ export default function Learn() {
                           onClick={() => handleCrimeTypeChange(crimeType.value)}
                           className={`w-full text-left px-4 py-3 hover:bg-blue-500/20 transition-colors ${
                             selectedCrimeType === crimeType.value
-                              ? 'bg-blue-500/30 text-blue-300'
-                              : 'text-whiteish'
+                              ? "bg-blue-500/30 text-blue-300"
+                              : "text-whiteish"
                           }`}
                         >
                           {crimeType.label}
@@ -262,7 +278,7 @@ export default function Learn() {
             </div>
           )}
 
-          {!showPersonalised && selectedCrimeType !== 'all' && (
+          {!showPersonalised && selectedCrimeType !== "all" && (
             <div className="flex justify-center mb-6">
               <div className="flex items-center space-x-3 bg-blue-500/20 border border-blue-500/30 rounded-full px-4 py-2">
                 <span className="text-blue-300 text-sm">Filtered by:</span>
@@ -270,7 +286,7 @@ export default function Learn() {
                   {getCrimeTypeDisplayName(selectedCrimeType)}
                 </span>
                 <button
-                  onClick={() => setSelectedCrimeType('all')}
+                  onClick={() => setSelectedCrimeType("all")}
                   className="text-blue-300 hover:text-white ml-2 text-sm"
                   aria-label="Clear crime type filter"
                 >
@@ -294,7 +310,8 @@ export default function Learn() {
                     </h2>
                   </div>
                   <p className="text-blue-200/80 mb-4 text-lg">
-                    Resources are prioritised based on common crimes in your area
+                    Resources are prioritised based on common crimes in your
+                    area
                   </p>
                   <div className="flex flex-wrap gap-3 justify-center">
                     {personalisation.topLocalCrimes.map((crime, index) => (
@@ -315,7 +332,7 @@ export default function Learn() {
             <p className="text-whiteish/60 text-sm">
               {showPersonalised && personalisation?.isPersonalised
                 ? `Showing ${displayResources.length} resources prioritised for your area`
-                : !showPersonalised && selectedCrimeType !== 'all'
+                : !showPersonalised && selectedCrimeType !== "all"
                   ? `Showing ${displayResources.length} resources for ${getCrimeTypeDisplayName(selectedCrimeType)}`
                   : `Showing all ${displayResources.length} resources`}
             </p>
@@ -327,9 +344,9 @@ export default function Learn() {
                 <BookOpen size={28} className="text-whiteish/60" />
               </div>
               <p className="text-xl text-whiteish/60">
-                {!showPersonalised && selectedCrimeType !== 'all'
+                {!showPersonalised && selectedCrimeType !== "all"
                   ? `No resources found for ${getCrimeTypeDisplayName(selectedCrimeType)}`
-                  : 'No educational resources available at this time.'}
+                  : "No educational resources available at this time."}
               </p>
             </div>
           ) : (
@@ -337,15 +354,17 @@ export default function Learn() {
               {displayResources.map((resource) => {
                 const isRelevant = isRelevantToUser(resource);
                 const shouldHighlight =
-                  showPersonalised && personalisation?.isPersonalised && isRelevant;
+                  showPersonalised &&
+                  personalisation?.isPersonalised &&
+                  isRelevant;
 
                 return (
                   <div
                     key={resource.id}
                     className={`group relative rounded-2xl p-6 backdrop-blur transition-all duration-300 hover:scale-[1.02] ${
                       shouldHighlight
-                        ? 'bg-gradient-to-r from-blue-500/10 to-gray-500/10 border border-blue-500/30 shadow-xl shadow-blue-500/10'
-                        : 'bg-grey/40 border border-whiteish/10 hover:border-whiteish/20 hover:bg-grey/60'
+                        ? "bg-gradient-to-r from-blue-500/10 to-gray-500/10 border border-blue-500/30 shadow-xl shadow-blue-500/10"
+                        : "bg-grey/40 border border-whiteish/10 hover:border-whiteish/20 hover:bg-grey/60"
                     }`}
                   >
                     {shouldHighlight && (
@@ -362,7 +381,9 @@ export default function Learn() {
                           {resource.title}
                         </h2>
                       </div>
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium border backdrop-blur ${getTypeColor(resource.type)}`}>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium border backdrop-blur ${getTypeColor(resource.type)}`}
+                      >
                         {resource.type.toUpperCase()}
                       </span>
                     </div>
@@ -376,9 +397,11 @@ export default function Learn() {
                         <div className="w-2 h-2 rounded-full bg-blue-500"></div>
                         <span className="text-sm text-whiteish/60 font-medium">
                           {resource.target_crime_type
-                            .split(', ')
-                            .map((crime) => getCrimeTypeDisplayName(crime.trim()))
-                            .join(', ')}
+                            .split(", ")
+                            .map((crime) =>
+                              getCrimeTypeDisplayName(crime.trim()),
+                            )
+                            .join(", ")}
                         </span>
                       </div>
 
@@ -390,7 +413,10 @@ export default function Learn() {
                       >
                         <span className="relative z-10 flex items-center space-x-2">
                           <span>View Resource</span>
-                          <ArrowRight size={16} className="transform transition-transform group-hover/btn:translate-x-1" />
+                          <ArrowRight
+                            size={16}
+                            className="transform transition-transform group-hover/btn:translate-x-1"
+                          />
                         </span>
                         <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover/btn:opacity-100 transition-opacity"></div>
                       </a>
