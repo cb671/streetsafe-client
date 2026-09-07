@@ -64,7 +64,7 @@ const Sidebar = () => {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [location.pathname]);
 
   useEffect(() => {
     setIsOpen(false);

@@ -4,13 +4,18 @@ import { getUserProfile } from "../api/api.js";
 
 export default function ProtectedRoute() {
   const [status, setStatus] = useState("loading");
+  const [user, setUser] = useState(null);
   const location = useLocation();
 
   useEffect(() => {
     let isMounted = true;
 
     getUserProfile()
-      .then(() => {
+      .then((data) => {
+        if (isMounted) {
+          setUser(data.user);
+          setStatus("authenticated");
+        }
         if (isMounted) setStatus("authenticated");
       })
       .catch(() => {
@@ -24,7 +29,7 @@ export default function ProtectedRoute() {
 
   if (status === "loading") {
     return (
-      <main className="flex min-h h-64 items-center justify-center">
+      <main className="flex min-h-screen items-center justify-center">
         <p>Loading your dashboard...</p>
       </main>
     );
@@ -34,5 +39,5 @@ export default function ProtectedRoute() {
     return <Navigate to="/login" replace state={{ from: location.pathname }} />;
   }
 
-  return <Outlet />;
+  return <Outlet context={{ user }} />;
 }
