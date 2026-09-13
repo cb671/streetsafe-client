@@ -1,27 +1,29 @@
-import {describe, expect, test} from "vitest";
-import {createRoutesStub} from "react-router";
+import { expect, test } from "vitest";
+import { createRoutesStub } from "react-router";
 import Home from "../app/routes/home.jsx";
 import Learn from "../app/routes/learn.jsx";
-import {render} from "vitest-browser-react";
-import {MapProvider, useMap} from "../app/contexts/MapContext.jsx";
-import {InnerMap} from "./common.jsx";
-import {useEffect} from "react";
+import { render } from "vitest-browser-react";
+import { MapProvider, useMap } from "../app/contexts/MapContext.jsx";
+import { InnerMap } from "./common.jsx";
+import { useEffect } from "react";
 import { userEvent } from "@vitest/browser/context";
-import {waitFor} from "@testing-library/react";
+import { waitFor } from "@testing-library/react";
+import { vi } from "vitest";
+import * as api from "../app/api/api.js";
 
+vi.mock("../app/api/api.js", { spy: true });
 
-const ExpectMapClick = ({onFinish}) => {
-  const {mapProps} = useMap();
+const ExpectMapClick = ({ onFinish }) => {
+  const { mapProps } = useMap();
   useEffect(() => {
-    if(!mapProps.onClick) return;
-    (async() => {
-      await new Promise(r=>setTimeout(r, 500));
-      mapProps.onClick(["89195d1a803ffff"]);
+    if (!mapProps.onClick) return;
+    (async () => {
+      await new Promise((r) => setTimeout(r, 500));
+      await mapProps.onClick(["89195d1a803ffff"]);
       onFinish();
     })();
   }, [mapProps]);
-}
-
+};
 
 const Stub = createRoutesStub([
   {
@@ -34,43 +36,54 @@ const Stub = createRoutesStub([
   },
 ]);
 
-test("hexagon click works", async() => {
+test("hexagon click works", async () => {
   let clickResolve;
-  const clickPromise = new Promise(r => clickResolve = r);
-  const page = render(<MapProvider>
-    <InnerMap/>
-    <Stub initialEntries={["/"]}/>
-    <ExpectMapClick onFinish={clickResolve}/>
-  </MapProvider>);
+  const clickPromise = new Promise((r) => (clickResolve = r));
+  api.getUserProfile.mockResolvedValue({ user: null });
+  api.getHexData.mockResolvedValue({
+    h3: "89195d1a803ffff",
+    crimes: [2, 1, 0, 3, 0, 1, 0, 2, 1, 0, 0],
+  });
+  const page = render(
+    <MapProvider>
+      <InnerMap />
+      <Stub initialEntries={["/"]} />
+      <ExpectMapClick onFinish={clickResolve} />
+    </MapProvider>,
+  );
   await clickPromise;
-  await expect.element(document.querySelector(".maplibregl-canvas")).toBeInTheDocument()
+  await expect
+    .element(document.querySelector(".maplibregl-canvas"))
+    .toBeInTheDocument();
   await expect.element(page.getByTestId("map-data-modal")).toBeInTheDocument();
 });
 
-test("icons render", async() => {
-  const page = render(<MapProvider>
-    <Stub initialEntries={["/"]}/>
-  </MapProvider>);
+test("icons render", async () => {
+  const page = render(
+    <MapProvider>
+      <Stub initialEntries={["/"]} />
+    </MapProvider>,
+  );
   await expect.element(page.getByTestId("nav-icons")).toBeInTheDocument();
 });
 
-test("learn icon navigates to learn page", async() => {
+test("learn icon navigates to learn page", async () => {
   const page = render(
     <MapProvider>
-      <Stub initialEntries={["/"]}/>
-    </MapProvider>
+      <Stub initialEntries={["/"]} />
+    </MapProvider>,
   );
 
   await userEvent.click(page.getByRole("button", { name: /learn/i }));
 
   await waitFor(async () => {
-    await expect.element(page.getByText(/learn about crime and safety/i)).toBeInTheDocument();
+    await expect
+      .element(page.getByText(/learn about crime and safety/i))
+      .toBeInTheDocument();
   });
 });
 
-
-test("pop-up close button hides the modal when clicked", async() => {
-
+test("pop-up close button hides the modal when clicked", async () => {
   // open the modal pop-up window
   let closePopUpModalButton;
   const clickPromise = new Promise((r) => (closePopUpModalButton = r));
@@ -79,7 +92,7 @@ test("pop-up close button hides the modal when clicked", async() => {
     <MapProvider>
       <Stub initialEntries={["/"]} />
       <ExpectMapClick onFinish={closePopUpModalButton} />
-  </MapProvider>
+    </MapProvider>,
   );
 
   // wait for the simulated hexagon click to finish
@@ -89,8 +102,10 @@ test("pop-up close button hides the modal when clicked", async() => {
   await expect.element(page.getByTestId("map-data-modal")).toBeInTheDocument();
 
   // Click the close button; getByRole can match accessible name of element (aria-label="close modal")
-  await userEvent.click(page.getByRole("button", { name: /close modal/i }))
+  await userEvent.click(page.getByRole("button", { name: /close modal/i }));
 
   // Modal disappears - use expect.element with a try/catch or waitFor
-  await expect.element(page.getByTestId("map-data-modal")).not.toBeInTheDocument();
+  await expect
+    .element(page.getByTestId("map-data-modal"))
+    .not.toBeInTheDocument();
 });

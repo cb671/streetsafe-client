@@ -38,6 +38,46 @@ export async function login(email, password) {
   return response.json();
 }
 
+export async function forgotPassword(email) {
+  const response = await fetch(`${API_ROOT}/auth/forgot-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ email: email.trim() }),
+  });
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(
+      data.error ||
+        data.message ||
+        "Unable to request a password reset. Please try again.",
+    );
+  }
+
+  return data;
+}
+
+export async function resetPassword(token, newPassword) {
+  const response = await fetch(`${API_ROOT}/auth/reset-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ token, newPassword }),
+  });
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(
+      data.error ||
+        data.message ||
+        "Unable to reset password. Please try again.",
+    );
+  }
+
+  return data;
+}
+
 export async function register(name, email, password, postcode) {
   const response = await fetch(API_ROOT + "/auth/register", {
     method: "POST",

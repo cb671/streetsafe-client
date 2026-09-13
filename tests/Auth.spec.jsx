@@ -14,13 +14,23 @@ const AuthRoutes = createRoutesStub([
   { path: "/", Component: () => <p>Home page</p> },
   { path: "/login", Component: Login },
   { path: "/register", Component: Register },
+  { path: "/dashboard", Component: () => <p>Dashboard page</p> },
 ]);
 
 async function completeRegistrationForm() {
   await userEvent.fill(document.querySelector('input[name="username"]'), "Bob");
-  await userEvent.fill(document.querySelector('input[name="email"]'), "bob@example.com");
-  await userEvent.fill(document.querySelector('input[name="password"]'), "password123");
-  await userEvent.fill(document.querySelector('input[name="postcode"]'), "N16 5JJ");
+  await userEvent.fill(
+    document.querySelector('input[name="email"]'),
+    "bob@example.com",
+  );
+  await userEvent.fill(
+    document.querySelector('input[name="password"]'),
+    "password123",
+  );
+  await userEvent.fill(
+    document.querySelector('input[name="postcode"]'),
+    "N16 5JJ",
+  );
 }
 
 beforeEach(() => vi.clearAllMocks());
@@ -43,8 +53,15 @@ describe("Register", () => {
     await userEvent.click(page.getByRole("button", { name: "Submit" }));
 
     await waitFor(() => expect(api.register).toHaveBeenCalled());
-    expect(api.register).toHaveBeenCalledWith("Bob", "bob@example.com", "password123", "N16 5JJ");
-    await expect.element(page.getByRole("heading", { name: "Check your email" })).toBeInTheDocument();
+    expect(api.register).toHaveBeenCalledWith(
+      "Bob",
+      "bob@example.com",
+      "password123",
+      "N16 5JJ",
+    );
+    await expect
+      .element(page.getByRole("heading", { name: "Check your email" }))
+      .toBeInTheDocument();
     expect(document.body.textContent).not.toContain("Home page");
   });
 
@@ -59,7 +76,9 @@ describe("Register", () => {
     await completeRegistrationForm();
     await userEvent.click(page.getByRole("button", { name: "Submit" }));
 
-    await expect.element(page.getByRole("button", { name: "Resend confirmation email" })).toBeInTheDocument();
+    await expect
+      .element(page.getByRole("button", { name: "Resend confirmation email" }))
+      .toBeInTheDocument();
   });
 
   it("resends confirmation to the registered email", async () => {
@@ -68,15 +87,23 @@ describe("Register", () => {
       requiresEmailConfirmation: true,
       confirmationEmailSent: true,
     });
-    api.resendConfirmation.mockResolvedValue({ message: "A new confirmation email has been sent." });
+    api.resendConfirmation.mockResolvedValue({
+      message: "A new confirmation email has been sent.",
+    });
     const page = render(<AuthRoutes initialEntries={["/register"]} />);
 
     await completeRegistrationForm();
     await userEvent.click(page.getByRole("button", { name: "Submit" }));
-    await userEvent.click(page.getByRole("button", { name: "Resend confirmation email" }));
+    await userEvent.click(
+      page.getByRole("button", { name: "Resend confirmation email" }),
+    );
 
-    await waitFor(() => expect(api.resendConfirmation).toHaveBeenCalledWith("bob@example.com"));
-    await expect.element(page.getByText("A new confirmation email has been sent.")).toBeInTheDocument();
+    await waitFor(() =>
+      expect(api.resendConfirmation).toHaveBeenCalledWith("bob@example.com"),
+    );
+    await expect
+      .element(page.getByText("A new confirmation email has been sent."))
+      .toBeInTheDocument();
   });
 });
 
@@ -85,30 +112,56 @@ describe("Login", () => {
     api.login.mockResolvedValue({ message: "Login successful" });
     const page = render(<AuthRoutes initialEntries={["/login"]} />);
 
-    await userEvent.fill(document.querySelector('input[name="username"]'), "bob@example.com");
-    await userEvent.fill(document.querySelector('input[name="password"]'), "password123");
+    await userEvent.fill(
+      document.querySelector('input[name="username"]'),
+      "bob@example.com",
+    );
+    await userEvent.fill(
+      document.querySelector('input[name="password"]'),
+      "password123",
+    );
     await userEvent.click(page.getByRole("button", { name: "Submit" }));
 
-    await waitFor(() => expect(api.login).toHaveBeenCalledWith("bob@example.com", "password123"));
-    await expect.element(page.getByText("Home page")).toBeInTheDocument();
+    await waitFor(() =>
+      expect(api.login).toHaveBeenCalledWith("bob@example.com", "password123"),
+    );
+    await expect.element(page.getByText("Dashboard page")).toBeInTheDocument();
   });
 
   it("shows confirmation guidance when login rejects an unconfirmed email", async () => {
-    api.login.mockRejectedValue(new Error("Email address has not been confirmed"));
+    api.login.mockRejectedValue(
+      new Error("Email address has not been confirmed"),
+    );
     const page = render(<AuthRoutes initialEntries={["/login"]} />);
 
-    await userEvent.fill(document.querySelector('input[name="username"]'), "bob@example.com");
-    await userEvent.fill(document.querySelector('input[name="password"]'), "password123");
+    await userEvent.fill(
+      document.querySelector('input[name="username"]'),
+      "bob@example.com",
+    );
+    await userEvent.fill(
+      document.querySelector('input[name="password"]'),
+      "password123",
+    );
     await userEvent.click(page.getByRole("button", { name: "Submit" }));
 
-    await expect.element(page.getByText("Email address has not been confirmed")).toBeInTheDocument();
-    await expect.element(page.getByText("Check your inbox for the confirmation link before signing in.")).toBeInTheDocument();
+    await expect
+      .element(page.getByText("Email address has not been confirmed"))
+      .toBeInTheDocument();
+    await expect
+      .element(
+        page.getByText(
+          "Check your inbox for the confirmation link before signing in.",
+        ),
+      )
+      .toBeInTheDocument();
   });
 });
 
 describe("Auth layout", () => {
   it("renders its heading", () => {
-    const AuthLayoutStub = createRoutesStub([{ path: "/auth", Component: AuthLayout }]);
+    const AuthLayoutStub = createRoutesStub([
+      { path: "/auth", Component: AuthLayout },
+    ]);
     const page = render(<AuthLayoutStub initialEntries={["/auth"]} />);
     expect(page.getByTestId("authheading")).toBeInTheDocument();
   });

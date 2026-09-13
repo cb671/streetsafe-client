@@ -1,4 +1,4 @@
-import { expect, test, describe, vi, beforeEach } from "vitest";
+import { expect, test, vi, beforeEach } from "vitest";
 import { render } from "vitest-browser-react";
 import { MapProvider } from "../app/contexts/MapContext.jsx";
 import { InnerMap } from "./common.jsx";
@@ -68,9 +68,9 @@ test("shows loading map data message until data resolves", async () => {
   await expect
     .element(page.getByText("Loading map data..."))
     .not.toBeInTheDocument();
-});
 
-await expect.element(page.getByText(delayedMessage)).not.toBeInTheDocument();
+  await expect.element(page.getByText(delayedMessage)).not.toBeInTheDocument();
+});
 
 test("map renders (go)", async () => {
   const page = render(

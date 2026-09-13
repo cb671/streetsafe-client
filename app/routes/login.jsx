@@ -89,7 +89,11 @@ export default function Login() {
         </p>
       )}
 
-      <p className="mt-6 text-center text-sm text-gray-500">Forgot password?</p>
+      <p className="mt-6 text-center text-sm text-gray-500">
+        <Link to="/forgot-password" className="underline">
+          Forgot password?
+        </Link>
+      </p>
 
       <p className="mt-6 text-center text-sm text-gray-500">
         New to StreetSafe?{" "}

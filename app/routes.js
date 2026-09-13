@@ -12,6 +12,8 @@ export default [
 
   layout("routes/auth.jsx", [
     route("/login", "routes/login.jsx"),
+    route("/forgot-password", "routes/forgot-password.jsx"),
+    route("/reset-password", "routes/reset-password.jsx"),
     route("/register", "routes/register.jsx"),
     route("/confirm-email", "routes/confirm-email.jsx"),
   ]),
