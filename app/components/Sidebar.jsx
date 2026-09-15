@@ -266,6 +266,9 @@ const Sidebar = () => {
         >
           StreetSafe
         </Link>
+        <p className="mt-1 text-center text-base text-gray-600 dark:text-gray-400 font-heading">
+          See the facts. Stay informed. Stay Safe
+        </p>
 
         <button
           ref={menuButtonRef}

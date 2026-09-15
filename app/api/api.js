@@ -24,12 +24,12 @@ export function getBarChartData(filter) {
   );
 }
 
-export async function login(email, password) {
+export async function login(email, password, rememberMe = false) {
   const response = await fetch(API_ROOT + "/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, rememberMe }),
   });
   if (!response.ok) {
     const error = await response.json();

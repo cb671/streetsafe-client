@@ -5,6 +5,7 @@ import { login } from "../api/api.js";
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ export default function Login() {
     setError("");
 
     try {
-      await login(username, password);
+      await login(username, password, rememberMe);
       navigate("/dashboard");
     } catch (err) {
       setError(err.message);
@@ -67,6 +68,21 @@ export default function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+        </div>
+
+        <div className="px-8">
+          <label htmlFor="rememberMe" className="flex items-center gap-2 text-sm">
+            <input
+              id="rememberMe"
+              name="rememberMe"
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              disabled={isLoading}
+              className="h-4 w-4 rounded border-gray-300 accent-indigo-600 focus:ring-2 focus:ring-indigo-500"
+            />
+            Remember me
+          </label>
         </div>
 
         <div className="mt-8 flex justify-center">

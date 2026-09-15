@@ -6,7 +6,6 @@ export default function Register() {
   const [registrationResult, setRegistrationResult] = useState(null);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [postcode, setPostcode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isResending, setIsResending] = useState(false);
@@ -15,6 +14,8 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Read the browser-filled password directly, including password-manager updates.
+    const password = new FormData(e.currentTarget).get("password");
     setIsLoading(true);
     setError("");
 
@@ -133,8 +134,6 @@ export default function Register() {
             required
             className="h-8 mt-1 block w-full rounded-md border border-gray-300 bg-white/80 px-3
                         py-3 text-gray-900 outline-none focus:ring-2 focus:ring-indigo-500"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
 

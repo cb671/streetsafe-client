@@ -81,11 +81,11 @@ export default function ResetPassword() {
     <>
       <h2 className="text-lg font-semibold text-center">Reset your password</h2>
 
-      <form onSubmit={handleSubmit}>
-        <div className="mt-6">
+      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+        <div className="px-4">
           <label
             htmlFor="newPassword"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm"
           >
             New Password
           </label>
@@ -98,14 +98,14 @@ export default function ResetPassword() {
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             disabled={isLoading}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            className="h-8 mt-1 block w-full rounded-md border border-gray-300 bg-white/80 px-3 py-3 text-gray-900 outline-none focus:ring-2 focus:ring-indigo-500"
           />
         </div>
 
-        <div className="mt-6">
+        <div className="px-4">
           <label
             htmlFor="confirmPassword"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm"
           >
             Confirm Password
           </label>
@@ -117,18 +117,20 @@ export default function ResetPassword() {
             autoComplete="new-password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            className="h-8 mt-1 block w-full rounded-md border border-gray-300 bg-white/80 px-3 py-3 text-gray-900 outline-none focus:ring-2 focus:ring-indigo-500"
             disabled={isLoading}
           />
         </div>
 
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-        >
-          {isLoading ? "Resetting..." : "Reset Password"}
-        </button>
+        <div className="mt-8 flex justify-center">
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+          >
+            {isLoading ? "Resetting..." : "Reset Password"}
+          </button>
+        </div>
       </form>
 
       {error && (

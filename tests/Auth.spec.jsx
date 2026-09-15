@@ -36,6 +36,25 @@ async function completeRegistrationForm() {
 beforeEach(() => vi.clearAllMocks());
 
 describe("Register", () => {
+  it("preserves a password filled without change events across renders and submits it", async () => {
+    api.register.mockRejectedValue(new Error("Please try again."));
+    const page = render(<AuthRoutes initialEntries={["/register"]} />);
+    await completeRegistrationForm();
+
+    const passwordInput = document.querySelector('input[name="password"]');
+    // Simulate a password manager writing directly without notifying React.
+    passwordInput.value = "generated-Test-42!";
+    await userEvent.fill(document.querySelector('input[name="postcode"]'), "N16 6AA");
+    expect(passwordInput.value).toBe("generated-Test-42!");
+
+    await userEvent.click(page.getByRole("button", { name: "Submit" }));
+    await expect.element(page.getByText("Please try again.")).toBeInTheDocument();
+    expect(api.register).toHaveBeenCalledWith(
+      "Bob", "bob@example.com", "generated-Test-42!", "N16 6AA",
+    );
+    expect(passwordInput.value).toBe("generated-Test-42!");
+  });
+
   it("renders the registration form", () => {
     const page = render(<AuthRoutes initialEntries={["/register"]} />);
     expect(page.getByTestId("form")).toBeInTheDocument();
@@ -108,9 +127,13 @@ describe("Register", () => {
 });
 
 describe("Login", () => {
-  it("submits email and password and navigates home", async () => {
+  it.each([false, true])("submits login with rememberMe=%s and navigates home", async (rememberMe) => {
     api.login.mockResolvedValue({ message: "Login successful" });
     const page = render(<AuthRoutes initialEntries={["/login"]} />);
+
+    const checkbox = page.getByRole("checkbox", { name: "Remember me" });
+    await expect.element(checkbox).not.toBeChecked();
+    if (rememberMe) await userEvent.click(checkbox);
 
     await userEvent.fill(
       document.querySelector('input[name="username"]'),
@@ -123,7 +146,7 @@ describe("Login", () => {
     await userEvent.click(page.getByRole("button", { name: "Submit" }));
 
     await waitFor(() =>
-      expect(api.login).toHaveBeenCalledWith("bob@example.com", "password123"),
+      expect(api.login).toHaveBeenCalledWith("bob@example.com", "password123", rememberMe),
     );
     await expect.element(page.getByText("Dashboard page")).toBeInTheDocument();
   });
