@@ -1,8 +1,11 @@
-import { useOutletContext } from "react-router-dom";
+import { Link, useOutletContext } from "react-router";
 import { useState } from "react";
+import useBookmarks from "../hooks/useBookmarks.js";
+import BookmarkButton from "../components/BookmarkButton.jsx";
 
 export default function Dashboard() {
   const { user } = useOutletContext();
+  const bookmarks = useBookmarks(Boolean(user));
   const [isEditingPostcode, setIsEditingPostcode] = useState(false);
   const [postcode, setPostcode] = useState("");
 
@@ -13,6 +16,41 @@ export default function Dashboard() {
       <p className="mt-2 text-gray-600">
         Your StreetSafe activity and account information.
       </p>
+
+      <section aria-labelledby="saved-resources-heading" className="mt-8 rounded-xl bg-black/75 p-6 text-whiteish">
+        <h2 id="saved-resources-heading" className="text-xl font-semibold">Saved resources</h2>
+        {bookmarks.loading && <p role="status" className="mt-4">Loading saved resources...</p>}
+        {bookmarks.error && (
+          <div role="alert" className="mt-4 text-red-200">
+            <p>{bookmarks.error}</p>
+            {bookmarks.expired ? (
+              <Link to="/login" className="underline">Sign in again</Link>
+            ) : (
+              <button type="button" onClick={bookmarks.reload} disabled={bookmarks.loading} className="mt-2 underline">Try again</button>
+            )}
+          </div>
+        )}
+        {bookmarks.ready && !bookmarks.loading && bookmarks.resources.length === 0 && (
+          <p className="mt-4 text-whiteish/70">
+            No saved resources yet. <Link to="/learn" className="text-blue-300 underline">Explore the Learn page</Link> and select a bookmark to save a resource here.
+          </p>
+        )}
+        {bookmarks.resources.length > 0 && (
+          <ul className="mt-4 space-y-4">
+            {bookmarks.resources.map((resource) => (
+              <li key={resource.id} className="flex items-start gap-4 rounded-lg border border-whiteish/15 p-4">
+                <div className="min-w-0 flex-1">
+                  <a href={resource.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-300 underline hover:text-blue-200">
+                    {resource.title}<span className="sr-only"> (opens in a new tab)</span>
+                  </a>
+                  <p className="mt-2 text-sm text-whiteish/70">{resource.description}</p>
+                </div>
+                <BookmarkButton resource={resource} bookmarks={bookmarks} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       <section className="mt-8 rounded-xl bg-black/75 p-6 text-whiteish">
         <p className="flex gap-2">

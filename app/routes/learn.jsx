@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import useBookmarks from "../hooks/useBookmarks.js";
+import BookmarkButton from "../components/BookmarkButton.jsx";
 import {
   ArrowRight,
   BookOpen,
@@ -22,6 +24,7 @@ export default function Learn() {
   const [selectedCrimeType, setSelectedCrimeType] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const bookmarks = useBookmarks(isLoggedIn);
 
   useEffect(() => {
     const checkAuthStatus = async () => {
@@ -338,6 +341,17 @@ export default function Learn() {
             </p>
           </div>
 
+          {isLoggedIn && bookmarks.error && (
+            <div role="alert" className="mb-6 rounded-xl border border-red-400/30 p-4 text-red-200">
+              <p>{bookmarks.error}</p>
+              {!bookmarks.expired && (
+                <button type="button" onClick={bookmarks.reload} className="mt-2 underline" disabled={bookmarks.loading}>
+                  Retry loading saved resources
+                </button>
+              )}
+            </div>
+          )}
+
           {displayResources.length === 0 ? (
             <div className="text-center py-16">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-grey/50 flex items-center justify-center">
@@ -376,6 +390,11 @@ export default function Learn() {
                     )}
 
                     <div className="flex items-start justify-between mb-4">
+                      {isLoggedIn && !bookmarks.expired && (
+                        <div className="mr-3">
+                          <BookmarkButton resource={resource} bookmarks={bookmarks} />
+                        </div>
+                      )}
                       <div className="flex-1 mr-4">
                         <h2 className="text-2xl font-semibold text-whiteish mb-2 group-hover:text-blue-300 transition-colors">
                           {resource.title}

@@ -180,6 +180,7 @@ export async function reverseGeo(lon, lat) {
     .then((r) => r.json())
     .catch((err) => ({ message: err.toString() }));
 }
+
 export function getEducationalResources(personalised = true) {
   const url = personalised
     ? API_ROOT + "/educational"
@@ -208,6 +209,7 @@ export function getPieChartData(filter) {
     (r) => r.json(),
   );
 }
+
 function filterParamsBuilder({
   startDate,
   endDate,
@@ -241,6 +243,69 @@ export function getUserProfile() {
       console.error("Failed to fetch user profile:", err);
       throw err;
     });
+}
+
+export async function getSavedResources() {
+  const response = await fetch(`${API_ROOT}/educational/bookmarks`, {
+    credentials: "include",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    const error = new Error(
+      data.error || data.message || "Unable to load saved resources.",
+    );
+
+    error.status = response.status;
+    throw error;
+  }
+
+  return data;
+}
+
+export async function saveResource(resourceId) {
+  const response = await fetch(
+    `${API_ROOT}/educational/bookmarks/${resourceId}`,
+    {
+      method: "PUT",
+      credentials: "include",
+    },
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    const error = new Error(
+      data.error || data.message || "Unable to save resource",
+    );
+
+    error.status = response.status;
+    throw error;
+  }
+
+  return data;
+}
+
+export async function removeSavedResource(resourceId) {
+  const response = await fetch(
+    `${API_ROOT}/educational/bookmarks/${resourceId}`,
+    {
+      method: "DELETE",
+      credentials: "include",
+    },
+  );
+
+  if (!response.ok) {
+    const data = await response.json();
+
+    const error = new Error(
+      data.error || data.message || "Unable to remove saved resource",
+    );
+
+    error.status = response.status;
+    throw error;
+  }
 }
 
 export const logout = async () => {
