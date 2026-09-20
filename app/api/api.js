@@ -131,6 +131,25 @@ export async function resendConfirmation(email) {
   return data;
 }
 
+export async function updatePostcode(postcode) {
+  const response = await fetch(`${API_ROOT}/auth/profile/postcode`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ postcode }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || data.error || "Unable to update postcode");
+  }
+
+  return data;
+}
+
 export async function getHexData(h3) {
   return fetch(`${API_ROOT}/map/hexagon/${h3}`).then((r) => r.json());
 }

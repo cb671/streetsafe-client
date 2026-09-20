@@ -36,8 +36,9 @@ export function getHexagonLocationLabel(data) {
 
   const broadLocation = (
     firstTextValue(data, ["name", "display_name"]) || "Unknown location"
-  ).split(",", 1)[0].trim();
-  const shortH3 = shortenH3(data.h3);
+  )
+    .split(",", 1)[0]
+    .trim();
 
-  return shortH3 ? `${broadLocation} · ${shortH3}` : broadLocation;
+  return broadLocation;
 }

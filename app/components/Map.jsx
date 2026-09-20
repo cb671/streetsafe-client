@@ -6,12 +6,13 @@ import {
   useControl,
 } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
+import { cellToBoundary, cellToLatLng } from "h3-js";
 import { H3HexagonLayer } from "@deck.gl/geo-layers";
 import { getTweenedColorHsl } from "../util/color.js";
 import { MapboxOverlay } from "@deck.gl/mapbox";
 import "@deck.gl/widgets/stylesheet.css";
 import { getMapData } from "../api/api.js";
-import { PathLayer, PointCloudLayer } from "@deck.gl/layers";
+import { PathLayer, PointCloudLayer, ScatterplotLayer } from "@deck.gl/layers";
 import { COORDINATE_SYSTEM } from "@deck.gl/core";
 import { routeColors } from "../util/const.js";
 import { initialPosition } from "../contexts/MapContext.jsx";
@@ -38,6 +39,9 @@ const material = {
   specularColor: [51, 51, 51],
 };
 
+const HEX_COVERAGE = 0.8;
+const HEX_ELEVATION_SCALE = 250;
+
 export default function MapComponent({
   onClick,
   mode,
@@ -47,6 +51,7 @@ export default function MapComponent({
   routes,
   resolveMapRef,
   userLocation,
+  homeH3Cells = [],
 }) {
   const [data, setData] = useState([]);
   const [geoPos, setGeoPos] = useState(userPosition);
@@ -57,6 +62,56 @@ export default function MapComponent({
   const [lastFlight, setLastFlight] = useState(null);
   const mapRef = useRef();
   const activeIdx = 1;
+
+  const homeDots = [];
+  const dotsPerEdge = 8;
+
+  if (mode !== "go") {
+    // Index the crime rows by their H3 ID.
+    // Use globalThis.Map because this file imports a map component named Map.
+    const crimeRowsbyCell = new globalThis.Map(
+      data.map((row) => [row[0], row]),
+    );
+
+    for (const cell of new Set(homeH3Cells)) {
+      // Find the crime data for this exact postcode cell.
+      const matchingRow = crimeRowsbyCell.get(cell);
+
+      // Use the same crime value and height scale as the displayed column.
+      // Cells without crime data retain a ground-level outline.
+      const crimeValue = matchingRow ? Number(matchingRow[activeIdx]) || 0 : 0;
+
+      const elevation = crimeValue * HEX_ELEVATION_SCALE;
+
+      // H3 returns the centre in latitude-first order.
+      const [centreLat, centreLng] = cellToLatLng(cell);
+
+      // Boundary coordinates are longitude-first because we pass true.
+      const boundary = cellToBoundary(cell, true);
+
+      // Shrink the boundary using the same coverage as the crime hexagons.
+      const displayedBoundary = boundary.map(([lng, lat]) => [
+        centreLng + (lng - centreLng) * HEX_COVERAGE,
+        centreLat + (lat - centreLat) * HEX_COVERAGE,
+      ]);
+
+      // Place dots along every edge of the smaller boundary.
+      for (let edge = 0; edge < displayedBoundary.length - 1; edge++) {
+        const start = displayedBoundary[edge];
+        const end = displayedBoundary[edge + 1];
+
+        for (let dot = 0; dot < dotsPerEdge; dot++) {
+          const fraction = dot / dotsPerEdge;
+
+          homeDots.push([
+            start[0] + (end[0] - start[0]) * fraction,
+            start[1] + (end[1] - start[1]) * fraction,
+            elevation,
+          ]);
+        }
+      }
+    }
+  }
 
   const layers = [];
 
@@ -116,8 +171,9 @@ export default function MapComponent({
       id: "hexagons",
       data,
       pickable: true,
+      highPrecision: true,
       getHexagon: (d) => d[0],
-      getElevation: (d) => d[activeIdx],
+      getElevation: (d) => Number(d[activeIdx]) || 0,
       getFillColor: (d) =>
         getTweenedColorHsl(
           Math.min(1, Math.max(0, d[activeIdx] / 10)),
@@ -126,14 +182,11 @@ export default function MapComponent({
       extruded: true,
       material,
 
-      transitions: {
-        elevationScale: 1000,
-      },
       opacity: 0.4,
-      coverage: 0.8,
+      coverage: HEX_COVERAGE,
       autoHighlight: true,
       highlightColor: [255, 255, 255, 100],
-      elevationScale: 250,
+      elevationScale: HEX_ELEVATION_SCALE,
 
       onClick: (info) => {
         if (info.object) {
@@ -143,6 +196,28 @@ export default function MapComponent({
     });
 
     layers.push(layer);
+
+    if (homeDots.length > 0) {
+      const homeDotsLayer = new ScatterplotLayer({
+        id: "home-postcode-dots",
+        data: homeDots,
+        getPosition: (dot) => dot,
+        radiusUnits: "pixels",
+        getRadius: 3,
+        getFillColor: [0, 120, 255, 255],
+        stroked: true,
+        getLineColor: [255, 255, 255, 255],
+        lineWidthUnits: "pixels",
+        getLineWidth: 1,
+        pickable: false,
+        parameters: {
+          depthCompare: "always",
+          depthWriteEnabled: false,
+        },
+      });
+
+      layers.push(homeDotsLayer);
+    }
   }
 
   useEffect(() => {

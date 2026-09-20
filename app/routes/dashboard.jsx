@@ -1,13 +1,37 @@
 import { Link, useOutletContext } from "react-router";
 import { useState } from "react";
+import { updatePostcode } from "~/api/api.js";
 import useBookmarks from "../hooks/useBookmarks.js";
 import BookmarkButton from "../components/BookmarkButton.jsx";
 
 export default function Dashboard() {
   const { user } = useOutletContext();
   const bookmarks = useBookmarks(Boolean(user));
-  const [isEditingPostcode, setIsEditingPostcode] = useState(false);
   const [postcode, setPostcode] = useState("");
+  const [isEditingPostcode, setIsEditingPostcode] = useState(false);
+  const [isSavingPostcode, setIsSavingPostcode] = useState(false);
+  const [postcodeError, setPostcodeError] = useState("");
+  const [postcodeMessage, setPostcodeMessage] = useState("");
+
+  async function handlePostcodeSubmit(event) {
+    event.preventDefault();
+
+    setIsSavingPostcode(true);
+    setPostcodeError("");
+    setPostcodeMessage("");
+
+    try {
+      await updatePostcode(postcode.trim());
+
+      setPostcodeMessage("Postcode saved. Open the home map to see your area.");
+      setPostcode("");
+      setIsEditingPostcode(false);
+    } catch (error) {
+      setPostcodeError(error.message);
+    } finally {
+      setIsSavingPostcode(false);
+    }
+  }
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8">
@@ -17,33 +41,68 @@ export default function Dashboard() {
         Your StreetSafe activity and account information.
       </p>
 
-      <section aria-labelledby="saved-resources-heading" className="mt-8 rounded-xl bg-black/75 p-6 text-whiteish">
-        <h2 id="saved-resources-heading" className="text-xl font-semibold">Saved resources</h2>
-        {bookmarks.loading && <p role="status" className="mt-4">Loading saved resources...</p>}
+      <section
+        aria-labelledby="saved-resources-heading"
+        className="mt-8 rounded-xl bg-black/75 p-6 text-whiteish"
+      >
+        <h2 id="saved-resources-heading" className="text-xl font-semibold">
+          Saved resources
+        </h2>
+        {bookmarks.loading && (
+          <p role="status" className="mt-4">
+            Loading saved resources...
+          </p>
+        )}
         {bookmarks.error && (
           <div role="alert" className="mt-4 text-red-200">
             <p>{bookmarks.error}</p>
             {bookmarks.expired ? (
-              <Link to="/login" className="underline">Sign in again</Link>
+              <Link to="/login" className="underline">
+                Sign in again
+              </Link>
             ) : (
-              <button type="button" onClick={bookmarks.reload} disabled={bookmarks.loading} className="mt-2 underline">Try again</button>
+              <button
+                type="button"
+                onClick={bookmarks.reload}
+                disabled={bookmarks.loading}
+                className="mt-2 underline"
+              >
+                Try again
+              </button>
             )}
           </div>
         )}
-        {bookmarks.ready && !bookmarks.loading && bookmarks.resources.length === 0 && (
-          <p className="mt-4 text-whiteish/70">
-            No saved resources yet. <Link to="/learn" className="text-blue-300 underline">Explore the Learn page</Link> and select a bookmark to save a resource here.
-          </p>
-        )}
+        {bookmarks.ready &&
+          !bookmarks.loading &&
+          bookmarks.resources.length === 0 && (
+            <p className="mt-4 text-whiteish/70">
+              No saved resources yet.{" "}
+              <Link to="/learn" className="text-blue-300 underline">
+                Explore the Learn page
+              </Link>{" "}
+              and select a bookmark to save a resource here.
+            </p>
+          )}
         {bookmarks.resources.length > 0 && (
           <ul className="mt-4 space-y-4">
             {bookmarks.resources.map((resource) => (
-              <li key={resource.id} className="flex items-start gap-4 rounded-lg border border-whiteish/15 p-4">
+              <li
+                key={resource.id}
+                className="flex items-start gap-4 rounded-lg border border-whiteish/15 p-4"
+              >
                 <div className="min-w-0 flex-1">
-                  <a href={resource.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-300 underline hover:text-blue-200">
-                    {resource.title}<span className="sr-only"> (opens in a new tab)</span>
+                  <a
+                    href={resource.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-blue-300 underline hover:text-blue-200"
+                  >
+                    {resource.title}
+                    <span className="sr-only"> (opens in a new tab)</span>
                   </a>
-                  <p className="mt-2 text-sm text-whiteish/70">{resource.description}</p>
+                  <p className="mt-2 text-sm text-whiteish/70">
+                    {resource.description}
+                  </p>
                 </div>
                 <BookmarkButton resource={resource} bookmarks={bookmarks} />
               </li>
@@ -69,6 +128,18 @@ export default function Dashboard() {
       <section className="mt-8 rounded-xl bg-black/75 p-6 text-whiteish">
         <h2 className="text-xl font-semibold">Home area</h2>
 
+        {postcodeError && (
+          <p role="alert" className="mt-2 text-red-300">
+            {postcodeError}
+          </p>
+        )}
+
+        {postcodeMessage && (
+          <p role="status" className="mt-2 text-green-300">
+            {postcodeMessage}
+          </p>
+        )}
+
         <p className="mt-2">
           <span>Status:{user?.h3 ? "Configured" : "Not configured"}</span>
         </p>
@@ -82,7 +153,7 @@ export default function Dashboard() {
             {user?.h3 ? "Change postcode" : "Add postcode"}
           </button>
         ) : (
-          <form className="mt-4 space-y-4">
+          <form onSubmit={handlePostcodeSubmit} className="mt-4 space-y-4">
             <div>
               <label htmlFor="postcode" className="block text-sm font-medium">
                 New postcode
@@ -104,9 +175,10 @@ export default function Dashboard() {
             <div className="flex gap-2">
               <button
                 type="submit"
-                className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white"
+                disabled={isSavingPostcode}
+                className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white disabled:opacity-50"
               >
-                Save postcode
+                {isSavingPostcode ? "Saving..." : "Save postcode"}
               </button>
 
               <button

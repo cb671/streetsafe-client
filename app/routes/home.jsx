@@ -28,15 +28,20 @@ const CRIME_LABELS = [
 export default function Home() {
   const [crimeData, setCrimeData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { setLocation, setClickHandler, clearClickHandler } = useMap();
+  const { setLocation, setClickHandler, clearClickHandler, updateMapProps } =
+    useMap();
 
   const closeModal = () => setCrimeData(null);
 
   useEffect(() => {
     const fetchAndSetUserLocation = async () => {
-      let pos = initialPosition;
+      const pos = { ...initialPosition };
       try {
         const data = await getUserProfile();
+
+        updateMapProps({
+          homeH3Cells: data.user?.homeH3Cells ?? [],
+        });
 
         if (data.user && data.user.h3) {
           try {
@@ -45,7 +50,7 @@ export default function Home() {
 
             pos.latitude = lat;
             pos.longitude = lng;
-            pos.zoom = 12;
+            pos.zoom = 10;
             pos.bearing = 0;
           } catch (importError) {
             console.error(
@@ -55,6 +60,7 @@ export default function Home() {
           }
         }
       } catch (error) {
+        updateMapProps({ homeH3Cells: [] });
         console.error("Failed to get user location:", error);
       }
 
@@ -62,7 +68,7 @@ export default function Home() {
     };
 
     fetchAndSetUserLocation();
-  }, [setLocation]);
+  }, [setLocation, updateMapProps]);
 
   async function handleClick(info) {
     try {
