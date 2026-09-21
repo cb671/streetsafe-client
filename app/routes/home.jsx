@@ -39,6 +39,12 @@ export default function Home() {
       try {
         const data = await getUserProfile();
 
+        console.log("Home highlight profile:", {
+          h3: data.user?.h3,
+          locationType: data.user?.location_type,
+          cells: data.user?.homeH3Cells,
+        });
+
         updateMapProps({
           homeH3Cells: data.user?.homeH3Cells ?? [],
         });
@@ -50,7 +56,9 @@ export default function Home() {
 
             pos.latitude = lat;
             pos.longitude = lng;
-            pos.zoom = 10;
+            pos.zoom = 13;
+            // pos.zoom = 10;
+            pos.pitch = 45;
             pos.bearing = 0;
           } catch (importError) {
             console.error(

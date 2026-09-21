@@ -6,13 +6,18 @@ import {
   useControl,
 } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { cellToBoundary, cellToLatLng } from "h3-js";
+import { cellToBoundary, cellToLatLng, gridDisk } from "h3-js";
 import { H3HexagonLayer } from "@deck.gl/geo-layers";
 import { getTweenedColorHsl } from "../util/color.js";
 import { MapboxOverlay } from "@deck.gl/mapbox";
 import "@deck.gl/widgets/stylesheet.css";
 import { getMapData } from "../api/api.js";
-import { PathLayer, PointCloudLayer, ScatterplotLayer } from "@deck.gl/layers";
+import {
+  PathLayer,
+  PointCloudLayer,
+  ScatterplotLayer,
+  SolidPolygonLayer,
+} from "@deck.gl/layers";
 import { COORDINATE_SYSTEM } from "@deck.gl/core";
 import { routeColors } from "../util/const.js";
 import { initialPosition } from "../contexts/MapContext.jsx";
@@ -26,9 +31,19 @@ export const colorRange = [
   [209, 55, 78, 255],
 ];
 
-function DeckGLOverlay(props) {
+function DeckGLOverlay({ overlayOrder = 0, ...props }) {
   const overlay = useControl(() => new MapboxOverlay(props));
+
   overlay.setProps(props);
+
+  useEffect(() => {
+    const container = overlay.getCanvas()?.parentElement;
+
+    if (container) {
+      container.style.zIndex = String(overlayOrder);
+      container.style.pointerEvents = "none";
+    }
+  }, [overlay, overlayOrder]);
   return null;
 }
 
@@ -40,7 +55,7 @@ const material = {
 };
 
 const HEX_COVERAGE = 0.8;
-const HEX_ELEVATION_SCALE = 250;
+const HEX_ELEVATION_SCALE = 50;
 
 export default function MapComponent({
   onClick,
@@ -64,6 +79,7 @@ export default function MapComponent({
   const activeIdx = 1;
 
   const homeDots = [];
+  const homeFaces = [];
   const dotsPerEdge = 8;
 
   if (mode !== "go") {
@@ -95,6 +111,18 @@ export default function MapComponent({
         centreLat + (lat - centreLat) * HEX_COVERAGE,
       ]);
 
+      if (matchingRow) {
+        const colour = getTweenedColorHsl(
+          Math.min(1, Math.max(0, crimeValue / 10)),
+          colorRange,
+        );
+
+        homeFaces.push({
+          polygon: displayedBoundary.map(([lng, lat]) => [lng, lat, elevation]),
+          colour: [colour[0], colour[1], colour[2], colour[255]],
+        });
+      }
+
       // Place dots along every edge of the smaller boundary.
       for (let edge = 0; edge < displayedBoundary.length - 1; edge++) {
         const start = displayedBoundary[edge];
@@ -113,7 +141,16 @@ export default function MapComponent({
     }
   }
 
+  console.log("Home highlight rendering:", {
+    mode,
+    mapLoaded,
+    cells: homeH3Cells,
+    dotCount: homeDots.length,
+    firstDot: homeDots[0],
+  });
+
   const layers = [];
+  const highlightLayers = [];
 
   if (mode === "go") {
     if (data.length === 0 || data[0].crime_factor !== undefined) {
@@ -197,6 +234,27 @@ export default function MapComponent({
 
     layers.push(layer);
 
+    // NEW: draw the selected hexagon's opaque top face.
+    if (homeDots.length > 0) {
+      highlightLayers.push(
+        new SolidPolygonLayer({
+          id: "home-postcode-faces",
+          data: homeFaces,
+          getPolygon: (face) => face.polygon,
+          getFillColor: (face) => face.colour,
+          positionFormat: "XYZ",
+          filled: true,
+          extruded: false,
+          opacity: 1,
+          pickable: false,
+          paramters: {
+            depthCompare: "always",
+            depthWriteEnabled: false,
+          },
+        }),
+      );
+    }
+
     if (homeDots.length > 0) {
       const homeDotsLayer = new ScatterplotLayer({
         id: "home-postcode-dots",
@@ -204,7 +262,7 @@ export default function MapComponent({
         getPosition: (dot) => dot,
         radiusUnits: "pixels",
         getRadius: 3,
-        getFillColor: [0, 120, 255, 255],
+        getFillColor: [255, 0, 255, 255],
         stroked: true,
         getLineColor: [255, 255, 255, 255],
         lineWidthUnits: "pixels",
@@ -216,7 +274,7 @@ export default function MapComponent({
         },
       });
 
-      layers.push(homeDotsLayer);
+      highlightLayers.push(homeDotsLayer);
     }
   }
 
@@ -423,7 +481,18 @@ export default function MapComponent({
         attributionControl={false}
         onLoad={onMapLoad}
       >
-        <DeckGLOverlay layers={mapLoaded ? layers : []} interleaved={false} />
+        <DeckGLOverlay
+          overlayOrder={0}
+          layers={mapLoaded ? layers : []}
+          interleaved={false}
+        />
+
+        <DeckGLOverlay
+          overlayOrder={1}
+          layers={mapLoaded ? highlightLayers : []}
+          interleaved={false}
+        />
+
         <NavigationControl />
         <ScaleControl position={"top-left"} />
       </Map>
