@@ -32,13 +32,29 @@ export function getHexagonLocationLabel(data) {
     firstTextValue(data.address, PRECISE_LOCATION_FIELDS) ||
     firstTextValue(data.nominatim?.address, PRECISE_LOCATION_FIELDS);
 
-  if (preciseLocation) return preciseLocation;
-
   const broadLocation = (
     firstTextValue(data, ["name", "display_name"]) || "Unknown location"
   )
     .split(",", 1)[0]
     .trim();
 
-  return broadLocation;
+  const location = preciseLocation || broadLocation;
+  const areaReference = firstTextValue(data, ["areaReference"]);
+
+  if (areaReference) {
+    return `${location} · ${areaReference}`;
+  }
+
+  const displayName = firstTextValue(data, ["displayName"]);
+
+  if (displayName) {
+    return displayName;
+  }
+
+  // Fallback for responses without an area reference.
+  if (data.h3) {
+    return `${location} · Cell ${data.h3}`;
+  }
+
+  return location;
 }

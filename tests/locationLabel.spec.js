@@ -5,23 +5,23 @@ import {
 } from "../app/util/locationLabel.js";
 
 describe("hexagon location labels", () => {
-  test("disambiguates a broad location with the selected H3 cell", () => {
+  test("includes the permanent area reference", () => {
     expect(
       getHexagonLocationLabel({
-        name: "Gorbals, Glasgow, Glasgow City",
+        name: "Woodberry Down, London",
+        areaReference: "Area 4",
         h3: "89190d1a803ffff",
       }),
-    ).toBe("Gorbals · 89190");
+    ).toBe("Woodberry Down · Area 4");
   });
 
   test("prefers a precise Nominatim road", () => {
     expect(
       getHexagonLocationLabel({
         name: "Gorbals",
-        h3: "89195d1a803ffff",
-        address: { road: "Crown Street" },
+        areaReference: "Area 5",
       }),
-    ).toBe("Crown Street");
+    ).toBe("Crown Street · Area 5");
   });
 
   test("supports a nested Nominatim address", () => {
