@@ -56,6 +56,7 @@ const material = {
 
 const HEX_COVERAGE = 0.8;
 const HEX_ELEVATION_SCALE = 50;
+const CRIME_DATA_MIN_ZOOM = 10;
 
 export default function MapComponent({
   onClick,
@@ -71,9 +72,16 @@ export default function MapComponent({
   const [data, setData] = useState([]);
   const [geoPos, setGeoPos] = useState(userPosition);
   const [mapPos, setMapPos] = useState(position || initialPosition);
+  const [zoom, setZoom] = useState(
+    userLocation ? 11 : (position?.zoom ?? initialPosition.zoom),
+  );
+
+  const showCrimeData = zoom >= CRIME_DATA_MIN_ZOOM;
+
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapDataLoaded, setMapDataLoaded] = useState(mode === "go");
   const [loadingProgress, setLoadingProgress] = useState(0);
+  const [showZoomMessage, setShowZoomMessage] = useState(false);
   const [lastFlight, setLastFlight] = useState(null);
   const mapRef = useRef();
   const activeIdx = 1;
@@ -226,9 +234,15 @@ export default function MapComponent({
       elevationScale: HEX_ELEVATION_SCALE,
 
       onClick: (info) => {
-        if (info.object) {
-          onClick && onClick(info.object);
+        if (!info.object) return;
+
+        if (!showCrimeData) {
+          setShowZoomMessage(true);
+          return;
         }
+
+        setShowZoomMessage(false);
+        onClick && onClick(info.object);
       },
     });
 
@@ -344,6 +358,12 @@ export default function MapComponent({
     setData(routes);
   }, [routes]);
 
+  useEffect(() => {
+    if (showCrimeData || mode === "go") {
+      setShowZoomMessage(false);
+    }
+  }, [showCrimeData, mode]);
+
   const updateMapPos = (pos) => {
     if (!pos) return;
 
@@ -372,6 +392,8 @@ export default function MapComponent({
 
   const onMapLoad = useCallback(() => {
     const center = mapRef.current?.getCenter();
+
+    setZoom(mapRef.current?.getZoom() ?? mapPos?.zoom ?? initialPosition.zoom);
 
     console.log("Map loaded:", {
       center,
@@ -420,6 +442,32 @@ export default function MapComponent({
   return (
     <div className="streetsafe-map" style={{ position: "relative" }}>
       {/* Loading indicator */}
+
+      {mode !== "go" && !showCrimeData && showZoomMessage && (
+        <div
+          role="status"
+          style={{
+            position: "absolute",
+            top: 32,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 2,
+            maxWidth: "calc(100% - 32px)",
+            padding: "0.75rem 1rem",
+            borderRadius: "0.75rem",
+            backgroundColor: "rgba(15, 23, 42, 0.9)",
+            color: "#f8fafc",
+            fontWeight: 600,
+            textAlign: "center",
+            pointerEvents: "none",
+          }}
+        >
+          <span>
+            Please zoom in to see crime data. Crime data is only available at
+            zoom level 10 and above.
+          </span>
+        </div>
+      )}
 
       {!mapDataLoaded && (
         <div
@@ -480,6 +528,7 @@ export default function MapComponent({
         doubleClickZoom={false}
         attributionControl={false}
         onLoad={onMapLoad}
+        onZoom={(e) => setZoom(e.viewState.zoom)}
       >
         <DeckGLOverlay
           overlayOrder={0}

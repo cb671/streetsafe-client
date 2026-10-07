@@ -1,6 +1,6 @@
 import { Link, useOutletContext } from "react-router";
 import { useState } from "react";
-import { updatePostcode } from "~/api/api.js";
+import { updatePostcode } from "../api/api.js";
 import useBookmarks from "../hooks/useBookmarks.js";
 import BookmarkButton from "../components/BookmarkButton.jsx";
 

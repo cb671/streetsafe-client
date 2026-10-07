@@ -20,6 +20,7 @@ describe("hexagon location labels", () => {
       getHexagonLocationLabel({
         name: "Gorbals",
         areaReference: "Area 5",
+        nominatim: { address: { road: "Crown Street" } },
       }),
     ).toBe("Crown Street · Area 5");
   });
